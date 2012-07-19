@@ -1,0 +1,45 @@
+/* ----------------------------------------------
+	div.simple-amazon-view
+---------------------------------------------- */
+div.simple-amazon-view {
+	margin: 10px 0;
+	padding: 5px 10px;
+	background-color: #fff;
+	border: 5px solid #ccc;
+	font-size: 12px;
+	clear: both;
+}
+
+/* cleafix */
+div.simple-amazon-view:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+*html div.simple-amazon-view { zoom: 1; }
+*:first-child+html div.simple-amazon-view { zoom: 1; }
+
+div.simple-amazon-view img.sa-image {
+	float: left;
+	margin: 5px 10px 5px 0px;
+	padding: 5px;
+	background-color: #999;
+	border: none;
+}
+
+.simple-amazon-view p.sa-title {
+	padding: 5px 0 10px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+div.simple-amazon-view ul.sa-detail {
+	margin:0;
+	list-style-type: none
+}
+
+div.simple-amazon-view p {
+	margin: 0;
+}

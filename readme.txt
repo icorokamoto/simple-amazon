@@ -1,0 +1,200 @@
+=== Simple Amazon ===
+Contributors: icoro
+Donate link: 
+Tags: amazon
+Requires at least: 2.6
+Tested up to: 3.4
+Stable tag: 
+
+本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
+
+== Description ==
+　「Simple Amazon」には、Amazon の 商品ページのURL を貼り付けるとその商品を記事上に表示するという、ただそれだけの機能しかありません。
+
+　「商品検索なんてAmaozonでした方が早いでしょ」「ちょっと具合悪いとこなんて自分で直すわ」「でも自分でイチからプラグイン組むのはダルイわ」という、ワケが分かっている人向けのプラグインです。
+
+　「Simple Amazon」のベースとなっているのは、「wp-tmkm-amazon」というプラグインです。このプラグイン、良くできていると思うのですが、すでに開発が止まってます(最近、有志により開発が進められているっぽいです)。
+　加えて、php5で使用するとエラーを吐いたり、自分にはあまり必要ない機能もあったので、書き直させてもらいました。
+　そうして出来たのがこの「Simple Amazon」です。
+
+== Installation ==
+1. ダウンロードした zip ファイルを解凍します。
+3. simple-amazon フォルダを wp-content/plugins フォルダに転送します。
+4. cacheディレクトリのパーミッションを777(または707)にします。
+5. 管理画面から simple-amazon を有効化します。
+2. プラグインの管理画面に移動して、「Access Key ID」と「Secret Access Key」を入力します。Access Key ID と Secret Access Key は https://affiliate.amazon.co.jp/ で取得してください。
+6. 必要に応じて「オプション設定」を設定します。リンクウィンドウの挙動や詳細表示を設定できます。「アソシエイト ID」は入力しなくても機能します。
+7. 記事本文中にAmazon.co.jpの商品詳細ページのURLをコピペするだけAmazonの商品情報が表示されます。
+
+= 日本以外のAmazonのアソシエイトに対応する場合 =
+
+デフォルトでは日本(amazon.co.jp)のアソシエイトIDのみ設定出来るようになっていますが、simple-amazon.php の中で、変数 $simple_amazon_international_mode を設定すれば、管理画面に設定した国のアソシエイトID入力欄が入力出来るようになります。設定出来る国は カナダ(ca), 中国(cn), ドイツ(de), スペイン(es), フランス(fr), イタリア(it), 日本(jp), イギリス(uk), アメリカ(us) です。
+
+すべての国に対応したい場合。
+$simple_amazon_international_mode = 'ca,cn,de,es,fr,it,jp,uk,us';
+
+amazon.co.ukにだけ対応したい場合。
+$simple_amazon_international_mode = 'uk';
+
+amazon.co.ukとamazon.co.jpに対応したい場合。
+$simple_amazon_international_mode = 'jp,uk';
+
+
+= php 関数として呼び出す場合 =
+
+php 関数として呼び出す場合は、テーマファイル等に以下のように記載します。
+
+<?php simple_amazon_view('ASIN','domain'); ?>
+
+　ASIN は Amazon の ASIN に置き換えて下さい。
+　domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+
+　以下は WPLANG に jp が設定されている場合の設定例です。(日本語版を使用している場合は通常 jp が設定されていると思われます。)
+
+amazon.co.jp にある、ASIN が 4883377245 の商品を表示させたい場合。
+<?php simple_amazon_view('4883377245'); ?>
+
+Amazon.co.uk にある、ASINが B000BMUVKQ の商品を表示させたい場合。
+<?php simple_amazon_view('B000BMUVKQ', 'uk'); ?>
+
+javari.jp にある、ASINが B000Z5N4EO の商品を表示させたい場合。
+<?php simple_amazon_view('B000Z5N4EO', 'javari.jp'); ?>
+
+
+= 高度な使い方 =
+
+　/include/sa_view_class.php の 39行目以降にある $regexps[] を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。
+　以下のような正規表現を利用して「ASIN」と「商品名」を取り出しています。「商品名」は「Product Advertising API」で商品情報を取得出来なかった場合に使用しています。
+
+ASINを指定する部分(必須): (?P<asin>[A-Z0-9]{10,13})
+商品名を指定する部分(任意): (?P<name>[\S]+)
+
+　たとえば、wp-tmkm-amazonとの互換を保ちたい場合は以下の行を追加します。
+
+$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
+
+
+== Changelog ==
+= 5.3.2 =
+* クラスの読み込み忘れを修正した。
+
+= 5.3.1 =
+* インストール時にエラーが発生する不具合を修正した。
+* キャッシュを作成出来ない不具合を修正した。
+* インターナショナルモードが正しく動作しない不具合を修正した。
+
+= 5.3 =
+* アソシエイトIDの入力を必須にした。
+* 期限切れのキャッシュを自動的に削除するようにした。
+* 商品情報が取得出来ないことがある不具合を修正した。
+* 中国(cn)、スペイン(es)、イタリア(it)のamazonに対応した。
+* その他、コードを整理した。
+
+= 5.2 =
+* カテゴリのデータがない場合にカテゴリを表示しないようにした。
+* キャッシュをコントロールするプログラムを書き換えた。
+* 無効なASINを指定した場合にエラーコメントを出力するようにした。
+
+= 5.1.2 =
+* php 関数として呼び出す場合にエラーが生じていたのを修正した。
+* レーティングの表示をしないようにした。
+* CSSのcleafix等を修正した。
+
+= 5.1.1 =
+* レスポンスがないときの表示に「商品リンクの動作」が反映されるように修正した。
+* 使用していないコードをとりあえずコメントアウトした。
+
+= 5.1 =
+* javari.jpの商品表示に対応した。
+
+= 5.0 =
+* ca, de, fr, uk, usのAmazonの商品表示に対応した。
+* ca, de, fr, uk, usのアフィリエイトIDに対応した。
+* 管理画面からキャッシュを削除する機能を削除した。
+
+= 4.0 =
+* コードを大幅に書き直し、クラスごとのファイルに分割した。
+* Product Advertising API の Access Key ID と Secret Access Key を管理画面で入力出来るようにした。
+* 管理画面からキャッシュを削除出来るようにした。
+* プラグインのアンインストール時に設定を削除するか残すか選択できるようにした。
+
+= 3.2.1 =
+* Lite.phpを読み込む前にすでにCache_Liteクラスが存在するかどうかチェックするようにした。
+* cacheディレクトリのパーミッションが正しくない場合、管理画面に警告を表示するようにした。
+* private_key、AWSAccessKeyIdが設定されてない場合、管理画面に警告を表示するようにした。
+
+= 3.2 =
+* Lite.php、PEAR.php、simple-amazon-function.phpの場所をincludeディレクトリ以下に変更した。
+* Product Advertising APIの毎秒1回ルールにちゃんと対応。
+
+= 3.1.1 =
+* CSSのclearfixを書き直した(変な書き方をしていたので)。
+* clearfixの見直しに伴い、出力するHTMLからhrタグを取り除いた。
+
+= 3.1 =
+* 表示したい商品のURLを貼り付けるだけで商品情報を表示出来るようにした。
+* その他、コードを整理した。
+
+= 3.0 =
+* 画像のサイズの指定を「商品画像のサイズ」1つにまとめた。
+* 「商品詳細の表示スタイル」を「商品詳細の表示項目」に名称変更した。
+* 「商品詳細の表示項目」の中にある各項目の名称を「Full」、「Detail」、「Title & Image」、「Title」にした。
+* ついでに「商品画像のサイズ」の中にある各項目の名称を「Small」、「Medium」、「Large」に変更した。
+* 「商品画像のサイズ」のデフォルト値を「small」から「Medium」にした。
+* 「商品画像のサイズ」に「Large」を追加した。
+* 出力するimgタグにheightとwidthを追加するようにした。
+* 中古価格を非表示にした。
+* 画像ファイルの保存場所をプラグインのルートディレクトリからimagesディレクトリに変更した。
+* 表示スタイル「Full」で「オススメ度」を表示するようにした。
+* 設定(アソシエイトID、レイアウト、画像サイズ)変更時にキャッシュを削除するようにした。
+* CSSの読み込みを切り替えられるようにした。
+* CSSを書き直した。
+* その他、コードを整理した。
+
+= 2.0.7 =
+* Simple Amazonでは使用していないlist機能のコードが残っていたので削除した。
+* その他、コードを整理した。
+
+= 2.0.6.1 =
+* クラス名をオリジナルのクラス名に変更した。(tmkm-amazon系統のプラグインと一緒に使用するとクラス名がコンフリクトするため。)
+
+= 2.0.6 =
+* ecsからフィードが返ってこない場合にエラーをログに出力しないようにした。
+* PEARを1.8.1にした。
+* Cache_Liteを1.7.8にした。
+* その他、コードを整理した。
+* readme.txtを作成した。
+
+= 2.0.5 =
+* コードをちょっと整理してみた。
+
+= 2.0.1 =
+* cacheが働いてなかったのを修正した。
+
+= 2.0 =
+* Product Advertising APIに対応した。
+
+= 1.0 =
+* wp-tmkm-amazonをsimpleXMLに対応させた。
+
+== Notes ==
+* Product Advertising API に対応しています。
+* PHP5以上 で動作します。
+* GDライブラリが使用できる環境を推奨。(なくても動作します。)
+* LGPL で提供されている Lite.php を同梱しています。
+* 記事本文中で PHP コードを実行できるプラグインを導入していれば、PHP 関数として呼び出すこともできます。
+* /include/sa_view_class.php の 39行目以降にある$regexps[]を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。以下のような正規表現を利用して「ASIN」と「商品名」を取り出しています。「商品名」は「Product Advertising API」で商品情報を取得出来なかった場合に使用しています。
+
+	ASINを指定する部分(必須)	: (?P<asin>[A-Z0-9]{10,13})
+	商品名を指定する部分(任意)	: (?P<name>[\S]+)
+
+	例: wp-tmkm-amazonとの互換を保ちたい場合は以下の行を追加します。
+
+		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
+
+* 書籍の場合、ASIN に 10 桁および 13 桁の ISBN を使用できます。
+* imagesディレクトリの中にあるamazon_noimg.png(75 x 75px)、amazon_noimg_small.png(160 x 160px)、amazon_noimg_large.png(500 x 500px)を差し替えることで、商品画像がないときの代替画像を好きなものにできます。
+* cacheディレクトリは別の場所に設置できます。その場合は、/include/sa-cache-control-class.php の 19行目にある cacheDir の値を、設置したディレクトリのパスに変更してください。
+
+== Links ==
+* [icoro](http://www.icoro.com/)
