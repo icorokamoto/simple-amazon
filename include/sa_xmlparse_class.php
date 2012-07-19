@@ -8,8 +8,6 @@ class SimpleAmazonXmlParse {
 	private $options;
 	private $config;
 	private $cache;
-	private $access_key;
-	private $private_key;
 
 	/**
 	 * @param	none
@@ -19,16 +17,16 @@ class SimpleAmazonXmlParse {
 
 		global $simple_amazon_options, $simple_amazon_settings;
 
-		$this->options	= $simple_amazon_options;
-		$this->config	= $simple_amazon_settings;
-		$this->cache	= new SimpleAmazonCacheControl();
+		$this->options = $simple_amazon_options;
+		$this->config  = $simple_amazon_settings;
+		$this->cache   = new SimpleAmazonCacheControl();
 
 	}
 
 	/**
 	 * Amazonのレスポンスを返す
-	 * @param	array $arr
-	 * @rerturn	object $parsedata
+	 * @param array $arr
+	 * @rerturn object $parsedata
 	 */
 	public function getamazonxml( $tld, $params ) {
 
@@ -37,7 +35,19 @@ class SimpleAmazonXmlParse {
 		}
 
 		// --- Set an ID for this cache ---
-		$id = $tld . $params['ItemId'];
+//		$id = $tld . $params['Operation'] . $params['ResponseGroup'];
+//		$id = $tld . $params['ItemId'];
+
+//		if( $params['Operation'] == 'ItemLookup' ) {
+//			$id .= $params['ItemId'];
+//		} elseif( $params['Operation'] == 'ItemSearch' ) {
+//			$id .= $params['SearchIndex'] . $params['BrowseNode'];
+//			$id = implode('', $params);
+//			echo '<!-- ' . $id . '-->';
+//		}
+
+		$id = implode('', $params);
+//		$id = md5($id);
 
 		// Check to see if there is a valid cache of xml
 		if ($xmldata = $this->cache->get( $id )) {
@@ -56,12 +66,13 @@ class SimpleAmazonXmlParse {
 			// Feed URI を生成
 			$feed_uri = $this->generate_feed_uri( $tld, $params );
 
-			//ロックファイルの設定
+			// ロックファイルの設定
 			$lockfile = $this->config['cache_dir'] . 'lockfile';
 
 			if ( checkpoint( $lockfile, 1 ) ) {
 				if( $xmldata = @file_get_contents($feed_uri) ) {
-					$this->cache->save( $xmldata, $id );
+					$status = $this->cache->save( $xmldata, $id );
+//var_dump($status);
 				}
 			}
 		}
@@ -69,11 +80,34 @@ class SimpleAmazonXmlParse {
 // レスポンスヘッダを出力
 //		echo $http_response_header;
 
-		//xmlをパース
-		$parsedata = simplexml_load_string( $xmldata );
+		// サーバーからレスポンスはある?
+		if( $xmldata === false ) {
+//			$error_message = '<!-- レスポンスがありません。 -->' . "\n";
+			$error_message = '<!-- ' . $http_response_header . ' -->';
+			return $error_message;
+		}
 
-		return $parsedata;
+		// xmlをパース
+		$AmazonXml = simplexml_load_string( $xmldata );
 
+		// リクエストは有効?
+		if( !$AmazonXml->Items || $AmazonXml->Items->Request->IsValid == 'False' ) {
+			$error_message = '<!-- 与えられたリクエストが正しくありません -->';
+			return $error_message;
+		}
+
+		// エラー発生してない？
+		if( $AmazonXml->Items->Request->Errors ) {
+			$error = $AmazonXml->Items->Request->Errors->Error;
+			$error_message = '<!-- ' . "\n"
+					. 'Occurrence of an Error' . "\n"
+					. '  Code: ' . $error->Code . "\n"
+					. '  Message: ' . $error->Message . "\n"
+					. ' -->';
+			return $error_message;
+		}
+
+		return $AmazonXml;
 	}
 
 	/**

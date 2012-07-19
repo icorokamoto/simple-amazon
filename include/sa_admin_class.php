@@ -6,7 +6,6 @@
 class SimpleAmazonAdmin {
 
 	private $cache;
-	private $settings;
 	private $options;
 
 	/**
@@ -15,11 +14,10 @@ class SimpleAmazonAdmin {
 	 */
 	public function __construct() {
 
-		global $simple_amazon_options, $simple_amazon_settings;
+		global $simple_amazon_options;
 
-		$this->options  = $simple_amazon_options;
-		$this->settings = $simple_amazon_settings;
-		$this->cache    = new SimpleAmazonCacheControl();
+		$this->options = $simple_amazon_options;
+		$this->cache = new SimpleAmazonCacheControl();
 	}
 
 	/**
@@ -128,7 +126,7 @@ class SimpleAmazonAdmin {
 			'<table class="form-table">' . "\n";
 
 		// international mode が設定されている場合は設定されている国だけ表示する
-		if( in_array('ca', $this->settings['imode']) ) {
+		if( in_array('ca', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>CA (カナダ)</th>' .
@@ -136,7 +134,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('cn', $this->settings['imode']) ) {
+		if( in_array('cn', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>CN (中国)</th>' .
@@ -144,7 +142,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('de', $this->settings['imode']) ) {
+		if( in_array('de', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>DE (ドイツ)</th>' .
@@ -152,7 +150,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('es', $this->settings['imode']) ) {
+		if( in_array('es', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>ES (スペイン)</th>' .
@@ -160,7 +158,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('fr', $this->settings['imode']) ) {
+		if( in_array('fr', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>FR (フランス)</th>' .
@@ -168,7 +166,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('it', $this->settings['imode']) ) {
+		if( in_array('it', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>it (イタリア)</th>' .
@@ -176,7 +174,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( !isset($this->settings['imode']) || in_array('jp', $this->settings['imode']) ) {
+		if( !isset($this->options['imode']) || in_array('jp', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>JP (日本)</th>' .
@@ -184,7 +182,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('uk', $this->settings['imode']) ) {
+		if( in_array('uk', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>UK (イギリス)</th>' .
@@ -192,7 +190,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('us', $this->settings['imode']) ) {
+		if( in_array('us', $this->options['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>US (アメリカ)</th>' .
@@ -268,24 +266,24 @@ class SimpleAmazonAdmin {
 
 		// create array
 		$options = array(
-			'accesskeyid'		=> trim( $_POST['accesskeyid'] ),
+			'accesskeyid'     => trim( $_POST['accesskeyid'] ),
 
-			'associatesid_ca'	=> isset($_POST['associatesid_ca']) ? trim($_POST['associatesid_ca']) : '',
-			'associatesid_cn'	=> isset($_POST['associatesid_cn']) ? trim($_POST['associatesid_cn']) : '',
-			'associatesid_de'	=> isset($_POST['associatesid_de']) ? trim($_POST['associatesid_de']) : '',
-			'associatesid_es'	=> isset($_POST['associatesid_es']) ? trim($_POST['associatesid_es']) : '',
-			'associatesid_fr'	=> isset($_POST['associatesid_fr']) ? trim($_POST['associatesid_fr']) : '',
-			'associatesid_it'	=> isset($_POST['associatesid_it']) ? trim($_POST['associatesid_it']) : '',
-			'associatesid_jp'	=> isset($_POST['associatesid_jp']) ? trim($_POST['associatesid_jp']) : '',
-			'associatesid_uk'	=> isset($_POST['associatesid_uk']) ? trim($_POST['associatesid_uk']) : '',
-			'associatesid_us'	=> isset($_POST['associatesid_us']) ? trim($_POST['associatesid_us']) : '',
+			'associatesid_ca' => isset($_POST['associatesid_ca']) ? trim($_POST['associatesid_ca']) : '',
+			'associatesid_cn' => isset($_POST['associatesid_cn']) ? trim($_POST['associatesid_cn']) : '',
+			'associatesid_de' => isset($_POST['associatesid_de']) ? trim($_POST['associatesid_de']) : '',
+			'associatesid_es' => isset($_POST['associatesid_es']) ? trim($_POST['associatesid_es']) : '',
+			'associatesid_fr' => isset($_POST['associatesid_fr']) ? trim($_POST['associatesid_fr']) : '',
+			'associatesid_it' => isset($_POST['associatesid_it']) ? trim($_POST['associatesid_it']) : '',
+			'associatesid_jp' => isset($_POST['associatesid_jp']) ? trim($_POST['associatesid_jp']) : '',
+			'associatesid_uk' => isset($_POST['associatesid_uk']) ? trim($_POST['associatesid_uk']) : '',
+			'associatesid_us' => isset($_POST['associatesid_us']) ? trim($_POST['associatesid_us']) : '',
 
-			'delete_setting'	=> $_POST['delete_setting'],
-			'imgsize'			=> $_POST['imgsize'],
-			'layout_type'		=> $_POST['layout_type'],
-			'secretaccesskey'	=> trim( $_POST['secretaccesskey'] ),
-			'setcss'			=> $_POST['setcss'],
-			'windowtarget'		=> $_POST['windowtarget']
+			'delete_setting'  => $_POST['delete_setting'],
+			'imgsize'         => $_POST['imgsize'],
+			'layout_type'     => $_POST['layout_type'],
+			'secretaccesskey' => trim( $_POST['secretaccesskey'] ),
+			'setcss'          => $_POST['setcss'],
+			'windowtarget'    => $_POST['windowtarget']
 		);
 
 		update_option( 'simple_amazon_admin_options', $options );
