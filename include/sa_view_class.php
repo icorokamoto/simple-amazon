@@ -98,7 +98,6 @@ class SimpleAmazonView {
 			$this->tld = $this->get_TLD($this->domain);
 		}
 
-//		$display = $this->htmlGenerater->format_amazon( $domain, $asin, $name );
 		$display = $this->generate( $asin, $style );
 		echo $display;
 
@@ -130,7 +129,6 @@ class SimpleAmazonView {
 	 * @param array $style
 	 * @return string $html
 	 */
-//	public function generate( $params, $domain, $style ) {
 	public function generate( $params, $style ) {
 
 		// style
@@ -267,8 +265,6 @@ class SimpleAmazonView {
 	 */
 	private function generate_item_html( $AmazonXml ) {
 
-//		if( isset($this->style['layout_type']) )
-//			$this->options['layout_type'] = $this->style['layout_type'];
 		$layout_type = $this->style['layout_type'];
 		$imgsize = $this->style['imgsize'];
 		$windowtarget = $this->options['windowtarget'];
@@ -549,7 +545,6 @@ class SimpleAmazonView {
 	private function get_img( $xml, $imgsize ) {
 
 		$img->url    = '';
-//		$img->size   = '';
 		$img->width  = 0;
 		$img->height = 0;
 
@@ -558,7 +553,6 @@ class SimpleAmazonView {
 				$temp = $xml->SmallImage;
 				if( !$item->URL ) {
 					$img->url		= $this->img['small'];
-//					$img->size		= ' height="75" width="75"';
 					$img->width		= 75;
 					$img->height	= 75;
 				}
@@ -567,7 +561,6 @@ class SimpleAmazonView {
 				$temp = $xml->LargeImage;
 				if( !$temp->URL ) {
 					$img->url		= $this->img['large'];
-//					$img->size		= ' height="500" width="500"';
 					$img->width		= 500;
 					$img->height	= 500;
 				}
@@ -577,7 +570,6 @@ class SimpleAmazonView {
 //				var_dump($temp);
 				if( !$temp->URL ) {
 					$img->url		= $this->img['medium'];
-//					$img->size		= ' height="160" width="160"';
 					$img->width		= 160;
 					$img->height	= 160;
 				}
@@ -585,7 +577,6 @@ class SimpleAmazonView {
 
 		if( !$img->url ) {
 			$img->url		= $temp->URL;
-//			$img->size 		= ' height="' . $temp->Height . '" width="' . $temp->Width . '"';
 			$img->width		= $temp->Width;
 			$img->height	= $temp->Height;
 //var_dump($img->url);

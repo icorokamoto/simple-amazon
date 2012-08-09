@@ -60,6 +60,13 @@ Amazon.co.uk にある、ASINが B000BMUVKQ の商品を表示させたい場合
 javari.jp にある、ASINが B000Z5N4EO の商品を表示させたい場合。
 <?php simple_amazon_view('B000Z5N4EO', 'javari.jp'); ?>
 
+= カスタムフィールドを使って表示 =
+
+　あらかじめ、テンプレートのAmazonの商品を表示したい場所に以下のように記載します。
+
+<?php simple_amazon_custum_view(); ?>
+
+　実際に商品を表示するには、記事を作成する際に「カスタムフィールドを追加:」で「amazon」を選択し、値に商品ページのURLを入力します。「カスタムフィールドを追加」ボタンをクリックして完了です。
 
 = 高度な使い方 =
 
@@ -75,6 +82,9 @@ $regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 
 
 == Changelog ==
+= 5.4 =
+* カスタムフィールドに対応した。
+
 = 5.3.2 =
 * クラスの読み込み忘れを修正した。
 

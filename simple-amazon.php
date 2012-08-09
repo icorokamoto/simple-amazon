@@ -4,7 +4,7 @@ Plugin Name: Simple Amazon
 Plugin URI: http://www.icoro.com/
 Description: ASIN を指定して Amazon から個別商品の情報を取出します。BOOKS, DVD, CD は詳細情報を取り出せます。
 Author: icoro
-Version: develop
+Version: 5.4
 Author URI: http://www.icoro.com/
 Special Thanks: tomokame (http://http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)
@@ -83,9 +83,6 @@ include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_xmlparse_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_cache_control_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_admin_class.php');
 
-//$SimpleAmazonCacheController	= new SimpleAmazonCacheControl($simple_amazon_settings);
-//$simpleAmazonView				= new SimpleAmazonView($simple_amazon_options);
-//$simpleAmazonAdmin				= new SimpleAmazonAdmin($simple_amazon_options, $SimpleAmazonCacheController);
 $simpleAmazonView  = new SimpleAmazonView();
 $simpleAmazonAdmin = new SimpleAmazonAdmin();
 
@@ -159,24 +156,6 @@ function simple_amazon_view( $asin, $code = null, $style = null ) {
 function simple_amazon_custum_view() {
 	global $simpleAmazonView;
 	$simpleAmazonView->view_custom_field();
-}
-
-/* 指定したノードのリストを表示する関数 */
-function simple_amazon_list_view( $params, $code = null, $style = null ) {
-	global $simpleAmazonView;
-	$simpleAmazonView->view( $params, trim($code), $style );
-/*
-		$params = array(
-//			'ResponseGroup' => 'Images,ItemAttributes',
-//			'Operation'     => 'ItemSearch',
-//			'MerchantId'    => 'All',
-//			'Condition'     => 'All',
-			'SearchIndex'   => 'Books',
-			'BrowseNode'    => '466280',
-//			'Sort'          => 'salesrank',
-			'Power'         => $power
-		);
-*/
 }
 
 ?>
