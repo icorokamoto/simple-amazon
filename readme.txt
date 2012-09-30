@@ -3,7 +3,7 @@ Contributors: icoro
 Donate link: 
 Tags: amazon
 Requires at least: 2.6
-Tested up to: 3.4
+Tested up to: 3.4.2
 Stable tag: 
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
@@ -75,6 +75,10 @@ $regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 
 
 == Changelog ==
+= 5.3.3 =
+* CSSの読み込み設定が動作していなかったのを修正した。
+* マルチサイト運用時に子サイトの設定を保存しようとすると親サイトの設定画面に飛ばされる不具合を修正した。
+
 = 5.3.2 =
 * クラスの読み込み忘れを修正した。
 
