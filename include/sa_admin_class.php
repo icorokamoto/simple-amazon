@@ -31,7 +31,7 @@ class SimpleAmazonAdmin {
 
 		$message = "";
 
-		if ( $_POST['action'] == 'save_options' ){
+		if ( isset($_POST['action']) && $_POST['action'] == 'save_options' ){
 			$this->simple_amazon_save_options();
 			$message .= '<div class="updated"><p><strong>設定を保存しました。</strong></p></div>' . "\n"; 
 		}
@@ -44,13 +44,13 @@ class SimpleAmazonAdmin {
 */
 
 		switch( $this->options['windowtarget']) {
-			case newwin: $newwindow = ' checked'; $selfwindow = ''; break;
+			case 'newwin': $newwindow = ' checked'; $selfwindow = ''; break;
 			default: $newwindow = ''; $selfwindow = ' checked';
 		}
 
 		switch( $this->options['imgsize'] ) {
-			case small: $s_imgsize = ' checked'; $m_imgsize = ''; $l_imgsize = ''; break;
-			case large: $s_imgsize = ''; $m_imgsize = ''; $l_imgsize = ' checked'; break;
+			case 'small': $s_imgsize = ' checked'; $m_imgsize = ''; $l_imgsize = ''; break;
+			case 'large': $s_imgsize = ''; $m_imgsize = ''; $l_imgsize = ' checked'; break;
 			default: $s_imgsize = ''; $m_imgsize = ' checked'; $l_imgsize = '';
 		}
 
@@ -62,12 +62,12 @@ class SimpleAmazonAdmin {
 		}
 
 		switch( $this->options['setcss']) {
-			case yes: $setcss_yes = ' checked'; $setcss_no = ''; break;
+			case 'yes': $setcss_yes = ' checked'; $setcss_no = ''; break;
 			default: $setcss_yes = ''; $setcss_no = ' checked';
 		}
 
 		switch( $this->options['delete_setting']) {
-			case yes: $delete_setting_yes = ' checked'; $delete_setting_no = ''; break;
+			case 'yes': $delete_setting_yes = ' checked'; $delete_setting_no = ''; break;
 			default: $delete_setting_yes = ''; $delete_setting_no = ' checked';
 		}
 
@@ -128,7 +128,7 @@ class SimpleAmazonAdmin {
 			'<table class="form-table">' . "\n";
 
 		// international mode が設定されている場合は設定されている国だけ表示する
-		if( in_array('ca', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('ca', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>CA (カナダ)</th>' .
@@ -136,7 +136,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('cn', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('cn', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>CN (中国)</th>' .
@@ -144,7 +144,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('de', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('de', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>DE (ドイツ)</th>' .
@@ -152,7 +152,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('es', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('es', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>ES (スペイン)</th>' .
@@ -160,7 +160,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('fr', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('fr', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>FR (フランス)</th>' .
@@ -168,7 +168,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('it', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('it', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>it (イタリア)</th>' .
@@ -184,7 +184,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('uk', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('uk', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>UK (イギリス)</th>' .
@@ -192,7 +192,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n";
 		}
 
-		if( in_array('us', $this->settings['imode']) ) {
+		if( isset($this->settings['imode']) && in_array('us', $this->settings['imode']) ) {
 		$simple_amazon_admin_html .=
 			'<tr>' .
 			'<th>US (アメリカ)</th>' .
@@ -253,7 +253,7 @@ class SimpleAmazonAdmin {
 		add_options_page(
 			'Simple Amazon',
 			'Simple Amazon',
-			8,
+			'level_8',
 			__FILE__,
 			array( &$this, 'simple_amazon_options_page' )
 		);
