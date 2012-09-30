@@ -101,8 +101,8 @@ add_filter('the_content', array(&$simpleAmazonView, '_replacestrings'));
 
 /* simple amazonのcssを読み込む */
 function add_simpleamazon_stylesheet(){
-	global $simple_amazon_settings;
-	if( $simple_amazon_settings['setcss'] == 'yes') {
+	global $simple_amazon_options;
+	if( $simple_amazon_options['setcss'] == 'yes') {
 		?>
 <link rel="stylesheet" href="<?php echo SIMPLE_AMAZON_PLUGIN_URL; ?>/simple-amazon.css" type="text/css" />
 		<?php
