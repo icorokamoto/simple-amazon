@@ -107,7 +107,7 @@ class SimpleAmazonAdmin {
 		}
 
 		$simple_amazon_admin_html .=
-			'<form method="post" action="' . $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING'] . '">' .
+			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' .
 			'<input type="hidden" name="action" value="save_options" />' .
 			'<h3>基本設定</h3>' . "\n" .
 			'<table class="form-table">' . "\n" .
