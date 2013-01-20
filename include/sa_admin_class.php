@@ -235,7 +235,7 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n" .
 
 			'</table>' . "\n" .
-			'<p class="submit"><input type="submit" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
+			'<p class="submit"><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
 			'</form>' . "\n";
 
 		echo $simple_amazon_admin_html;
