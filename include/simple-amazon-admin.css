@@ -1,0 +1,15 @@
+/* ----------------------------------------------
+	simple amazon admin
+---------------------------------------------- */
+
+/* cleafix */
+#simple-amazon-options-menu:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+*html #simple-amazon-options-menu { zoom: 1; }
+*:first-child+html #simple-amazon-options-menu { zoom: 1; }
+

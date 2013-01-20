@@ -6,7 +6,6 @@
 class SimpleAmazonAdmin {
 
 	private $cache;
-	private $settings;
 	private $options;
 
 	/**
@@ -15,10 +14,9 @@ class SimpleAmazonAdmin {
 	 */
 	public function __construct() {
 
-		global $simple_amazon_options, $simple_amazon_settings;
+		global $simple_amazon_options;
 
 		$this->options  = $simple_amazon_options;
-		$this->settings = $simple_amazon_settings;
 		$this->cache    = new SimpleAmazonCacheControl();
 	}
 
@@ -107,101 +105,19 @@ class SimpleAmazonAdmin {
 		}
 
 		$simple_amazon_admin_html .=
-			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' .
-			'<input type="hidden" name="action" value="save_options" />' .
-			'<h3>基本設定</h3>' . "\n" .
-			'<table class="form-table">' . "\n" .
-
-			'<tr>' . "\n" .
-			'<th>Access Key ID</th>' . "\n" .
-			'<td><input type="text" size="22" name="accesskeyid" value="' . $this->options['accesskeyid'] . '" /></td>' . "\n" .
-			'</tr>' . "\n" .
-
-			'<tr>' . "\n" .
-			'<th>Secret Access Key</th>' . "\n" .
-			'<td><input type="text" size="42" name="secretaccesskey" value="' . $this->options['secretaccesskey'] . '" /></td>' . "\n" .
-			'</tr>' . "\n" .
-
-			'</table>' . "\n" .
-
-			'<h3>アソシエイト ID</h3>' . "\n" .
-			'<table class="form-table">' . "\n";
-
-		// international mode が設定されている場合は設定されている国だけ表示する
-		if( isset($this->settings['imode']) && in_array('ca', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>CA (カナダ)</th>' .
-			'<td><input type="text" name="associatesid_ca" value="' . $this->options['associatesid_ca'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('cn', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>CN (中国)</th>' .
-			'<td><input type="text" name="associatesid_cn" value="' . $this->options['associatesid_cn'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('de', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>DE (ドイツ)</th>' .
-			'<td><input type="text" name="associatesid_de" value="' . $this->options['associatesid_de'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('es', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>ES (スペイン)</th>' .
-			'<td><input type="text" name="associatesid_es" value="' . $this->options['associatesid_es'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('fr', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>FR (フランス)</th>' .
-			'<td><input type="text" name="associatesid_fr" value="' . $this->options['associatesid_fr'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('it', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>it (イタリア)</th>' .
-			'<td><input type="text" name="associatesid_it" value="' . $this->options['associatesid_it'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( !isset($this->settings['imode']) || in_array('jp', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>JP (日本)</th>' .
-			'<td><input type="text" name="associatesid_jp" value="' . $this->options['associatesid_jp'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('uk', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>UK (イギリス)</th>' .
-			'<td><input type="text" name="associatesid_uk" value="' . $this->options['associatesid_uk'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
-
-		if( isset($this->settings['imode']) && in_array('us', $this->settings['imode']) ) {
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>US (アメリカ)</th>' .
-			'<td><input type="text" name="associatesid_us" value="' . $this->options['associatesid_us'] . '" /></td>' .
-			'</tr>' . "\n";
-		}
+			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
+			'<input type="hidden" name="action" value="save_options" />' . "\n";
 
 		$simple_amazon_admin_html .=
-			'</table>' . "\n" .
+			'<div id="simple-amazon-options">' . "\n" .
+
+			'<div id="simple-amazon-options-menu"><ul class="subsubsub">' . "\n" .
+			'<li><a href="#tabs-1">オプション設定</a></li> | ' . "\n" .
+			'<li><a href="#tabs-2">基本設定</a></li>' . "\n" .
+			'</ul></div>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<div id="tabs-1">' . "\n" .
 
 			'<h3>オプション設定</h3>' . "\n" .
 			'<table class="form-table">' . "\n" .
@@ -235,7 +151,90 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n" .
 
 			'</table>' . "\n" .
-			'<p class="submit"><input type="submit" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
+			'</div>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<div id="tabs-2">' . "\n" .
+
+			'<h3>基本設定</h3>' . "\n" .
+			'<table class="form-table">' . "\n" .
+
+			'<tr>' . "\n" .
+			'<th>Access Key ID</th>' . "\n" .
+			'<td><input type="text" size="22" name="accesskeyid" value="' . $this->options['accesskeyid'] . '" /></td>' . "\n" .
+			'</tr>' . "\n" .
+
+			'<tr>' . "\n" .
+			'<th>Secret Access Key</th>' . "\n" .
+			'<td><input type="text" size="42" name="secretaccesskey" value="' . $this->options['secretaccesskey'] . '" /></td>' . "\n" .
+			'</tr>' . "\n" .
+
+			'</table>' . "\n" .
+
+			'<h3>アソシエイト ID</h3>' . "\n" .
+			'<table class="form-table">' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>CA (カナダ)</th>' .
+			'<td><input type="text" name="associatesid_ca" value="' . $this->options['associatesid_ca'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>CN (中国)</th>' .
+			'<td><input type="text" name="associatesid_cn" value="' . $this->options['associatesid_cn'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>DE (ドイツ)</th>' .
+			'<td><input type="text" name="associatesid_de" value="' . $this->options['associatesid_de'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>ES (スペイン)</th>' .
+			'<td><input type="text" name="associatesid_es" value="' . $this->options['associatesid_es'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>FR (フランス)</th>' .
+			'<td><input type="text" name="associatesid_fr" value="' . $this->options['associatesid_fr'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>it (イタリア)</th>' .
+			'<td><input type="text" name="associatesid_it" value="' . $this->options['associatesid_it'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>JP (日本)</th>' .
+			'<td><input type="text" name="associatesid_jp" value="' . $this->options['associatesid_jp'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>UK (イギリス)</th>' .
+			'<td><input type="text" name="associatesid_uk" value="' . $this->options['associatesid_uk'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>US (アメリカ)</th>' .
+			'<td><input type="text" name="associatesid_us" value="' . $this->options['associatesid_us'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'</table>' . "\n" .
+			'</div>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<p class="submit"><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
+			'</div>' . "\n" .
 			'</form>' . "\n";
 
 		echo $simple_amazon_admin_html;

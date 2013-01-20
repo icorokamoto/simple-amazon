@@ -98,7 +98,6 @@ class SimpleAmazonView {
 			$this->tld = $this->get_TLD($this->domain);
 		}
 
-//		$display = $this->htmlGenerater->format_amazon( $domain, $asin, $name );
 		$display = $this->generate( $asin, $style );
 		echo $display;
 
@@ -106,7 +105,7 @@ class SimpleAmazonView {
 
 	/**
 	 * カスタムフィールドから値を取得して商品情報を表示する
-	 * @param	string $content
+	 * @param	none
 	 * @return	none
 	 */
 	public function view_custom_field() {
@@ -123,14 +122,13 @@ class SimpleAmazonView {
 		}
 	}
 
+	
 	/**
 	 * parserにパラメータを渡してレスポンスを得る
 	 * @param array or string $params
-	 * @param string $domain ( ドメイン: amazon.ca/cn/de/es/fr/it/co.jp/co.uk/com/javari.jp )
 	 * @param array $style
 	 * @return string $html
 	 */
-//	public function generate( $params, $domain, $style ) {
 	public function generate( $params, $style ) {
 
 		// style
@@ -150,8 +148,8 @@ class SimpleAmazonView {
 		// params
 		$default_params = array(
 			'AssociateTag' => $this->get_aid($this->tld),
-			'MerchantId'	=> 'All',
-			'Condition'	 => 'All'
+			'MerchantId'   => 'All',
+			'Condition'    => 'All'
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
@@ -161,16 +159,18 @@ class SimpleAmazonView {
 		// HTMLを取得 //
 		if( is_string($params) ) {
 
+			// $params として asin が与えられた場合
 			// 商品情報のHTMLを取得
 			$params = wp_parse_args( array(
-				'Operation'	 => 'ItemLookup',
+				'Operation'     => 'ItemLookup',
 				'ResponseGroup' => 'Images,ItemAttributes',
-				'ItemId'		=> $params
+				'ItemId'        => $params
 			), $default_params);
 			$html = $this->generate_item( $params );
 
 		} else {
 
+			// $params として リクエストの配列が与えられた場合
 			// 商品一覧のHTMLを取得
 			$params = array_merge( array(
 				'Operation'	 => 'ItemSearch',
@@ -184,10 +184,8 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	商品情報の HTML を生成
-	 * @param	string $domain ( ドメイン: amazon.ca/cn/de/es/fr/it/co.jp/co.uk/com/javari.jp )
-	 * @param	string $asin ( ASIN )
-	 * @param	array $style
+	 * 商品情報の HTML を生成
+	 * @param array $params = array(Operation, ResponseGroup, ItemId)
 	 * @return	string $output ( HTML )
 	 */
 	private function generate_item( $params ) {
@@ -203,7 +201,7 @@ class SimpleAmazonView {
 		$xml = $this->get_xml( $params );
 
 		if( is_string($xml) ) {
-			$output = $this->generate_item_html_nonres( $asin );
+			$output = $this->generate_item_html_nonres( $params['ItemId'] );
 		} else {
 			$output = $this->generate_item_html( $xml );
 		}
@@ -213,11 +211,9 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	Amazon 商品の HTML を生成(レスポンスがない場合)
-	 * @param	string $domain ( ドメイン: amazon.ca/cn/de/es/fr/it/co.jp/co.uk/com/javari.jp )
-	 * @param	string $asin ( ASIN )
-	 * @param	string $name ( 商品名 )
-	 * @return	string $output ( HTML )
+	 * Amazon 商品の HTML を生成(レスポンスがない場合)
+	 * @param string $asin ( ASIN )
+	 * @return string $output ( HTML )
 	 */
 	private function generate_item_html_nonres( $asin ) {
 
@@ -261,14 +257,12 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	Amazon 商品の HTML を生成 ( レスポンスがある場合 )
-	 * @param	object $AmazonXML ( レスポンス )
-	 * @return	string $output ( HTML )
+	 * Amazon 商品の HTML を生成 ( レスポンスがある場合 )
+	 * @param object $AmazonXml ( レスポンス )
+	 * @return string $output ( HTML )
 	 */
 	private function generate_item_html( $AmazonXml ) {
 
-//		if( isset($this->style['layout_type']) )
-//			$this->options['layout_type'] = $this->style['layout_type'];
 		$layout_type = $this->style['layout_type'];
 		$imgsize = $this->style['imgsize'];
 		$windowtarget = $this->options['windowtarget'];
@@ -395,21 +389,32 @@ class SimpleAmazonView {
 
 	}
 
+	/**
+	 * 商品リストのHTMLを返す
+	 * @param Array $params
+	 * @return String $output
+	 */
 	private function generate_list( $params ) {
 
 		// レスポンスの取得
-		// 正常に取得出来た場合は xmlオブジェクトが、エラーの場合は文字列が返ってくる
 		$xml = $this->get_xml( $params );
 
 		if( is_string($xml) ) {
+			//エラーメッセージ
 			$output = $xml;
 		} else {
+			//商品リストのHTML
 			$output = $this->generate_list_html( $xml );
 		}
 
 		return $output;
 	}
 
+	/**
+	 * 商品リストのHTMLを生成する
+	 * @param Object $xml
+	 * @return String $html
+	 */
 	private function generate_list_html( $xml ) {
 
 		$imgsize        = $this->style['imgsize'];
@@ -453,13 +458,12 @@ class SimpleAmazonView {
 		return $html;
 	}
 
+	
 	/**
 	 * parserにパラメータを渡してレスポンスを得る
 	 * @param array $params
-	 * @param string $name ( 商品名 )
-	 * @param string $domain ( ドメイン: amazon.ca/cn/de/es/fr/it/co.jp/co.uk/com/javari.jp )
 	 * @return object $parsed_data
-	 * @return string $parsed_data (レスポンスがエラーだった場合)
+	 * @return string $parsed_data (レスポンスがエラーだった場合はエラーメッセージ)
 	 */
 	private function get_xml( $params ) {
 
@@ -477,9 +481,9 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	国コードからドメインを取得する
-	 * @param	string $domain
-	 * @return	object $img
+	 * 国コードからドメインを取得する
+	 * @param String $code
+	 * @return String $domain
 	 */
 	private function get_domain( $code ) {
 		switch($code) {
@@ -499,9 +503,9 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	ドメインからTLDを取得する
-	 * @param	string $domain
-	 * @return	object $img
+	 * ドメインからTLDを取得する
+	 * @param String $domain
+	 * @return String $tld
 	 */
 	private function get_TLD( $domain ) {
 		switch($domain) {
@@ -521,9 +525,9 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	TLDからアソシエイトIDを取得する
-	 * @param	string $domain
-	 * @return	object $img
+	 * TLDからアソシエイトIDを取得する
+	 * @param String $tld
+	 * @return String $aid
 	 */
 	private function get_aid( $tld ) {
 		switch($tld) {
@@ -542,23 +546,22 @@ class SimpleAmazonView {
 	}
 
 	/**
-	 * @brief	画像のURL、width、heightを設定する
-	 * @param	object $xml
-	 * @return	object $img
+	 * 画像のURL、width、heightを設定する
+	 * @param Object $xml
+	 * @param String $imgsize
+	 * @return Object $img
 	 */
 	private function get_img( $xml, $imgsize ) {
 
 		$img->url    = '';
-//		$img->size   = '';
 		$img->width  = 0;
 		$img->height = 0;
 
 		switch( $imgsize ) {
 			case 'small':
 				$temp = $xml->SmallImage;
-				if( !$item->URL ) {
+				if( !$temp->URL ) {
 					$img->url		= $this->img['small'];
-//					$img->size		= ' height="75" width="75"';
 					$img->width		= 75;
 					$img->height	= 75;
 				}
@@ -567,7 +570,6 @@ class SimpleAmazonView {
 				$temp = $xml->LargeImage;
 				if( !$temp->URL ) {
 					$img->url		= $this->img['large'];
-//					$img->size		= ' height="500" width="500"';
 					$img->width		= 500;
 					$img->height	= 500;
 				}
@@ -577,7 +579,6 @@ class SimpleAmazonView {
 //				var_dump($temp);
 				if( !$temp->URL ) {
 					$img->url		= $this->img['medium'];
-//					$img->size		= ' height="160" width="160"';
 					$img->width		= 160;
 					$img->height	= 160;
 				}
@@ -585,7 +586,6 @@ class SimpleAmazonView {
 
 		if( !$img->url ) {
 			$img->url		= $temp->URL;
-//			$img->size 		= ' height="' . $temp->Height . '" width="' . $temp->Width . '"';
 			$img->width		= $temp->Width;
 			$img->height	= $temp->Height;
 //var_dump($img->url);
