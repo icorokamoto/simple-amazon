@@ -322,7 +322,7 @@ class SimpleAmazonGenerateHtml {
 		if( $this->conf->layout_type != '3' ) {
 			if($this->conf->imgsize == 'small') {
 				$temp = $xml->SmallImage;
-				if( !$item->URL ) {
+				if( !$temp->URL ) {
 					$img->url = $this->conf->imgfile->smallimgfile;
 					$img->size = ' height="75" width="75"';
 				}
