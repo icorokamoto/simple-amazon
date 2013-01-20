@@ -35,7 +35,7 @@ if ( ! defined( 'SIMPLE_AMAZON_IMG_URL' ) )
 /******************************************************************************
  * globalな変数の設定
  *****************************************************************************/
-global $simple_amazon_settings, $simple_amazon_options;
+global $simple_amazon_options;
 
 $simple_amazon_options = get_option('simple_amazon_admin_options');
 
@@ -60,14 +60,6 @@ if ( ! $simple_amazon_options ){
 	);
 	update_option( 'simple_amazon_admin_options', $simple_amazon_options );
 }
-
-$simple_amazon_settings = array(
-		'litephp_path'	=> SIMPLE_AMAZON_PLUGIN_DIR . '/include/Lite.php',	// Lite.phpのpath
-		'cache_dir'		=> SIMPLE_AMAZON_PLUGIN_DIR . '/cache/',			// cacheディレクトリのpath
-		'cache_time'	=> 60*60*24,										// cacheの有効時間(秒単位)
-		'cp_path'		=> 'checkpoint.php'									// checkpoint.phpのpath
-//		'lock_file'		=> ''												// lockfileのpath
-	);
 
 /******************************************************************************
  * クラスの読み込み
