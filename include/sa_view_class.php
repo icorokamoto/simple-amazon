@@ -125,11 +125,11 @@ class SimpleAmazonView {
 	
 	/**
 	 * parserにパラメータを渡してレスポンスを得る
-	 * @param array or string $params
+	 * @param string $asin
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $params, $style ) {
+	public function generate( $asin, $style ) {
 
 		// style
 		$default_style = array(
@@ -157,29 +157,16 @@ class SimpleAmazonView {
 			$default_params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// HTMLを取得 //
-		if( is_string($params) ) {
 
-			// $params として asin が与えられた場合
-			// 商品情報のHTMLを取得
-			$params = wp_parse_args( array(
-				'Operation'     => 'ItemLookup',
-				'ResponseGroup' => 'Images,ItemAttributes',
-				'ItemId'        => $params
-			), $default_params);
-			$html = $this->generate_item( $params );
+		// $params として asin が与えられた場合
+		// 商品情報のHTMLを取得
+		$params = wp_parse_args( array(
+			'Operation'     => 'ItemLookup',
+			'ResponseGroup' => 'Images,ItemAttributes',
+			'ItemId'        => $asin
+		), $default_params);
+		$html = $this->generate_item( $params );
 
-		} else {
-
-			// $params として リクエストの配列が与えられた場合
-			// 商品一覧のHTMLを取得
-			$params = array_merge( array(
-				'Operation'	 => 'ItemSearch',
-				'ResponseGroup' => ($this->style['show_thumbnail']) ? 'Images,ItemAttributes' : 'ItemAttributes'
-			), $params);
-			$params = wp_parse_args($params, $default_params);
-			$html = $this->generate_list( $params );
-
-		}
 		return $html;
 	}
 
@@ -408,54 +395,6 @@ class SimpleAmazonView {
 		}
 
 		return $output;
-	}
-
-	/**
-	 * 商品リストのHTMLを生成する
-	 * @param Object $xml
-	 * @return String $html
-	 */
-	private function generate_list_html( $xml ) {
-
-		$imgsize        = $this->style['imgsize'];
-		$before_list    = $this->style['before_list'];
-		$after_list     = $this->style['after_list'];
-		$before_li      = $this->style['before_li'];
-		$after_li       = $this->style['after_li'];
-		$show_title     = $this->style['show_title'];
-		$show_thumbnail = $this->style['show_thumbnail'];
-
-		$items = $xml->Items->Item;
-
-		$list = '';
-
-		foreach($items as $item) {
-
-			$list .= $before_li;
-
-			$url = $item->DetailPageURL;
-			$title = $item->ItemAttributes->Title;
-			$author = $item->ItemAttributes->Author;
-
-			if($show_thumbnail) {
-				$img = $this->get_img($item, $imgsize);
-				$img_src = $img->url;
-				$img_h =  $img->height;
-				$img_w =  $img->width;
-				$list .= "<a href=\"{$url}\" class=\"pub_img\"><img src=\"{$img_src}\" width=\"{$img_w}\" height=\"{$img_h}\" title=\"{$title}\" /></a>";
-			}
-
-			if($show_title) {
-				$pubdate = $item->ItemAttributes->PublicationDate;
-				$list .= "<a href=\"{$url}\">{$title}</a> <span class=\"pub_info\">{$author} {$pubdate}</span>";
-			}
-
-			$list .= $after_li;
-		}
-
-		$html = $before_list . $list . $after_list;
-
-		return $html;
 	}
 
 	
