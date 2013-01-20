@@ -6,7 +6,6 @@
 class SimpleAmazonAdmin {
 
 	private $cache;
-//	private $settings;
 	private $options;
 
 	/**
@@ -16,10 +15,8 @@ class SimpleAmazonAdmin {
 	public function __construct() {
 
 		global $simple_amazon_options;
-//		global $simple_amazon_settings;
 
 		$this->options  = $simple_amazon_options;
-//		$this->settings = $simple_amazon_settings;
 		$this->cache    = new SimpleAmazonCacheControl();
 	}
 
@@ -106,8 +103,6 @@ class SimpleAmazonAdmin {
 		if( !$check_associatesid ) {
 			$simple_amazon_admin_html .= '<div class="error"><p><strong>アソシエイト ID</strong> を設定して下さい。</p></div>' . "\n";
 		}
-
-//		$simple_amazon_admin_html .= '<div id="tabs-1"><p>tab1</p></div><div id="tabs-2"><p>tab2</p></div><div id="tabs-3"><p>tab3</p></div></div>';
 
 		$simple_amazon_admin_html .=
 			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
