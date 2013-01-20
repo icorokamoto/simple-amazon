@@ -16,9 +16,6 @@ Special Thanks: PHP による Amazon PAAPI の毎秒ルール制限の実装と�
 
 if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 
-// デフォルトでは日本語版です。
-//$simple_amazon_international_mode = 'ca,cn,de,es,fr,it,jp,uk,us';
-
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
@@ -38,7 +35,7 @@ if ( ! defined( 'SIMPLE_AMAZON_IMG_URL' ) )
 /******************************************************************************
  * globalな変数の設定
  *****************************************************************************/
-global $simple_amazon_settings, $simple_amazon_options;
+global $simple_amazon_options;
 
 $simple_amazon_options = get_option('simple_amazon_admin_options');
 
@@ -64,17 +61,6 @@ if ( ! $simple_amazon_options ){
 	update_option( 'simple_amazon_admin_options', $simple_amazon_options );
 }
 
-$simple_amazon_settings = array(
-		'litephp_path'	=> SIMPLE_AMAZON_PLUGIN_DIR . '/include/Lite.php',	// Lite.phpのpath
-		'cache_dir'		=> SIMPLE_AMAZON_PLUGIN_DIR . '/cache/',			// cacheディレクトリのpath
-		'cache_time'	=> 60*60*24,										// cacheの有効時間(秒単位)
-		'cp_path'		=> 'checkpoint.php'									// checkpoint.phpのpath
-//		'lock_file'		=> ''												// lockfileのpath
-	);
-if( isset($simple_amazon_international_mode) && !empty($simple_amazon_international_mode) ) {
-	$simple_amazon_settings['imode'] = array_map('trim', explode(',', $simple_amazon_international_mode));
-}
-
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
@@ -90,9 +76,15 @@ $simpleAmazonAdmin = new SimpleAmazonAdmin();
 /******************************************************************************
  * アクション&フィルタの設定
  *****************************************************************************/
+function addScripts() {
+	wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery'));
+	wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.css');
+}
+
 /* Insert the Admin panel. */
 if (is_admin()) {
 	add_action('admin_menu', array($simpleAmazonAdmin, 'simple_amazon_add_options'));
+	add_action('admin_enqueue_scripts', 'addScripts');
 }
 
 /* amazon のURLをhtmlに置き換える */

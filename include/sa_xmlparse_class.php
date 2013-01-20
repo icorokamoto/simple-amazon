@@ -6,7 +6,6 @@
 class SimpleAmazonXmlParse {
 
 	private $options;
-	private $config;
 	private $cache;
 
 	/**
@@ -15,11 +14,11 @@ class SimpleAmazonXmlParse {
 	 */
 	function __construct() {
 
-		global $simple_amazon_options, $simple_amazon_settings;
+		global $simple_amazon_options;
 
 		$this->options = $simple_amazon_options;
-		$this->config  = $simple_amazon_settings;
 		$this->cache   = new SimpleAmazonCacheControl();
+		$this->cp_path = 'checkpoint.php';
 
 	}
 
@@ -50,7 +49,9 @@ class SimpleAmazonXmlParse {
 //		$id = md5($id);
 
 		// Check to see if there is a valid cache of xml
-		if ($xmldata = $this->cache->get( $id )) {
+		$xmldata = $this->cache->get( $id );
+
+		if ($xmldata) {
 
 		// there is a cache, so parse cached xml
 //			echo "<!-- read cache -->";
@@ -61,18 +62,20 @@ class SimpleAmazonXmlParse {
 //			echo "<!-- read feed -->";
 
 			if( ! function_exists('checkpoint') )
-				include_once( $this->config['cp_path'] );
+				include_once( $this->cp_path );
 
 			// Feed URI を生成
 			$feed_uri = $this->generate_feed_uri( $tld, $params );
 
-			// ロックファイルの設定
-			$lockfile = $this->config['cache_dir'] . 'lockfile';
+			//ロックファイルの設定
+			$lockfile = $this->cache->get_cache_dir() . 'lockfile';
 
 			if ( checkpoint( $lockfile, 1 ) ) {
-				if( $xmldata = @file_get_contents($feed_uri) ) {
-					$status = $this->cache->save( $xmldata, $id );
-//var_dump($status);
+				$xmldata = @file_get_contents($feed_uri);
+				if($xmldata) {
+					$this->cache->save( $xmldata, $id );
+//					$status = $this->cache->save( $xmldata, $id );
+//					var_dump($status);
 				}
 			}
 		}
@@ -124,15 +127,15 @@ class SimpleAmazonXmlParse {
 
 		$params = array_merge(
 			array(
-				'Service'			=> 'AWSECommerceService',
-				'AWSAccessKeyId'	=> $this->options['accesskeyid'],
-				'Timestamp'			=> gmdate("Y-m-d\TH:i:s\Z"),
-				'Version'			=> '2011-08-01',
-				'ContentType'		=> 'text/xml'
+				'Service'        => 'AWSECommerceService',
+				'AWSAccessKeyId' => $this->options['accesskeyid'],
+				'Timestamp'      => gmdate("Y-m-d\TH:i:s\Z"),
+				'Version'        => '2011-08-01',
+				'ContentType'    => 'text/xml'
 //				,
-//				'Operation'			=> 'ItemLookup',
-//				'MerchantId'		=> 'All',
-//				'Condition'			=> 'All'
+//				'Operation'      => 'ItemLookup',
+//				'MerchantId'     => 'All',
+//				'Condition'      => 'All'
 			), $params );
 
 		// sort the parameters
