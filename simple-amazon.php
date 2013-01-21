@@ -4,7 +4,7 @@ Plugin Name: Simple Amazon
 Plugin URI: http://www.icoro.com/
 Description: ASIN を指定して Amazon から個別商品の情報を取出します。BOOKS, DVD, CD は詳細情報を取り出せます。
 Author: icoro
-Version: 5.3.4
+Version: 5.4
 Author URI: http://www.icoro.com/
 Special Thanks: tomokame (http://http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)
@@ -41,22 +41,22 @@ $simple_amazon_options = get_option('simple_amazon_admin_options');
 
 if ( ! $simple_amazon_options ){
 	$simple_amazon_options = array(
-		'accesskeyid'		=> '',
-		'associatesid_ca'	=> '',
-		'associatesid_cn'	=> '',
-		'associatesid_de'	=> '',
-		'associatesid_es'	=> '',
-		'associatesid_fr'	=> '',
-		'associatesid_it'	=> '',
-		'associatesid_jp'	=> '',
-		'associatesid_uk'	=> '',
-		'associatesid_us'	=> '',
-		'delete_setting'	=> 'no',
-		'imgsize'			=> 'medium',
-		'layout_type'		=> 0,
-		'secretaccesskey'	=> '',
-		'setcss'			=> 'yes',
-		'windowtarget'		=> 'self'
+		'accesskeyid'     => '',
+		'associatesid_ca' => '',
+		'associatesid_cn' => '',
+		'associatesid_de' => '',
+		'associatesid_es' => '',
+		'associatesid_fr' => '',
+		'associatesid_it' => '',
+		'associatesid_jp' => '',
+		'associatesid_uk' => '',
+		'associatesid_us' => '',
+		'delete_setting'  => 'no',
+		'imgsize'         => 'medium',
+		'layout_type'     => 0,
+		'secretaccesskey' => '',
+		'setcss'          => 'yes',
+		'windowtarget'    => 'self'
 	);
 	update_option( 'simple_amazon_admin_options', $simple_amazon_options );
 }
@@ -68,28 +68,30 @@ include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_view_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_xmlparse_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_cache_control_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_admin_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_generate_html_class.php');
 
-$simpleAmazonView				= new SimpleAmazonView();
-$simpleAmazonAdmin				= new SimpleAmazonAdmin();
+$simpleAmazonView  = new SimpleAmazonView();
+$simpleAmazonAdmin = new SimpleAmazonAdmin();
 
 
 /******************************************************************************
  * アクション&フィルタの設定
  *****************************************************************************/
 function addScripts() {
-	wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery'));
+	//javascript
+	wp_enqueue_script('jquery-ui-tabs', array('jquery'));
+	wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery-ui-tabs'));
+	//css
 	wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.css');
 }
 
 /* Insert the Admin panel. */
 if (is_admin()) {
-	add_action('admin_menu', array(&$simpleAmazonAdmin, 'simple_amazon_add_options'));
+	add_action('admin_menu', array($simpleAmazonAdmin, 'simple_amazon_add_options'));
 	add_action('admin_enqueue_scripts', 'addScripts');
 }
 
 /* amazon のURLをhtmlに置き換える */
-add_filter('the_content', array(&$simpleAmazonView, '_replacestrings'));
+add_filter('the_content', array($simpleAmazonView, 'replace'));
 
 /* simple amazonのcssを読み込む */
 function add_simpleamazon_stylesheet(){
@@ -138,12 +140,17 @@ register_deactivation_hook(__FILE__, 'simple_amazon_deactivation');
 /******************************************************************************
  * 関数の設定
  *****************************************************************************/
-if( !function_exists('simple_amazon_view') ) {
-	function simple_amazon_view( $asin, $domain = null ) {
-		global $simpleAmazonView;
-		$simpleAmazonView->simple_amazon_view( $asin, $domain );
-	}
+ 
+/* 指定したasinの商品情報を表示する関数 */
+function simple_amazon_view( $asin, $code = null, $style = null ) {
+	global $simpleAmazonView;
+	$simpleAmazonView->view( $asin, trim($code), $style );
 }
 
+/* カスタムフィールドから値を取得して表示する関数 */
+function simple_amazon_custum_view() {
+	global $simpleAmazonView;
+	$simpleAmazonView->view_custom_field();
+}
 
 ?>
