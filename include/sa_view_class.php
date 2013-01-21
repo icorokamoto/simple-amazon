@@ -9,7 +9,6 @@ class SimpleAmazonView {
 	private $style;
 	private $domain;
 	private $tld;
-//	private $aid;
 	private $img;
 
 	/**
@@ -40,47 +39,6 @@ class SimpleAmazonView {
 			'medium'    => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png',
 			'large'     => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png'
 		);
-	}
-
-	/**
-	 * 記事本文中のコードを個別商品表示 HTML に置き換える
-	 * @param	string $content
-	 * @return	string $content ( HTML )
-	 */
-	public function replace($content) { // 記事本文中の呼び出しコードを変換
-
-//		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
-		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
-//		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-//		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-
-		foreach( $regexps as $regexp ) {
-			if( preg_match_all($regexp, $content, $arr) ) {
-				for ($i=0; $i<count($arr[0]); $i++) {
-					$asin = $arr['asin'][$i];
-					$name = ( isset($arr['name'][$i]) ) ? $arr['name'][$i] : '';
-
-					if( isset($arr['domain'][$i]) ) {
-						$this->domain = trim($arr['domain'][$i]);
-						$this->tld = $this->get_TLD($this->domain);
-					}
-
-					$display = $this->generate( $asin, array( 'name' => $name ) );
-
-					// URLの置換
-					$content = str_replace($arr[0][$i], $display, $content);
-				}
-			}
-		}
-
-		/* for WYSWYG Editer */
-//	  $content = str_replace('<p><div class="simple-amazon-view">', '<div class="simple-amazon-view">', $content);
-//	  $content = str_replace('<hr class="simple-amazon-clear" /></div></p>', '<hr class="simple-amazon-clear" /></div>', $content);
-
-		return $content;
-
 	}
 
 	/**
@@ -121,93 +79,99 @@ class SimpleAmazonView {
 			echo $html;
 		}
 	}
+	
+	/**
+	 * 記事本文中のコードを個別商品表示 HTML に置き換える
+	 * @param	string $content
+	 * @return	string $content ( HTML )
+	 */
+	public function replace($content) { // 記事本文中の呼び出しコードを変換
 
+//		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
+		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
+//		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+//		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+
+		foreach( $regexps as $regexp ) {
+			if( preg_match_all($regexp, $content, $arr) ) {
+				for ($i=0; $i<count($arr[0]); $i++) {
+					$asin = $arr['asin'][$i];
+					$name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
+
+					if( isset($arr['domain'][$i]) ) {
+						$this->domain = trim($arr['domain'][$i]);
+						$this->tld = $this->get_TLD($this->domain);
+					}
+
+					$display = $this->generate( $asin, array( 'name' => $name ) );
+
+					// URLの置換
+					$content = str_replace($arr[0][$i], $display, $content);
+				}
+			}
+		}
+
+		/* for WYSWYG Editer */
+//	  $content = str_replace('<p><div class="simple-amazon-view">', '<div class="simple-amazon-view">', $content);
+//	  $content = str_replace('<hr class="simple-amazon-clear" /></div></p>', '<hr class="simple-amazon-clear" /></div>', $content);
+
+		return $content;
+
+	}
 	
 	/**
 	 * parserにパラメータを渡してレスポンスを得る
-	 * @param array or string $params
+	 * @param string $asin
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $params, $style ) {
+	public function generate( $asin, $style ) {
 
-		// style
+		// ISBN13をISBN10に変換 //
+		if( strlen( $asin ) == 13 ) {
+			$generalfunclib = new CalcISBNLibrary();
+			$asin = $generalfunclib->calc_chkdgt_isbn10( substr( $asin, 3, 9 ) );
+		}
+
+		// default style
 		$default_style = array(
-			'name'           => '',
-			'layout_type'    => $this->options['layout_type'],
-			'imgsize'        => $this->options['imgsize'],
-			'before_list'    => '<ul>',
-			'after_list'     => '</ul>',
-			'before_li'      => '<li>',
-			'after_li'       => '</li>',
-			'show_thumbnail' => true,
-			'show_title'     => true
+			'name'        => '',
+			'layout_type' => $this->options['layout_type'],
+			'imgsize'     => $this->options['imgsize']
 		);
 		$this->style = wp_parse_args($style, $default_style);
 
 		// params
-		$default_params = array(
-			'AssociateTag' => $this->get_aid($this->tld),
-			'MerchantId'   => 'All',
-			'Condition'    => 'All'
+		$params = array(
+			'AssociateTag'  => $this->get_aid($this->tld),
+			'MerchantId'    => 'All',
+			'Condition'     => 'All',
+			'Operation'     => 'ItemLookup',
+			'ResponseGroup' => 'Images,ItemAttributes',
+			'ItemId'        => $asin
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
 		if( $this->domain == "javari.jp" )
-			$default_params['MarketplaceDomain'] = 'www.javari.jp';
+			$params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// HTMLを取得 //
-		if( is_string($params) ) {
-
-			// $params として asin が与えられた場合
-			// 商品情報のHTMLを取得
-			$params = wp_parse_args( array(
-				'Operation'     => 'ItemLookup',
-				'ResponseGroup' => 'Images,ItemAttributes',
-				'ItemId'        => $params
-			), $default_params);
-			$html = $this->generate_item( $params );
-
-		} else {
-
-			// $params として リクエストの配列が与えられた場合
-			// 商品一覧のHTMLを取得
-			$params = array_merge( array(
-				'Operation'	 => 'ItemSearch',
-				'ResponseGroup' => ($this->style['show_thumbnail']) ? 'Images,ItemAttributes' : 'ItemAttributes'
-			), $params);
-			$params = wp_parse_args($params, $default_params);
-			$html = $this->generate_list( $params );
-
-		}
-		return $html;
-	}
-
-	/**
-	 * 商品情報の HTML を生成
-	 * @param array $params = array(Operation, ResponseGroup, ItemId)
-	 * @return	string $output ( HTML )
-	 */
-	private function generate_item( $params ) {
-
-		// ISBN13をISBN10に変換 //
-		if( strlen( $params['ItemId'] ) == 13 ) {
-			$generalfunclib = new CalcISBNLibrary();
-			$params['ItemId'] = $generalfunclib->calc_chkdgt_isbn10( substr( $params['ItemId'], 3, 9 ) );
-		}
 
 		// レスポンスの取得
-		// 正常に取得出来た場合は xmlオブジェクトが、エラーの場合は文字列が返ってくる
-		$xml = $this->get_xml( $params );
+		// 正常に取得出来た場合は xml オブジェクトが、エラーの場合は文字列が返ってくる
+		$parser = new SimpleAmazonXmlParse();
+		$xml = $parser->getamazonxml( $this->tld, $params );
 
 		if( is_string($xml) ) {
-			$output = $this->generate_item_html_nonres( $params['ItemId'] );
+//			$html = $this->generate_item_html_nonres( $params['ItemId'] );
+			$html = '<!--Amazonのサーバでエラーが起こっているかもしれません。ページを再読み込みしてみてください。-->';
 		} else {
-			$output = $this->generate_item_html( $xml );
+			$html = $this->generate_item_html( $xml );
 		}
 
-		return $output;
-
+		return $html;
 	}
 
 	/**
@@ -217,7 +181,7 @@ class SimpleAmazonView {
 	 */
 	private function generate_item_html_nonres( $asin ) {
 
-		$name = ($this->style['name']) ? urldecode($this->style['name']) : "Amazon.co.jpの詳細ページへ &raquo;";
+		$name = ($this->style['name']) ? $this->style['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
 		$tag = '?tag=' . $this->get_aid($this->tld);
 		$windowtarget = $this->options['windowtarget'];
 
@@ -288,7 +252,7 @@ class SimpleAmazonView {
 		//Title & Image
 		if( $layout_type == 2 ) {
 			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->url . '" height="' . $img->height . '" width="' . $img->width . '" alt="" class="sa-image" /></a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
 			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
 			$output .= '</div>' . "\n";
 		}
@@ -296,7 +260,7 @@ class SimpleAmazonView {
 		//Detail
 		if( $layout_type == 1 ) {
 			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->url . '" height="' . $img->height . '" width="' . $img->width . '" alt="" class="sa-image" /></a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
 			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
 
 			$output_list = "";
@@ -340,7 +304,7 @@ class SimpleAmazonView {
 		//Full
 		if( $layout_type < 1 ) {
 			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="' . $url . '"' . $windowtarget . '><img src="' . $img->url . '" height="' . $img->height . '" width="' . $img->width . '" alt="" class="sa-image" /></a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-img-box"><a href="' . $url . '"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
 			$output .= "\t" . '<p class="sa-title"><a href="' . $url . '"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
 
 			$output_list = "";
@@ -388,97 +352,7 @@ class SimpleAmazonView {
 		return $output;
 
 	}
-
-	/**
-	 * 商品リストのHTMLを返す
-	 * @param Array $params
-	 * @return String $output
-	 */
-	private function generate_list( $params ) {
-
-		// レスポンスの取得
-		$xml = $this->get_xml( $params );
-
-		if( is_string($xml) ) {
-			//エラーメッセージ
-			$output = $xml;
-		} else {
-			//商品リストのHTML
-			$output = $this->generate_list_html( $xml );
-		}
-
-		return $output;
-	}
-
-	/**
-	 * 商品リストのHTMLを生成する
-	 * @param Object $xml
-	 * @return String $html
-	 */
-	private function generate_list_html( $xml ) {
-
-		$imgsize        = $this->style['imgsize'];
-		$before_list    = $this->style['before_list'];
-		$after_list     = $this->style['after_list'];
-		$before_li      = $this->style['before_li'];
-		$after_li       = $this->style['after_li'];
-		$show_title     = $this->style['show_title'];
-		$show_thumbnail = $this->style['show_thumbnail'];
-
-		$items = $xml->Items->Item;
-
-		$list = '';
-
-		foreach($items as $item) {
-
-			$list .= $before_li;
-
-			$url = $item->DetailPageURL;
-			$title = $item->ItemAttributes->Title;
-			$author = $item->ItemAttributes->Author;
-
-			if($show_thumbnail) {
-				$img = $this->get_img($item, $imgsize);
-				$img_src = $img->url;
-				$img_h =  $img->height;
-				$img_w =  $img->width;
-				$list .= "<a href=\"{$url}\" class=\"pub_img\"><img src=\"{$img_src}\" width=\"{$img_w}\" height=\"{$img_h}\" title=\"{$title}\" /></a>";
-			}
-
-			if($show_title) {
-				$pubdate = $item->ItemAttributes->PublicationDate;
-				$list .= "<a href=\"{$url}\">{$title}</a> <span class=\"pub_info\">{$author} {$pubdate}</span>";
-			}
-
-			$list .= $after_li;
-		}
-
-		$html = $before_list . $list . $after_list;
-
-		return $html;
-	}
-
 	
-	/**
-	 * parserにパラメータを渡してレスポンスを得る
-	 * @param array $params
-	 * @return object $parsed_data
-	 * @return string $parsed_data (レスポンスがエラーだった場合はエラーメッセージ)
-	 */
-	private function get_xml( $params ) {
-
-		$parser = new SimpleAmazonXmlParse();
-		$parsed_data = $parser->getamazonxml( $this->tld, $params );
-
-//		DEBUG
-//		$parsed_data = false;
-//		echo "<pre>\n";
-//		print_r($parsed_data);
-//		echo "</pre>\n";
-
-		return $parsed_data;
-
-	}
 
 	/**
 	 * 国コードからドメインを取得する
@@ -553,43 +427,38 @@ class SimpleAmazonView {
 	 */
 	private function get_img( $xml, $imgsize ) {
 
-		$img->url    = '';
-		$img->width  = 0;
-		$img->height = 0;
+		$img = new stdClass();
 
 		switch( $imgsize ) {
 			case 'small':
-				$temp = $xml->SmallImage;
-				if( !$temp->URL ) {
-					$img->url		= $this->img['small'];
-					$img->width		= 75;
-					$img->height	= 75;
+				if( property_exists($xml, 'SmallImage') ){
+					$img = $xml->SmallImage;
+				} else {
+					$img->URL    = $this->img['small'];
+					$img->Width  = 75;
+					$img->Height = 75;
 				}
 				break;
 			case 'large':
-				$temp = $xml->LargeImage;
-				if( !$temp->URL ) {
-					$img->url		= $this->img['large'];
-					$img->width		= 500;
-					$img->height	= 500;
+				if( property_exists($xml, 'LargeImage') ){
+					$img = $xml->LargeImage;
+				} else {
+					$img->URL    = $this->img['large'];
+					$img->Width  = 500;
+					$img->Height = 500;
 				}
 				break;
 			default:
-				$temp = $xml->MediumImage;
-//				var_dump($temp);
-				if( !$temp->URL ) {
-					$img->url		= $this->img['medium'];
-					$img->width		= 160;
-					$img->height	= 160;
+				if( property_exists($xml, 'MediumImage') ){
+					$img = $xml->MediumImage;
+				} else {
+					$img->URL    = $this->img['medium'];
+					$img->Width  = 160;
+					$img->Height = 160;
 				}
 		}
 
-		if( !$img->url ) {
-			$img->url		= $temp->URL;
-			$img->width		= $temp->Width;
-			$img->height	= $temp->Height;
-//var_dump($img->url);
-		}
+//		var_dump($img);
 
 		return $img;
 

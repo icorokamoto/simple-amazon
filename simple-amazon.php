@@ -77,7 +77,10 @@ $simpleAmazonAdmin = new SimpleAmazonAdmin();
  * アクション&フィルタの設定
  *****************************************************************************/
 function addScripts() {
-	wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery'));
+	//javascript
+	wp_enqueue_script('jquery-ui-tabs', array('jquery'));
+	wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery-ui-tabs'));
+	//css
 	wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.css');
 }
 
