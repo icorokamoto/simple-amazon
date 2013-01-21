@@ -3,7 +3,7 @@ Contributors: icoro
 Donate link: 
 Tags: amazon
 Requires at least: 2.6
-Tested up to: 3.4.2
+Tested up to: 3.5
 Stable tag: 
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
@@ -25,19 +25,6 @@ Stable tag:
 2. プラグインの管理画面に移動して、「Access Key ID」と「Secret Access Key」を入力します。Access Key ID と Secret Access Key は https://affiliate.amazon.co.jp/ で取得してください。
 6. 必要に応じて「オプション設定」を設定します。リンクウィンドウの挙動や詳細表示を設定できます。「アソシエイト ID」は入力しなくても機能します。
 7. 記事本文中にAmazon.co.jpの商品詳細ページのURLをコピペするだけAmazonの商品情報が表示されます。
-
-= 日本以外のAmazonのアソシエイトに対応する場合 =
-
-デフォルトでは日本(amazon.co.jp)のアソシエイトIDのみ設定出来るようになっていますが、simple-amazon.php の中で、変数 $simple_amazon_international_mode を設定すれば、管理画面に設定した国のアソシエイトID入力欄が入力出来るようになります。設定出来る国は カナダ(ca), 中国(cn), ドイツ(de), スペイン(es), フランス(fr), イタリア(it), 日本(jp), イギリス(uk), アメリカ(us) です。
-
-すべての国に対応したい場合。
-$simple_amazon_international_mode = 'ca,cn,de,es,fr,it,jp,uk,us';
-
-amazon.co.ukにだけ対応したい場合。
-$simple_amazon_international_mode = 'uk';
-
-amazon.co.ukとamazon.co.jpに対応したい場合。
-$simple_amazon_international_mode = 'jp,uk';
 
 
 = php 関数として呼び出す場合 =
@@ -67,6 +54,7 @@ javari.jp にある、ASINが B000Z5N4EO の商品を表示させたい場合。
 <?php simple_amazon_custum_view(); ?>
 
 　実際に商品を表示するには、記事を作成する際に「カスタムフィールドを追加:」で「amazon」を選択し、値に商品ページのURLを入力します。「カスタムフィールドを追加」ボタンをクリックして完了です。
+　改行で区切ることで複数の商品を一度に表示することが出来ます。
 
 = 高度な使い方 =
 
