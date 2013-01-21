@@ -9,8 +9,9 @@ class SimpleAmazonAdmin {
 	private $options;
 
 	/**
-	 * @param	none
-	 * @return	object $this
+	 * Construct
+	 * @param none
+	 * @return none
 	 */
 	public function __construct() {
 
@@ -18,8 +19,26 @@ class SimpleAmazonAdmin {
 
 		$this->options  = $simple_amazon_options;
 		$this->cache    = new SimpleAmazonCacheControl();
+
+		//アクションの設定
+		add_action('admin_menu', array($this, 'simple_amazon_add_options'));
+		add_action('admin_enqueue_scripts', array($this, 'addScripts'));
+
 	}
 
+	/**
+	 * JavascriptとCSSを読み込む
+	 */
+	function addScripts() {
+
+		//javascript
+		wp_enqueue_script('jquery-ui-tabs', array('jquery'));
+		wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery-ui-tabs'), SIMPLE_AMAZON_VER);
+
+		//css
+		wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.css', array(), SIMPLE_AMAZON_VER);
+	}
+	
 	/**
 	 * @brief	管理画面のhtmlを生成する
 	 * @param	none

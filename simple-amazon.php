@@ -19,6 +19,9 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
+if ( ! defined( 'SIMPLE_AMAZON_VER' ) )
+	define( 'SIMPLE_AMAZON_VER', '5.4' );
+
 if ( ! defined( 'SIMPLE_AMAZON_DIR_NAME' ) )
 	define( 'SIMPLE_AMAZON_DIR_NAME', plugin_basename( dirname( __FILE__ ) ) );
 
@@ -76,33 +79,20 @@ $simpleAmazonAdmin = new SimpleAmazonAdmin();
 /******************************************************************************
  * アクション&フィルタの設定
  *****************************************************************************/
-function addScripts() {
-	//javascript
-	wp_enqueue_script('jquery-ui-tabs', array('jquery'));
-	wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery-ui-tabs'));
-	//css
-	wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.css');
-}
-
-/* Insert the Admin panel. */
-if (is_admin()) {
-	add_action('admin_menu', array($simpleAmazonAdmin, 'simple_amazon_add_options'));
-	add_action('admin_enqueue_scripts', 'addScripts');
-}
 
 /* amazon のURLをhtmlに置き換える */
 add_filter('the_content', array($simpleAmazonView, 'replace'));
 
 /* simple amazonのcssを読み込む */
 function add_simpleamazon_stylesheet(){
+
 	global $simple_amazon_options;
+
 	if( $simple_amazon_options['setcss'] == 'yes') {
-		?>
-<link rel="stylesheet" href="<?php echo SIMPLE_AMAZON_PLUGIN_URL; ?>/simple-amazon.css" type="text/css" />
-		<?php
+		wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon.css', array(), SIMPLE_AMAZON_VER);
 	}
 }
-add_action('wp_head', 'add_simpleamazon_stylesheet');
+add_action('wp_head', 'add_simpleamazon_stylesheet', 1);
 
 /* 定期的に期限切れのキャッシュを削除する feat. wp-cron */
 function simple_amazon_clean_cache() {
