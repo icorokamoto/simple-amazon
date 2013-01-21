@@ -19,20 +19,11 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
-if ( ! defined( 'SIMPLE_AMAZON_VER' ) )
-	define( 'SIMPLE_AMAZON_VER', '5.4' );
-
-if ( ! defined( 'SIMPLE_AMAZON_DIR_NAME' ) )
-	define( 'SIMPLE_AMAZON_DIR_NAME', plugin_basename( dirname( __FILE__ ) ) );
-
-if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) )
-	define( 'SIMPLE_AMAZON_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . SIMPLE_AMAZON_DIR_NAME );
-
-if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_URL' ) )
-	define( 'SIMPLE_AMAZON_PLUGIN_URL', WP_PLUGIN_URL . '/' . SIMPLE_AMAZON_DIR_NAME );
-
-if ( ! defined( 'SIMPLE_AMAZON_IMG_URL' ) )
-	define( 'SIMPLE_AMAZON_IMG_URL', SIMPLE_AMAZON_PLUGIN_URL . '/images' );
+define( 'SIMPLE_AMAZON_VER', '5.4' );
+define( 'SIMPLE_AMAZON_DIR_NAME',   plugin_basename( dirname( __FILE__ ) ) );
+define( 'SIMPLE_AMAZON_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . SIMPLE_AMAZON_DIR_NAME );
+define( 'SIMPLE_AMAZON_PLUGIN_URL', WP_PLUGIN_URL . '/' . SIMPLE_AMAZON_DIR_NAME );
+define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . '/images' );
 
 
 /******************************************************************************

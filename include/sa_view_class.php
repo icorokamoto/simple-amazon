@@ -436,6 +436,13 @@ class SimpleAmazonView {
 	 * @return String $aid
 	 */
 	private function get_aid($tld) {
+		
+		if($tld == 'com')
+			$tld = 'us';
+
+		$associatesid_key = 'associatesid_' . $tld;
+		$aid = $this->options[$associatesid_key];
+/*
 		switch($tld) {
 			case 'ca': $aid = $this->options['associatesid_ca']; break;
 			case 'cn': $aid = $this->options['associatesid_cn']; break;
@@ -448,6 +455,7 @@ class SimpleAmazonView {
 			case 'com': $aid = $this->options['associatesid_us']; break;
 			default: $aid = '';
 		}
+*/
 		return $aid;
 	}
 
