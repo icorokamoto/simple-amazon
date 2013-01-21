@@ -71,6 +71,7 @@ include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_view_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_xmlparse_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_cache_control_class.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_admin_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_lib_class.php');
 
 $simpleAmazonView  = new SimpleAmazonView();
 $simpleAmazonAdmin = new SimpleAmazonAdmin();

@@ -61,8 +61,8 @@ class SimpleAmazonAdmin {
 */
 
 		switch( $this->options['windowtarget']) {
-			case 'newwin': $newwindow = ' checked'; $selfwindow = ''; break;
-			default: $newwindow = ''; $selfwindow = ' checked';
+			case 'self': $newwindow = ''; $selfwindow = ' checked';
+			default: $newwindow = ' checked'; $selfwindow = ''; break;
 		}
 
 		switch( $this->options['imgsize'] ) {
@@ -143,13 +143,13 @@ class SimpleAmazonAdmin {
 
 			'<tr><th>商品リンクの動作</th>' . "\n" .
 			'<td><input type="radio" name="windowtarget" value="self"' . $selfwindow . ' />&nbsp;同じウィンドウ ( target 指定なし )<br />' . "\n" .
-			'<input type="radio" name="windowtarget" value="newwin"' . $newwindow . ' />&nbsp;新規ウィンドウ ( target="_blank" )</td>' . "\n" .
+			'<input type="radio" name="windowtarget" value="blank"' . $newwindow . ' />&nbsp;新規ウィンドウ ( target="_blank" )</td>' . "\n" .
 			'</tr>' . "\n" .
 
 			'<tr><th>商品詳細の表示項目</th>' . "\n" .
 			'<td><input type="radio" name="layout_type" value="0"' . $default_layout . ' />&nbsp;Full ( 画像、タイトル、出版社、発売時期、著者、価格、本のタイプ、ページ数、ISBN。本以外はこれに準ずる項目 )<br />' . "\n" .
 			'<input type="radio" name="layout_type" value="1"' . $medium_layout . ' />&nbsp;Detail ( 画像、タイトル、出版社、著者、発売時期。Fullから価格情報、コード情報を省略 )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="2"' . $simple_layout . ' />&nbsp;Title &amp; Image ( 画像とタイトルのみ )<br />' . "\n" .
+			'<input type="radio" name="layout_type" value="2"' . $simple_layout . ' />&nbsp;Simple ( 画像とタイトルのみ )<br />' . "\n" .
 			'<input type="radio" name="layout_type" value="3"' . $noimage_layout . ' />&nbsp;Title ( タイトルのみ )</td>' . "\n" .
 			'</tr>' . "\n" .
 
@@ -286,22 +286,22 @@ class SimpleAmazonAdmin {
 
 		// create array
 		$options = array(
-			'accesskeyid'     => trim( $_POST['accesskeyid'] ),
+			'accesskeyid'     => $this->h( $_POST['accesskeyid'] ),
 
-			'associatesid_ca' => isset($_POST['associatesid_ca']) ? trim($_POST['associatesid_ca']) : '',
-			'associatesid_cn' => isset($_POST['associatesid_cn']) ? trim($_POST['associatesid_cn']) : '',
-			'associatesid_de' => isset($_POST['associatesid_de']) ? trim($_POST['associatesid_de']) : '',
-			'associatesid_es' => isset($_POST['associatesid_es']) ? trim($_POST['associatesid_es']) : '',
-			'associatesid_fr' => isset($_POST['associatesid_fr']) ? trim($_POST['associatesid_fr']) : '',
-			'associatesid_it' => isset($_POST['associatesid_it']) ? trim($_POST['associatesid_it']) : '',
-			'associatesid_jp' => isset($_POST['associatesid_jp']) ? trim($_POST['associatesid_jp']) : '',
-			'associatesid_uk' => isset($_POST['associatesid_uk']) ? trim($_POST['associatesid_uk']) : '',
-			'associatesid_us' => isset($_POST['associatesid_us']) ? trim($_POST['associatesid_us']) : '',
+			'associatesid_ca' => isset($_POST['associatesid_ca']) ? $this->h($_POST['associatesid_ca']) : '',
+			'associatesid_cn' => isset($_POST['associatesid_cn']) ? $this->h($_POST['associatesid_cn']) : '',
+			'associatesid_de' => isset($_POST['associatesid_de']) ? $this->h($_POST['associatesid_de']) : '',
+			'associatesid_es' => isset($_POST['associatesid_es']) ? $this->h($_POST['associatesid_es']) : '',
+			'associatesid_fr' => isset($_POST['associatesid_fr']) ? $this->h($_POST['associatesid_fr']) : '',
+			'associatesid_it' => isset($_POST['associatesid_it']) ? $this->h($_POST['associatesid_it']) : '',
+			'associatesid_jp' => isset($_POST['associatesid_jp']) ? $this->h($_POST['associatesid_jp']) : '',
+			'associatesid_uk' => isset($_POST['associatesid_uk']) ? $this->h($_POST['associatesid_uk']) : '',
+			'associatesid_us' => isset($_POST['associatesid_us']) ? $this->h($_POST['associatesid_us']) : '',
 
 			'delete_setting'  => $_POST['delete_setting'],
 			'imgsize'         => $_POST['imgsize'],
 			'layout_type'     => $_POST['layout_type'],
-			'secretaccesskey' => trim( $_POST['secretaccesskey'] ),
+			'secretaccesskey' => $this->h( $_POST['secretaccesskey'] ),
 			'setcss'          => $_POST['setcss'],
 			'windowtarget'    => $_POST['windowtarget']
 		);
@@ -313,9 +313,19 @@ class SimpleAmazonAdmin {
 	}
 
 	/**
-	 * @brief	オプション設定をデータベースから削除する
-	 * @param	none
-	 * @return	none
+	 * 文字列をHTMLエンティティに変換する
+	 * @param string $str
+	 * @return string $str
+	 */
+	private function h($str) {
+		$str = trim( htmlentities($str, ENT_QUOTES) );
+		return $str;
+	}
+
+	/**
+	 * オプション設定をデータベースから削除する
+	 * @param none
+	 * @return none
 	 */
 	public function uninstall() {
 		if( $this->options['delete_setting'] == 'yes' ) {

@@ -7,9 +7,10 @@ class SimpleAmazonView {
 
 	private $options;
 	private $style;
-	private $domain;
-	private $tld;
-	private $img;
+	private $lib;
+//	private $domain;
+//	private $tld;
+//	private $img;
 
 	/**
 	 * @param	none
@@ -20,8 +21,10 @@ class SimpleAmazonView {
 		global $simple_amazon_options;
 
 		$this->options = $simple_amazon_options;
+		$this->lib = new SimpleAmazonLib();
 
-		// デフォルトのドメインとTLDの設定
+		// デフォルトのドメインを設定
+/*
 		switch( WPLANG ) {
 			case 'en_CA': $this->domain = 'amazon.ca'; $this->tld = 'ca'; break;
 			case 'zh_CN': $this->domain = 'amazon.cn'; $this->tld = 'cn'; break;
@@ -33,13 +36,16 @@ class SimpleAmazonView {
 			case 'en_GB': $this->domain = 'amazon.co.uk'; $this->tld = 'uk'; break;
 			default:      $this->domain = 'amazon.com'; $this->tld = 'com';
 		}
-
+*/
+/*
 		$this->img = array(
 			'small'     => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png',
 			'medium'    => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png',
 			'large'     => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png'
 		);
-	}
+*/
+  	}
+ 
 
 	/**
 	 * PHP の関数として Amazon の個別商品 HTML を呼び出す
@@ -49,14 +55,16 @@ class SimpleAmazonView {
 	 * @return	none
 	 */
 	public function view( $asin, $code, $style ) {
-
+/*
 		if($code) {
 			// set TLD
-			$this->domain = $this->get_domain($code);
-			$this->tld = $this->get_TLD($this->domain);
+			$domain = $this->lib->get_domain($code);
+			$this->tld = $this->lib->get_TLD($this->domain);
 		}
+*/
+		$domain = $this->lib->get_domain($code);
 
-		$display = $this->generate( $asin, $style );
+		$display = $this->generate( $asin, $domain, $style );
 		echo $display;
 
 	}
@@ -94,6 +102,8 @@ class SimpleAmazonView {
 		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
+		$default_domain = $this->lib->get_domain();
+
 		foreach( $regexps as $regexp ) {
 			if( preg_match_all($regexp, $content, $arr) ) {
 				for ($i=0; $i<count($arr[0]); $i++) {
@@ -101,11 +111,13 @@ class SimpleAmazonView {
 					$name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
 
 					if( isset($arr['domain'][$i]) ) {
-						$this->domain = trim($arr['domain'][$i]);
-						$this->tld = $this->get_TLD($this->domain);
+						$domain = trim($arr['domain'][$i]);
+//						$this->tld = $this->lib->get_TLD($this->domain);
+					} else {
+						$domain = $default_domain;
 					}
 
-					$display = $this->generate( $asin, array( 'name' => $name ) );
+					$display = $this->generate( $asin, $domain, array( 'name' => $name ) );
 
 					// URLの置換
 					$content = str_replace($arr[0][$i], $display, $content);
@@ -127,25 +139,29 @@ class SimpleAmazonView {
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $asin, $style ) {
+	public function generate( $asin, $domain, $style ) {
 
-		// ISBN13をISBN10に変換 //
+		// ISBN13をISBN10に変換
 		if( strlen( $asin ) == 13 ) {
 			$generalfunclib = new CalcISBNLibrary();
 			$asin = $generalfunclib->calc_chkdgt_isbn10( substr( $asin, 3, 9 ) );
 		}
 
-		// default style
+		// TLD
+		$tld = $this->lib->get_TLD($domain);
+
+		//style
 		$default_style = array(
-			'name'        => '',
-			'layout_type' => $this->options['layout_type'],
-			'imgsize'     => $this->options['imgsize']
+			'name'         => '',
+			'layout_type'  => $this->options['layout_type'],
+			'imgsize'      => $this->options['imgsize'],
+			'windowtarget' => $this->options['windowtarget']
 		);
 		$this->style = wp_parse_args($style, $default_style);
 
 		// params
 		$params = array(
-			'AssociateTag'  => $this->get_aid($this->tld),
+			'AssociateTag'  => $this->get_aid($tld),
 			'MerchantId'    => 'All',
 			'Condition'     => 'All',
 			'Operation'     => 'ItemLookup',
@@ -154,7 +170,7 @@ class SimpleAmazonView {
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
-		if( $this->domain == "javari.jp" )
+		if( $domain == "javari.jp" )
 			$params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// HTMLを取得 //
@@ -162,10 +178,10 @@ class SimpleAmazonView {
 		// レスポンスの取得
 		// 正常に取得出来た場合は xml オブジェクトが、エラーの場合は文字列が返ってくる
 		$parser = new SimpleAmazonXmlParse();
-		$xml = $parser->getamazonxml( $this->tld, $params );
+		$xml = $parser->getamazonxml( $tld, $params );
 
 		if( is_string($xml) ) {
-//			$html = $this->generate_item_html_nonres( $params['ItemId'] );
+//			$html = $this->generate_item_html_nonres( $params['ItemId'], $domain );
 			$html = '<!--Amazonのサーバでエラーが起こっているかもしれません。ページを再読み込みしてみてください。-->';
 		} else {
 			$html = $this->generate_item_html( $xml );
@@ -179,18 +195,19 @@ class SimpleAmazonView {
 	 * @param string $asin ( ASIN )
 	 * @return string $output ( HTML )
 	 */
-	private function generate_item_html_nonres( $asin ) {
+	private function generate_item_html_nonres( $asin, $domain ) {
 
+		$tld = $this->lib->get_TLD($domain);
 		$name = ($this->style['name']) ? $this->style['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
-		$tag = '?tag=' . $this->get_aid($this->tld);
-		$windowtarget = $this->options['windowtarget'];
+		$tag = '?tag=' . $this->get_aid($tld);
+		$windowtarget = $this->style['windowtarget'];
 
 		switch( $windowtarget ) {
 			case 'newwin': $windowtarget = ' target="_blank"'; break;
 			case 'self': $windowtarget = '';
 		}
 
-		$amazonlink = 'http://www.' . $this->domain . '/dp/' . $asin . $tag;
+		$amazonlink = 'http://www.' . $domain . '/dp/' . $asin . $tag;
 		$amazonimg_url = 'http://images.amazon.com/images/P/' . $asin . '.09.THUMBZZZ.jpg';
 		$amazonimg_size = '';
 
@@ -199,7 +216,8 @@ class SimpleAmazonView {
 		if( function_exists('getimagesize') ) {
 			$imgsize = getimagesize( $amazonimg_url );
 			if( $imgsize[0] == 1 && $imgsize[1] == 1 ) {
-				$amazonimg_url = $this->img['small'];
+				//画像キメ打ち
+				$amazonimg_url = SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png';
 				$amazonimg_size = ' width="75" height="75"';
 			} else {
 				$amazonimg_size = ' ' . $imgsize[3];
@@ -227,30 +245,33 @@ class SimpleAmazonView {
 	 */
 	private function generate_item_html( $AmazonXml ) {
 
-		$layout_type = $this->style['layout_type'];
-		$imgsize = $this->style['imgsize'];
-		$windowtarget = $this->options['windowtarget'];
+		$layout_type  = $this->style['layout_type'];
+		$imgsize      = $this->style['imgsize'];
+		$windowtarget = $this->style['windowtarget'];
+
+		switch( $windowtarget ) {
+			case 'self' : $windowtarget = '';
+			default     : $windowtarget = ' target="_blank"'; break;
+		}
 
 		$item = $AmazonXml->Items->Item;
 		$attr = $item->ItemAttributes;
-		$url = $item->DetailPageURL;
+		$url  = $item->DetailPageURL;
 
-		if( $layout_type != '3' )
-			$img = $this->get_img( $item, $imgsize );
-
-		switch( $windowtarget ) {
-			case 'newwin': $windowtarget = ' target="_blank"'; break;
-			case 'self': $windowtarget = '';
-		}
+//		if( $layout_type != 3 )
+//			$img = $this->lib->get_img($item, $imgsize);
 
 		// テンプレート //
 		//Title
-		if( $layout_type == 3 ) {
+		if( $layout_type == 3 || $layout_type == 'title' ) {
 			$output = '<a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a>';
 		}
 
 		//Title & Image
-		if( $layout_type == 2 ) {
+		elseif( $layout_type == 2 || $layout_type == 'simple' ) {
+
+			$img = $this->lib->get_img($item, $imgsize);
+
 			$output = '<div class="simple-amazon-view">' . "\n";
 			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
 			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
@@ -258,7 +279,10 @@ class SimpleAmazonView {
 		}
 
 		//Detail
-		if( $layout_type == 1 ) {
+		elseif( $layout_type == 1 || $layout_type == 'detail' ) {
+
+			$img = $this->lib->get_img($item, $imgsize);
+
 			$output = '<div class="simple-amazon-view">' . "\n";
 			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
 			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
@@ -299,10 +323,14 @@ class SimpleAmazonView {
 			}
 
 			$output .= '</div>' . "\n";
+
 		}
 
 		//Full
-		if( $layout_type < 1 ) {
+		else {
+
+			$img = $this->lib->get_img($item, $imgsize);
+
 			$output = '<div class="simple-amazon-view">' . "\n";
 			$output .= "\t" . '<p class="sa-img-box"><a href="' . $url . '"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
 			$output .= "\t" . '<p class="sa-title"><a href="' . $url . '"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
@@ -359,6 +387,7 @@ class SimpleAmazonView {
 	 * @param String $code
 	 * @return String $domain
 	 */
+/*
 	private function get_domain( $code ) {
 		switch($code) {
 			case 'ca':        $domain = 'amazon.ca'; break;
@@ -375,12 +404,14 @@ class SimpleAmazonView {
 		}
 		return $domain;
 	}
+*/
 
 	/**
 	 * ドメインからTLDを取得する
 	 * @param String $domain
 	 * @return String $tld
 	 */
+/*
 	private function get_TLD( $domain ) {
 		switch($domain) {
 			case 'amazon.ca':    $tld = 'ca'; break;
@@ -397,13 +428,14 @@ class SimpleAmazonView {
 		}
 		return $tld;
 	}
+*/
 
 	/**
 	 * TLDからアソシエイトIDを取得する
 	 * @param String $tld
 	 * @return String $aid
 	 */
-	private function get_aid( $tld ) {
+	private function get_aid($tld) {
 		switch($tld) {
 			case 'ca': $aid = $this->options['associatesid_ca']; break;
 			case 'cn': $aid = $this->options['associatesid_cn']; break;
@@ -425,6 +457,7 @@ class SimpleAmazonView {
 	 * @param String $imgsize
 	 * @return Object $img
 	 */
+/*
 	private function get_img( $xml, $imgsize ) {
 
 		$img = new stdClass();
@@ -463,12 +496,15 @@ class SimpleAmazonView {
 		return $img;
 
 	}
+*/
+
 
 }
 
 /******************************************************************************
  * ISBN13とISBN10を相互に変換するクラス
  *****************************************************************************/
+/*
 class CalcISBNLibrary {
 
 	public function calc_chkdgt_mod10( $val ){
@@ -514,5 +550,5 @@ class CalcISBNLibrary {
 	}
 
 }
-
+*/
 ?>
