@@ -61,8 +61,8 @@ class SimpleAmazonAdmin {
 */
 
 		switch( $this->options['windowtarget']) {
-			case 'self': $newwindow = ''; $selfwindow = ' checked';
-			default: $newwindow = ' checked'; $selfwindow = ''; break;
+			case 'self': $newwindow = ''; $selfwindow = ' checked'; break;
+			default: $newwindow = ' checked'; $selfwindow = '';
 		}
 
 		switch( $this->options['imgsize'] ) {
