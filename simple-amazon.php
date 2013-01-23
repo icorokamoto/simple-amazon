@@ -140,7 +140,7 @@ function simple_amazon_custum_view() {
 /* 指定したノードのリストを表示する関数 */
 function simple_amazon_list_view( $params, $code = null, $style = null ) {
 	global $simpleAmazonListView;
-	$simpleAmazonView->view( $params, $code, $style );
+	$simpleAmazonListView->view( $params, $code, $style );
 /*
 		$params = array(
 //			'ResponseGroup' => 'Images,ItemAttributes',

@@ -30,10 +30,11 @@ class SimpleAmazonListView {
 	 */
 	public function view( $param, $code, $style ) {
 
-		$code = esc_html($code);
+		$code   = esc_html($code);
 		$domain = $this->lib->get_domain($code);
 
 		$display = $this->generate( $param, $domain, $style );
+
 		echo $display;
 
 	}
@@ -44,7 +45,7 @@ class SimpleAmazonListView {
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $params, $style ) {
+	public function generate( $params, $domain, $style ) {
 
 		// style
 		$default_style = array(
