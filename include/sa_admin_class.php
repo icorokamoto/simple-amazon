@@ -227,7 +227,7 @@ class SimpleAmazonAdmin {
 
 		$simple_amazon_admin_html .=
 			'<tr>' .
-			'<th>it (イタリア)</th>' .
+			'<th>IT (イタリア)</th>' .
 			'<td><input type="text" name="associatesid_it" value="' . $this->options['associatesid_it'] . '" /></td>' .
 			'</tr>' . "\n";
 
