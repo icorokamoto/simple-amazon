@@ -288,20 +288,20 @@ class SimpleAmazonAdmin {
 		$options = array(
 			'accesskeyid'     => $this->h( $_POST['accesskeyid'] ),
 
-			'associatesid_ca' => isset($_POST['associatesid_ca']) ? $this->h($_POST['associatesid_ca']) : '',
-			'associatesid_cn' => isset($_POST['associatesid_cn']) ? $this->h($_POST['associatesid_cn']) : '',
-			'associatesid_de' => isset($_POST['associatesid_de']) ? $this->h($_POST['associatesid_de']) : '',
-			'associatesid_es' => isset($_POST['associatesid_es']) ? $this->h($_POST['associatesid_es']) : '',
-			'associatesid_fr' => isset($_POST['associatesid_fr']) ? $this->h($_POST['associatesid_fr']) : '',
-			'associatesid_it' => isset($_POST['associatesid_it']) ? $this->h($_POST['associatesid_it']) : '',
-			'associatesid_jp' => isset($_POST['associatesid_jp']) ? $this->h($_POST['associatesid_jp']) : '',
-			'associatesid_uk' => isset($_POST['associatesid_uk']) ? $this->h($_POST['associatesid_uk']) : '',
-			'associatesid_us' => isset($_POST['associatesid_us']) ? $this->h($_POST['associatesid_us']) : '',
+			'associatesid_ca' => isset($_POST['associatesid_ca']) ? esc_html($_POST['associatesid_ca']) : '',
+			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
+			'associatesid_de' => isset($_POST['associatesid_de']) ? esc_html($_POST['associatesid_de']) : '',
+			'associatesid_es' => isset($_POST['associatesid_es']) ? esc_html($_POST['associatesid_es']) : '',
+			'associatesid_fr' => isset($_POST['associatesid_fr']) ? esc_html($_POST['associatesid_fr']) : '',
+			'associatesid_it' => isset($_POST['associatesid_it']) ? esc_html($_POST['associatesid_it']) : '',
+			'associatesid_jp' => isset($_POST['associatesid_jp']) ? esc_html($_POST['associatesid_jp']) : '',
+			'associatesid_uk' => isset($_POST['associatesid_uk']) ? esc_html($_POST['associatesid_uk']) : '',
+			'associatesid_us' => isset($_POST['associatesid_us']) ? esc_html($_POST['associatesid_us']) : '',
 
 			'delete_setting'  => $_POST['delete_setting'],
 			'imgsize'         => $_POST['imgsize'],
 			'layout_type'     => $_POST['layout_type'],
-			'secretaccesskey' => $this->h( $_POST['secretaccesskey'] ),
+			'secretaccesskey' => esc_html( $_POST['secretaccesskey'] ),
 			'setcss'          => $_POST['setcss'],
 			'windowtarget'    => $_POST['windowtarget']
 		);

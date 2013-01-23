@@ -161,7 +161,7 @@ class SimpleAmazonView {
 
 		// params
 		$params = array(
-			'AssociateTag'  => $this->get_aid($tld),
+			'AssociateTag'  => $this->lib->get_aid($tld, $this->options),
 			'MerchantId'    => 'All',
 			'Condition'     => 'All',
 			'Operation'     => 'ItemLookup',
@@ -199,7 +199,7 @@ class SimpleAmazonView {
 
 		$tld = $this->lib->get_TLD($domain);
 		$name = ($this->style['name']) ? $this->style['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
-		$tag = '?tag=' . $this->get_aid($tld);
+		$tag = '?tag=' . $this->lib->get_aid($tld, $this->options);
 		$windowtarget = $this->style['windowtarget'];
 
 		switch( $windowtarget ) {
@@ -435,14 +435,9 @@ class SimpleAmazonView {
 	 * @param String $tld
 	 * @return String $aid
 	 */
+/*
 	private function get_aid($tld) {
 		
-		if($tld == 'com')
-			$tld = 'us';
-
-		$associatesid_key = 'associatesid_' . $tld;
-		$aid = $this->options[$associatesid_key];
-/*
 		switch($tld) {
 			case 'ca': $aid = $this->options['associatesid_ca']; break;
 			case 'cn': $aid = $this->options['associatesid_cn']; break;
@@ -455,9 +450,10 @@ class SimpleAmazonView {
 			case 'com': $aid = $this->options['associatesid_us']; break;
 			default: $aid = '';
 		}
-*/
+
 		return $aid;
 	}
+*/
 
 	/**
 	 * 画像のURL、width、heightを設定する

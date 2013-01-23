@@ -117,6 +117,24 @@ class SimpleAmazonLib {
 	}
 	
 	/**
+	 * TLDからアソシエイトIDを取得する
+	 * @param String $tld
+	 * @param Array $ids
+	 * @return String $aid
+	 */
+	public function get_aid($tld, $array_id) {
+		
+		if($tld == 'com')
+			$tld = 'us';
+
+		$associatesid_key = 'associatesid_' . $tld;
+
+		$aid = $array_id[$associatesid_key];
+
+		return $aid;
+	}
+
+	/**
 	 * ISBN10をISBN13に変換する
 	 * @param String $val
 	 * @return String $val.$chkdgt
