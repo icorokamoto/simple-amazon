@@ -125,16 +125,17 @@ class SimpleAmazonAdmin {
 
 		$simple_amazon_admin_html .=
 			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
-			'<input type="hidden" name="action" value="save_options" />' . "\n";
+			'<input type="hidden" name="action" value="save_options" />' . "\n" .
+			'<div id="simple-amazon-options">' . "\n";
 
+		// タブ
 		$simple_amazon_admin_html .=
-			'<div id="simple-amazon-options">' . "\n" .
-
 			'<div id="simple-amazon-options-menu"><ul class="subsubsub">' . "\n" .
 			'<li><a href="#tabs-1">オプション設定</a></li> | ' . "\n" .
 			'<li><a href="#tabs-2">基本設定</a></li>' . "\n" .
 			'</ul></div>' . "\n";
 
+		// オプション設定
 		$simple_amazon_admin_html .=
 			'<div id="tabs-1">' . "\n" .
 
@@ -172,6 +173,7 @@ class SimpleAmazonAdmin {
 			'</table>' . "\n" .
 			'</div>' . "\n";
 
+		// 基本設定
 		$simple_amazon_admin_html .=
 			'<div id="tabs-2">' . "\n" .
 
@@ -252,7 +254,7 @@ class SimpleAmazonAdmin {
 			'</div>' . "\n";
 
 		$simple_amazon_admin_html .=
-			'<p class="submit"><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
+			'<p><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
 			'</div>' . "\n" .
 			'</form>' . "\n";
 
