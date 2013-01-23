@@ -126,9 +126,9 @@ register_deactivation_hook(__FILE__, 'simple_amazon_deactivation');
  *****************************************************************************/
  
 /* 指定したasinの商品情報を表示する関数 */
-function simple_amazon_view( $asin, $code = null, $style = null ) {
+function simple_amazon_view( $asin, $code = null, $styles = null ) {
 	global $simpleAmazonView;
-	$simpleAmazonView->view( $asin, trim($code), $style );
+	$simpleAmazonView->view( $asin, esc_html($code), $styles );
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */
@@ -138,18 +138,13 @@ function simple_amazon_custum_view() {
 }
 
 /* 指定したノードのリストを表示する関数 */
-function simple_amazon_list_view( $params, $code = null, $style = null ) {
+function simple_amazon_list_view( $params, $code = null, $styles = null ) {
 	global $simpleAmazonListView;
-	$simpleAmazonListView->view( $params, $code, $style );
+	$simpleAmazonListView->view( $params, esc_html($code), $styles );
 /*
 		$params = array(
-//			'ResponseGroup' => 'Images,ItemAttributes',
-//			'Operation'     => 'ItemSearch',
-//			'MerchantId'    => 'All',
-//			'Condition'     => 'All',
 			'SearchIndex'   => 'Books',
 			'BrowseNode'    => '466280',
-//			'Sort'          => 'salesrank',
 			'Power'         => $power
 		);
 */

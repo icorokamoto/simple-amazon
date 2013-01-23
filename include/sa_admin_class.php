@@ -288,7 +288,8 @@ class SimpleAmazonAdmin {
 
 		// create array
 		$options = array(
-			'accesskeyid'     => $this->h( $_POST['accesskeyid'] ),
+			'accesskeyid'     => esc_html( $_POST['accesskeyid'] ),
+			'secretaccesskey' => esc_html( $_POST['secretaccesskey'] ),
 
 			'associatesid_ca' => isset($_POST['associatesid_ca']) ? esc_html($_POST['associatesid_ca']) : '',
 			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
@@ -300,12 +301,11 @@ class SimpleAmazonAdmin {
 			'associatesid_uk' => isset($_POST['associatesid_uk']) ? esc_html($_POST['associatesid_uk']) : '',
 			'associatesid_us' => isset($_POST['associatesid_us']) ? esc_html($_POST['associatesid_us']) : '',
 
-			'delete_setting'  => $_POST['delete_setting'],
-			'imgsize'         => $_POST['imgsize'],
+			'windowtarget'    => $_POST['windowtarget'],
 			'layout_type'     => $_POST['layout_type'],
-			'secretaccesskey' => esc_html( $_POST['secretaccesskey'] ),
+			'imgsize'         => $_POST['imgsize'],
 			'setcss'          => $_POST['setcss'],
-			'windowtarget'    => $_POST['windowtarget']
+			'delete_setting'  => $_POST['delete_setting']
 		);
 
 		update_option( 'simple_amazon_admin_options', $options );
@@ -315,17 +315,7 @@ class SimpleAmazonAdmin {
 	}
 
 	/**
-	 * 文字列をHTMLエンティティに変換する
-	 * @param string $str
-	 * @return string $str
-	 */
-	private function h($str) {
-		$str = trim( htmlentities($str, ENT_QUOTES) );
-		return $str;
-	}
-
-	/**
-	 * オプション設定をデータベースから削除する
+	 * @brief	オプション設定をデータベースから削除する
 	 * @param none
 	 * @return none
 	 */
