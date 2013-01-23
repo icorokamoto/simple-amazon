@@ -58,16 +58,16 @@ if ( ! $simple_amazon_options ){
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_xmlparse_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_cache_control_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_lib_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_admin_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_view_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_listview_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_xml_parse.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_cache_control.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_lib.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_admin.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_view.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_list_view.php');
 
-$simpleAmazonView  = new SimpleAmazonView();
-$simpleAmazonListView  = new SimpleAmazonListView();
-$simpleAmazonAdmin = new SimpleAmazonAdmin();
+$simpleAmazonView     = new SimpleAmazonView();
+$simpleAmazonListView = new SimpleAmazonListView();
+$simpleAmazonAdmin    = new SimpleAmazonAdmin();
 
 
 /******************************************************************************
@@ -137,7 +137,7 @@ function simple_amazon_custum_view() {
 	$simpleAmazonView->view_custom_field();
 }
 
-/* 指定したノードのリストを表示する関数 */
+/* 指定したリクエストのリストを表示する関数 */
 function simple_amazon_list_view( $params, $code = null, $styles = null ) {
 	global $simpleAmazonListView;
 	$simpleAmazonListView->view( $params, esc_html($code), $styles );
