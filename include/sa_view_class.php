@@ -91,8 +91,9 @@ class SimpleAmazonView {
 		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
 //		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 //		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>.+)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\..+)\/(?P<name>[\S]+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\..+)\/dp\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)http:\/\/www\.(?P<domain>amazon\..+)\/gp\/product\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
 		foreach( $regexps as $regexp ) {
 			if( preg_match_all($regexp, $content, $arr) ) {
