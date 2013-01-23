@@ -6,7 +6,7 @@
 class SimpleAmazonView {
 
 	private $options;
-	private $style;
+	private $styles;
 	private $lib;
 //	private $domain;
 //	private $tld;
@@ -54,7 +54,7 @@ class SimpleAmazonView {
 	 * @param	array $style
 	 * @return	none
 	 */
-	public function view( $asin, $code, $style ) {
+	public function view( $asin, $code, $styles ) {
 /*
 		if($code) {
 			// set TLD
@@ -64,7 +64,7 @@ class SimpleAmazonView {
 */
 		$domain = $this->lib->get_domain($code);
 
-		$display = $this->generate( $asin, $domain, $style );
+		$display = $this->generate( $asin, $domain, $styles );
 		echo $display;
 
 	}
@@ -139,7 +139,7 @@ class SimpleAmazonView {
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $asin, $domain, $style ) {
+	public function generate( $asin, $domain, $styles ) {
 
 		// ISBN13をISBN10に変換
 		if( strlen( $asin ) == 13 ) {
@@ -151,13 +151,13 @@ class SimpleAmazonView {
 		$tld = $this->lib->get_TLD($domain);
 
 		//style
-		$default_style = array(
+		$default_styles = array(
 			'name'         => '',
 			'layout_type'  => $this->options['layout_type'],
 			'imgsize'      => $this->options['imgsize'],
 			'windowtarget' => $this->options['windowtarget']
 		);
-		$this->style = wp_parse_args($style, $default_style);
+		$this->styles = wp_parse_args($styles, $default_styles);
 
 		// params
 		$params = array(
@@ -198,9 +198,9 @@ class SimpleAmazonView {
 	private function generate_item_html_nonres( $asin, $domain ) {
 
 		$tld = $this->lib->get_TLD($domain);
-		$name = ($this->style['name']) ? $this->style['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
+		$name = ($this->styles['name']) ? $this->styles['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
 		$tag = '?tag=' . $this->lib->get_aid($tld, $this->options);
-		$windowtarget = $this->style['windowtarget'];
+		$windowtarget = $this->styles['windowtarget'];
 
 		switch( $windowtarget ) {
 			case 'newwin': $windowtarget = ' target="_blank"'; break;
@@ -245,9 +245,9 @@ class SimpleAmazonView {
 	 */
 	private function generate_item_html( $AmazonXml ) {
 
-		$layout_type  = $this->style['layout_type'];
-		$imgsize      = $this->style['imgsize'];
-		$windowtarget = $this->style['windowtarget'];
+		$layout_type  = $this->styles['layout_type'];
+		$imgsize      = $this->styles['imgsize'];
+		$windowtarget = $this->styles['windowtarget'];
 
 		switch( $windowtarget ) {
 			case 'self' : $windowtarget = '';

@@ -6,7 +6,7 @@
 class SimpleAmazonListView {
 
 	private $options;
-	private $style;
+	private $styles;
 	private $lib;
 
 	/**
@@ -23,17 +23,26 @@ class SimpleAmazonListView {
 
 	/**
 	 * PHP の関数として Amazon の商品リストの HTML を呼び出す
-	 * @param	string $asin
-	 * @param	string $tld
-	 * @param	array $style
-	 * @return	none
+	 * @param array $params = array(
+	 *   //'ResponseGroup' => 'Images,ItemAttributes',
+	 *   //'Operation'     => 'ItemSearch',
+	 *   //'MerchantId'    => 'All',
+	 *   //'Condition'     => 'All',
+	 *     'SearchIndex'   => 'Books',
+	 *     'BrowseNode'    => '466280',
+	 *   //'Sort'          => 'salesrank',
+	 *     'Power'         => $power
+	 *	);
+	 * @param string $code
+	 * @param array $style
+	 * @return none
 	 */
-	public function view( $param, $code, $style ) {
+	public function view( $params, $code, $style ) {
 
 		$code   = esc_html($code);
 		$domain = $this->lib->get_domain($code);
 
-		$display = $this->generate( $param, $domain, $style );
+		$display = $this->generate( $params, $domain, $style );
 
 		echo $display;
 
@@ -45,10 +54,10 @@ class SimpleAmazonListView {
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $params, $domain, $style ) {
+	public function generate( $params, $domain, $styles ) {
 
 		// style
-		$default_style = array(
+		$default_styles = array(
 			'imgsize'        => $this->options['imgsize'],
 			'before_list'    => '<ul>',
 			'after_list'     => '</ul>',
@@ -57,7 +66,7 @@ class SimpleAmazonListView {
 			'show_thumbnail' => true,
 			'show_title'     => true
 		);
-		$this->style = wp_parse_args($style, $default_style);
+		$this->styles = wp_parse_args($styles, $default_styles);
 
 		$domain = $this->lib->get_domain();
 		$tld    = $this->lib->get_TLD($domain);
@@ -68,7 +77,7 @@ class SimpleAmazonListView {
 			'MerchantId'    => 'All',
 			'Condition'     => 'All',
 			'Operation'     => 'ItemSearch',
-			'ResponseGroup' => ($this->style['show_thumbnail']) ? 'Images,ItemAttributes' : 'ItemAttributes'
+			'ResponseGroup' => ($this->styles['show_thumbnail']) ? 'Images,ItemAttributes' : 'ItemAttributes'
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
@@ -106,13 +115,13 @@ class SimpleAmazonListView {
 	 */
 	private function generate_list_html( $xml ) {
 
-		$imgsize        = $this->style['imgsize'];
-		$before_list    = $this->style['before_list'];
-		$after_list     = $this->style['after_list'];
-		$before_li      = $this->style['before_li'];
-		$after_li       = $this->style['after_li'];
-		$show_title     = $this->style['show_title'];
-		$show_thumbnail = $this->style['show_thumbnail'];
+		$imgsize        = $this->styles['imgsize'];
+		$before_list    = $this->styles['before_list'];
+		$after_list     = $this->styles['after_list'];
+		$before_li      = $this->styles['before_li'];
+		$after_li       = $this->styles['after_li'];
+		$show_title     = $this->styles['show_title'];
+		$show_thumbnail = $this->styles['show_thumbnail'];
 
 		$items = $xml->Items->Item;
 
