@@ -134,7 +134,7 @@ register_deactivation_hook(__FILE__, 'simple_amazon_deactivation');
 /* 指定したasinの商品情報を表示する関数 */
 function simple_amazon_view( $asin, $code = null, $style = null ) {
 	global $simpleAmazonView;
-	$simpleAmazonView->view( $asin, trim($code), $style );
+	$simpleAmazonView->view( $asin, esc_html($code), $style );
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */

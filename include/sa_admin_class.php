@@ -286,24 +286,24 @@ class SimpleAmazonAdmin {
 
 		// create array
 		$options = array(
-			'accesskeyid'     => trim( $_POST['accesskeyid'] ),
+			'accesskeyid'     => esc_html( $_POST['accesskeyid'] ),
+			'secretaccesskey' => esc_html( $_POST['secretaccesskey'] ),
 
-			'associatesid_ca' => isset($_POST['associatesid_ca']) ? trim($_POST['associatesid_ca']) : '',
-			'associatesid_cn' => isset($_POST['associatesid_cn']) ? trim($_POST['associatesid_cn']) : '',
-			'associatesid_de' => isset($_POST['associatesid_de']) ? trim($_POST['associatesid_de']) : '',
-			'associatesid_es' => isset($_POST['associatesid_es']) ? trim($_POST['associatesid_es']) : '',
-			'associatesid_fr' => isset($_POST['associatesid_fr']) ? trim($_POST['associatesid_fr']) : '',
-			'associatesid_it' => isset($_POST['associatesid_it']) ? trim($_POST['associatesid_it']) : '',
-			'associatesid_jp' => isset($_POST['associatesid_jp']) ? trim($_POST['associatesid_jp']) : '',
-			'associatesid_uk' => isset($_POST['associatesid_uk']) ? trim($_POST['associatesid_uk']) : '',
-			'associatesid_us' => isset($_POST['associatesid_us']) ? trim($_POST['associatesid_us']) : '',
+			'associatesid_ca' => isset($_POST['associatesid_ca']) ? esc_html($_POST['associatesid_ca']) : '',
+			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
+			'associatesid_de' => isset($_POST['associatesid_de']) ? esc_html($_POST['associatesid_de']) : '',
+			'associatesid_es' => isset($_POST['associatesid_es']) ? esc_html($_POST['associatesid_es']) : '',
+			'associatesid_fr' => isset($_POST['associatesid_fr']) ? esc_html($_POST['associatesid_fr']) : '',
+			'associatesid_it' => isset($_POST['associatesid_it']) ? esc_html($_POST['associatesid_it']) : '',
+			'associatesid_jp' => isset($_POST['associatesid_jp']) ? esc_html($_POST['associatesid_jp']) : '',
+			'associatesid_uk' => isset($_POST['associatesid_uk']) ? esc_html($_POST['associatesid_uk']) : '',
+			'associatesid_us' => isset($_POST['associatesid_us']) ? esc_html($_POST['associatesid_us']) : '',
 
-			'delete_setting'  => $_POST['delete_setting'],
-			'imgsize'         => $_POST['imgsize'],
+			'windowtarget'    => $_POST['windowtarget'],
 			'layout_type'     => $_POST['layout_type'],
-			'secretaccesskey' => trim( $_POST['secretaccesskey'] ),
+			'imgsize'         => $_POST['imgsize'],
 			'setcss'          => $_POST['setcss'],
-			'windowtarget'    => $_POST['windowtarget']
+			'delete_setting'  => $_POST['delete_setting']
 		);
 
 		update_option( 'simple_amazon_admin_options', $options );
