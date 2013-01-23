@@ -19,11 +19,11 @@ Stable tag:
 
 == Installation ==
 1. ダウンロードした zip ファイルを解凍します。
-3. simple-amazon フォルダを wp-content/plugins フォルダに転送します。
-4. cacheディレクトリのパーミッションを777(または707)にします。
-5. 管理画面から simple-amazon を有効化します。
-2. プラグインの管理画面に移動して、「Access Key ID」と「Secret Access Key」を入力します。Access Key ID と Secret Access Key は https://affiliate.amazon.co.jp/ で取得してください。
-6. 必要に応じて「オプション設定」を設定します。リンクウィンドウの挙動や詳細表示を設定できます。「アソシエイト ID」は入力しなくても機能します。
+2. simple-amazon フォルダを wp-content/plugins フォルダに転送します。
+3. cacheディレクトリのパーミッションを777(または707)にします。
+4. 管理画面から simple-amazon を有効化します。
+5. プラグインの管理画面に移動して、「Access Key ID」と「Secret Access Key」、および「アソシエイトID」を入力します。Access Key ID、 Secret Access Key、アソシエイトID は https://affiliate.amazon.co.jp/ で取得してください。
+6. 必要に応じて「オプション設定」を設定します。リンクウィンドウの挙動や詳細表示を設定できます。
 7. 記事本文中にAmazon.co.jpの商品詳細ページのURLをコピペするだけAmazonの商品情報が表示されます。
 
 
