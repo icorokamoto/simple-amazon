@@ -262,8 +262,14 @@ class SimpleAmazonView {
 //			$img = $this->lib->get_img($item, $imgsize);
 
 		// テンプレート //
+		
+		//image
+		if( $layout_type == 'image' ) {
+			$output .= '<a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="' . $attr->Title . '" class="sa-image" /></a>' . "\n";
+		}
+		
 		//Title
-		if( $layout_type == 3 || $layout_type == 'title' ) {
+		elseif( $layout_type == 3 || $layout_type == 'title' ) {
 			$output = '<a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a>';
 		}
 
@@ -278,6 +284,7 @@ class SimpleAmazonView {
 			$output .= '</div>' . "\n";
 		}
 
+/*
 		//Detail
 		elseif( $layout_type == 1 || $layout_type == 'detail' ) {
 
@@ -327,7 +334,7 @@ class SimpleAmazonView {
 			$output .= '</div>' . "\n";
 
 		}
-
+*/
 		//Full
 		else {
 

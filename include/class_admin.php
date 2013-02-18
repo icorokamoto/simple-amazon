@@ -72,10 +72,15 @@ class SimpleAmazonAdmin {
 		}
 
 		switch( $this->options['layout_type'] ) {
-			case 1: $default_layout = ''; $medium_layout = ' checked'; $simple_layout = ''; $noimage_layout = ''; break;
-			case 2: $default_layout  = ''; $medium_layout = ''; $simple_layout = ' checked'; $noimage_layout = ''; break;
-			case 3: $default_layout  = ''; $medium_layout = ''; $simple_layout = ''; $noimage_layout = ' checked'; break;
-			default: $default_layout  = ' checked';$medium_layout = '';  $simple_layout = ''; $noimage_layout = '';
+			case 'simple': $default_layout = ''; $simple_layout = ' checked'; $title_layout = '';         $image_layout = ''; break;
+			case 'title':  $default_layout = ''; $simple_layout = '';         $title_layout = ' checked'; $image_layout = ''; break;
+			case 'image':  $default_layout = ''; $simple_layout = '';         $title_layout = '';         $image_layout = ' checked'; break;
+
+			//旧Ver.互換用
+			case 2: $default_layout = ''; $simple_layout = ' checked'; $title_layout = ''; $image_layout = ''; break;
+			case 3: $default_layout = ''; $simple_layout = ''; $title_layout = ' checked'; $image_layout = ''; break;
+
+			default: $default_layout = ' checked'; $simple_layout = ''; $title_layout = ''; $image_layout = '';
 		}
 
 		switch( $this->options['setcss']) {
@@ -148,10 +153,10 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n" .
 
 			'<tr><th>商品詳細の表示項目</th>' . "\n" .
-			'<td><input type="radio" name="layout_type" value="0"' . $default_layout . ' />&nbsp;Full ( 画像、タイトル、出版社、発売時期、著者、価格、本のタイプ、ページ数、ISBN。本以外はこれに準ずる項目 )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="1"' . $medium_layout . ' />&nbsp;Detail ( 画像、タイトル、出版社、著者、発売時期。Fullから価格情報、コード情報を省略 )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="2"' . $simple_layout . ' />&nbsp;Simple ( 画像とタイトルのみ )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="3"' . $noimage_layout . ' />&nbsp;Title ( タイトルのみ )</td>' . "\n" .
+			'<td><input type="radio" name="layout_type" value="full"' . $default_layout . ' />&nbsp;Full ( 画像、タイトル、出版社、発売時期、著者、価格、本のタイプ、ページ数、ISBN。本以外はこれに準ずる項目 )<br />' . "\n" .
+			'<input type="radio" name="layout_type" value="simple"' . $simple_layout . ' />&nbsp;Simple ( 画像とタイトルのみ )<br />' . "\n" .
+			'<input type="radio" name="layout_type" value="title"' . $title_layout . ' />&nbsp;Title ( タイトルのみ )<br />' . "\n" .
+			'<input type="radio" name="layout_type" value="image"' . $image_layout . ' />&nbsp;Image ( 画像のみ )</td>' . "\n" .
 			'</tr>' . "\n" .
 
 			'<tr><th>商品画像のサイズ</th>' . "\n" .
