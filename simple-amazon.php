@@ -22,9 +22,6 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 if ( ! defined( 'SIMPLE_AMAZON_VER' ) )
 	define( 'SIMPLE_AMAZON_VER', '5.4' );
 
-if ( ! defined( 'SIMPLE_AMAZON_DIR_NAME' ) )
-	define( 'SIMPLE_AMAZON_DIR_NAME', plugin_basename( dirname( __FILE__ ) ) );
-
 if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) )
 	define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 
