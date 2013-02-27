@@ -34,7 +34,7 @@ php 関数として呼び出す場合は、テーマファイル等に以下の�
 <?php simple_amazon_view($asin, $domain, $styles ); ?>
 
 　$asin は Amazon の ASIN です。
-　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, jp, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
 　$styles は表示オプションの配列です。設定出来る項目は以下のようになっています。この項目は省略可能です。省略した場合はオプション設定の設定がデフォルトとして使用されます。
 
 windowtarget : 設定出来る値は self / blank の2つ。オプション設定の「商品リンクの動作」に相当します。
