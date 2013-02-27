@@ -26,7 +26,7 @@ if ( ! defined( 'SIMPLE_AMAZON_DIR_NAME' ) )
 	define( 'SIMPLE_AMAZON_DIR_NAME', plugin_basename( dirname( __FILE__ ) ) );
 
 if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) )
-	define( 'SIMPLE_AMAZON_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . SIMPLE_AMAZON_DIR_NAME );
+	define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_URL' ) )
 	define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -67,10 +67,10 @@ if ( ! $simple_amazon_options ){
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_view_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_xmlparse_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_cache_control_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/sa_admin_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_view_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_xmlparse_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_cache_control_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_admin_class.php');
 
 $simpleAmazonView  = new SimpleAmazonView();
 $simpleAmazonAdmin = new SimpleAmazonAdmin();
