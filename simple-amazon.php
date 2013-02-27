@@ -29,10 +29,10 @@ if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) )
 	define( 'SIMPLE_AMAZON_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . SIMPLE_AMAZON_DIR_NAME );
 
 if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_URL' ) )
-	define( 'SIMPLE_AMAZON_PLUGIN_URL', WP_PLUGIN_URL . '/' . SIMPLE_AMAZON_DIR_NAME );
+	define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 if ( ! defined( 'SIMPLE_AMAZON_IMG_URL' ) )
-	define( 'SIMPLE_AMAZON_IMG_URL', SIMPLE_AMAZON_PLUGIN_URL . '/images' );
+	define( 'SIMPLE_AMAZON_IMG_URL', SIMPLE_AMAZON_PLUGIN_URL . 'images' );
 
 
 /******************************************************************************
@@ -89,7 +89,7 @@ function add_simpleamazon_stylesheet(){
 	global $simple_amazon_options;
 
 	if( $simple_amazon_options['setcss'] == 'yes') {
-		wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon.css', array(), SIMPLE_AMAZON_VER);
+		wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'simple-amazon.css', array(), SIMPLE_AMAZON_VER);
 	}
 }
 add_action('wp_head', 'add_simpleamazon_stylesheet', 1);
