@@ -4,7 +4,7 @@ Plugin Name: Simple Amazon
 Plugin URI: http://www.icoro.com/
 Description: ASIN を指定して Amazon から個別商品の情報を取出します。BOOKS, DVD, CD は詳細情報を取り出せます。
 Author: icoro
-Version: develop
+Version: 5.4
 Author URI: http://www.icoro.com/
 Special Thanks: tomokame (http://http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)
@@ -19,11 +19,9 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
-define( 'SIMPLE_AMAZON_VER', '5.4' );
-define( 'SIMPLE_AMAZON_DIR_NAME',   plugin_basename( dirname( __FILE__ ) ) );
-define( 'SIMPLE_AMAZON_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . SIMPLE_AMAZON_DIR_NAME );
-define( 'SIMPLE_AMAZON_PLUGIN_URL', WP_PLUGIN_URL . '/' . SIMPLE_AMAZON_DIR_NAME );
-define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . '/images' );
+define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
+define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images' );
 
 
 /******************************************************************************
@@ -58,12 +56,12 @@ if ( ! $simple_amazon_options ){
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_xml_parse.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_cache_control.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_lib.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_admin.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_view.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . '/include/class_list_view.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_xml_parse.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_cache_control.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_lib.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_admin.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_view.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
 
 $simpleAmazonView     = new SimpleAmazonView();
 $simpleAmazonListView = new SimpleAmazonListView();
@@ -83,7 +81,7 @@ function add_simpleamazon_stylesheet(){
 	global $simple_amazon_options;
 
 	if( $simple_amazon_options['setcss'] == 'yes') {
-		wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon.css', array(), SIMPLE_AMAZON_VER);
+		wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'simple-amazon.css', array(), SIMPLE_AMAZON_VER);
 	}
 }
 add_action('wp_head', 'add_simpleamazon_stylesheet', 1);

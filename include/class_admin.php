@@ -33,10 +33,10 @@ class SimpleAmazonAdmin {
 
 		//javascript
 		wp_enqueue_script('jquery-ui-tabs', array('jquery'));
-		wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.js', array('jquery-ui-tabs'), SIMPLE_AMAZON_VER);
+		wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array('jquery-ui-tabs'), SIMPLE_AMAZON_VER);
 
 		//css
-		wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'/include/simple-amazon-admin.css', array(), SIMPLE_AMAZON_VER);
+		wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.css', array(), SIMPLE_AMAZON_VER);
 	}
 	
 	/**

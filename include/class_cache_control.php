@@ -15,10 +15,10 @@ class SimpleAmazonCacheControl {
 	public function __construct() {
 
 		// cacheディレクトリのpath
- 		$this->cache_dir = SIMPLE_AMAZON_PLUGIN_DIR . '/cache/';
+ 		$this->cache_dir = SIMPLE_AMAZON_PLUGIN_DIR . 'cache/';
 
 		// Lite.phpのpath
-		$litephp_path = SIMPLE_AMAZON_PLUGIN_DIR . '/include/Lite.php';
+		$litephp_path = SIMPLE_AMAZON_PLUGIN_DIR . 'include/Lite.php';
 
 		// cacheの有効時間(秒単位)
  		$cache_time = 60*60*24;
