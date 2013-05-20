@@ -250,8 +250,8 @@ class SimpleAmazonView {
 		$windowtarget = $this->styles['windowtarget'];
 
 		switch( $windowtarget ) {
-			case 'self' : $windowtarget = '';
-			default     : $windowtarget = ' target="_blank"'; break;
+			case 'self' : $windowtarget = ''; break;
+			default     : $windowtarget = ' target="_blank"';
 		}
 
 		$item = $AmazonXml->Items->Item;
