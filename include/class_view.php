@@ -266,7 +266,7 @@ class SimpleAmazonView {
 		//image
 		if( $layout_type == 'image' ) {
 			$img = $this->lib->get_img($item, $imgsize);
-			$output .= '<a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="' . $attr->Title . '" class="sa-image" /></a>' . "\n";
+			$output = '<a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" title="' . $attr->Title . '" class="sa-image" /></a>';
 		}
 		
 		//Title
