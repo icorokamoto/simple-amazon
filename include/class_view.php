@@ -373,9 +373,16 @@ class SimpleAmazonView {
 					$output_list .= "\t" . "<li>レーベル：" . $attr->Manufacturer . "( " . $attr->ReleaseDate . " )</li>\n";
 					break;
 				default:
+//					$feature_array = array();
+//					foreach($attr->Feature as $f) {
+//						array_push($feature_array, $f);
+//					}
+//					$feature = implode(' / ', $feature_array);
+
 					if( $attr->Manufacturer ) $output_list .= "\t" . "<li>メーカー：" . $attr->Manufacturer . "</li>\n";
 					if( $attr->Binding ) $output_list .= "\t" . "<li>カテゴリ：" . $attr->Binding . "</li>\n";
 					if( $attr->ReleaseDate ) $output_list .= "\t" . "<li>発売日：" . $attr->ReleaseDate . "</li>\n";
+//					if( $feature ) $output_list .= "\t" . "<li>" . $feature . "</li>\n";
 			}
 			if( $attr->ListPrice->FormattedPrice ) $output_list .= "\t" . "<li>定価：" . $attr->ListPrice->FormattedPrice . "</li>\n";
 //			if( $rating ) $output_list .= "\t" . "<li>おすすめ度：" . $rating . "</li>\n";
