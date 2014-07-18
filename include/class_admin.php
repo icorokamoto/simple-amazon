@@ -31,12 +31,17 @@ class SimpleAmazonAdmin {
 	 */
 	function addScripts() {
 
-		//javascript
-		wp_enqueue_script('jquery-ui-tabs', array('jquery'));
-		wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array('jquery-ui-tabs'), SIMPLE_AMAZON_VER);
+//		wp_enqueue_script('jquery-ui-tabs', array('jquery'));
+//		wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array('jquery-ui-tabs'), SIMPLE_AMAZON_VER);
 
-		//css
-		wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.css', array(), SIMPLE_AMAZON_VER);
+		// add jQuery tabs for options page. Use jQuery UI Tabs from WP
+		if ( isset($_GET['page']) && $_GET['page'] == 'simple_amazon' ) {
+			//javascript
+			wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array(), SIMPLE_AMAZON_VER);
+			//css
+//			wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.css', array(), SIMPLE_AMAZON_VER);
+		}
+
 	}
 	
 	/**
@@ -95,7 +100,8 @@ class SimpleAmazonAdmin {
 
 		// 管理画面のテンプレート
 		$simple_amazon_admin_html =
-			'<div class="wrap" id="footnote-options">' . "\n".
+//			'<div class="wrap" id="footnote-options">' . "\n".
+			'<div class="wrap">' . "\n".
 			'<h2>Simple Amazon プラグイン設定</h2>' . "\n";
 
 		if ( $message ){
@@ -130,19 +136,27 @@ class SimpleAmazonAdmin {
 
 		$simple_amazon_admin_html .=
 			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
-			'<input type="hidden" name="action" value="save_options" />' . "\n" .
-			'<div id="simple-amazon-options">' . "\n";
+//			'<input type="hidden" name="action" value="save_options" />' . "\n" .
+//			'<div id="simple-amazon-options">' . "\n";
+			'<input type="hidden" name="action" value="save_options" />' . "\n";
 
 		// タブ
+/*
 		$simple_amazon_admin_html .=
 			'<div id="simple-amazon-options-menu"><ul class="subsubsub">' . "\n" .
 			'<li><a href="#tabs-1">オプション設定</a></li> | ' . "\n" .
 			'<li><a href="#tabs-2">基本設定</a></li>' . "\n" .
 			'</ul></div>' . "\n";
-
+*/
+		$simple_amazon_admin_html .=
+			'<h2 class="nav-tab-wrapper" id="simple-amazon-options-menu">' . "\n" .
+			'<a href="#tabs-1" class="nav-tab">オプション設定</a>' . "\n" .
+			'<a href="#tabs-2" class="nav-tab">基本設定</a>' . "\n" .
+			'</h2>' . "\n";
+			
 		// オプション設定
 		$simple_amazon_admin_html .=
-			'<div id="tabs-1">' . "\n" .
+			'<div class="group" id="tabs-1">' . "\n" .
 
 			'<h3>オプション設定</h3>' . "\n" .
 			'<table class="form-table">' . "\n" .
@@ -180,7 +194,7 @@ class SimpleAmazonAdmin {
 
 		// 基本設定
 		$simple_amazon_admin_html .=
-			'<div id="tabs-2">' . "\n" .
+			'<div class="group" id="tabs-2">' . "\n" .
 
 			'<h3>基本設定</h3>' . "\n" .
 			'<table class="form-table">' . "\n" .
@@ -260,7 +274,7 @@ class SimpleAmazonAdmin {
 
 		$simple_amazon_admin_html .=
 			'<p><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
-			'</div>' . "\n" .
+//			'</div>' . "\n" .
 			'</form>' . "\n";
 
 		echo $simple_amazon_admin_html;
@@ -279,7 +293,8 @@ class SimpleAmazonAdmin {
 			'Simple Amazon',
 			'Simple Amazon',
 			'level_8',
-			__FILE__,
+//			__FILE__,
+			'simple_amazon',
 			array( &$this, 'simple_amazon_options_page' )
 		);
 	}

@@ -65,8 +65,10 @@ include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
 
 $simpleAmazonView     = new SimpleAmazonView();
 $simpleAmazonListView = new SimpleAmazonListView();
-$simpleAmazonAdmin    = new SimpleAmazonAdmin();
 
+if (is_admin()) {
+	$simpleAmazonAdmin    = new SimpleAmazonAdmin();
+}
 
 /******************************************************************************
  * アクション&フィルタの設定
