@@ -550,7 +550,7 @@ class Icoro_Cache_Lite
         include_once('PEAR.php');
         return PEAR::raiseError($msg, $code, $this->_pearErrorMode);
 */
-		return ture;
+		return true;
     }
     
     /**

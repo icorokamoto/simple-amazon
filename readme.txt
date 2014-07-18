@@ -31,12 +31,17 @@ Stable tag:
 
 php 関数として呼び出す場合は、テーマファイル等に以下のように記載します。
 
-<?php simple_amazon_view('ASIN','domain'); ?>
+<?php simple_amazon_view($asin, $domain, $styles ); ?>
 
-　ASIN は Amazon の ASIN に置き換えて下さい。
-　domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+　$asin は Amazon の ASIN です。
+　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, jp, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+　$styles は表示オプションの配列です。設定出来る項目は以下のようになっています。この項目は省略可能です。省略した場合はオプション設定の設定がデフォルトとして使用されます。
 
-　以下は WPLANG に jp が設定されている場合の設定例です。(日本語版を使用している場合は通常 jp が設定されていると思われます。)
+windowtarget : 設定出来る値は self / blank の2つ。オプション設定の「商品リンクの動作」に相当します。
+layout_type : 設定出来る値は full / detail / simple / title の4つ。オプション設定の「商品詳細の表示項目」に相当します。
+imgsize : 設定出来る値は small / medium / large の3つ。オプション設定の「商品画像サイズ」に相当します。
+
+　以下は WPLANG に ja が設定されている場合の設定例です。(日本語版を使用している場合は通常 ja が設定されていると思われます。)
 
 amazon.co.jp にある、ASIN が 4883377245 の商品を表示させたい場合。
 <?php simple_amazon_view('4883377245'); ?>
@@ -44,17 +49,55 @@ amazon.co.jp にある、ASIN が 4883377245 の商品を表示させたい場�
 Amazon.co.uk にある、ASINが B000BMUVKQ の商品を表示させたい場合。
 <?php simple_amazon_view('B000BMUVKQ', 'uk'); ?>
 
-javari.jp にある、ASINが B000Z5N4EO の商品を表示させたい場合。
-<?php simple_amazon_view('B000Z5N4EO', 'javari.jp'); ?>
+javari.jp にある、ASINが B000Z5N4EO の商品を商品名だけ(title)で表示させたい場合。
+<?php simple_amazon_view('B000Z5N4EO', 'javari.jp', array('layout_type'=>'title')); ?>
 
 = カスタムフィールドを使って表示 =
 
-　あらかじめ、テンプレートのAmazonの商品を表示したい場所に以下のように記載します。
+　カスタムフィールドに入力したAmazonの商品のURLを元に商品情報を表示します。
+　利用するにはあらかじめテンプレートのAmazonの商品を表示したい場所に以下のように記載します。
 
 <?php simple_amazon_custum_view(); ?>
 
 　実際に商品を表示するには、記事を作成する際に「カスタムフィールドを追加:」で「amazon」を選択し、値に商品ページのURLを入力します。「カスタムフィールドを追加」ボタンをクリックして完了です。
 　改行で区切ることで複数の商品を一度に表示することが出来ます。
+
+= 商品リストを表示 =
+
+　商品リストを表示します。もっというと、ItemSearchのオペレーションを実行して、その結果をリストする関数です。
+　利用するにはあらかじめテンプレートのAmazonの商品リストを表示したい場所に以下のように記載します。
+
+<?php simple_amazon_list_view( $params, $domain, $styles ); ?>
+
+　$params はProduct Advertising APIのリクエストパラメータがそのまま使えます。より詳しい内容は [Product Advertising](https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html) API の APIリファレンス -> オペレーション -> ItemSearch のページを参照してください。
+　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+$styles はリスト表示する歳のタグなどを指定することが出来ます。設定出来る項目は以下のようになっています。この項目は省略可能です。
+
+imgsize : 設定出来る値は small / medium / large の3つ。オプション設定の「商品画像サイズ」に相当します。デフォルトはオプション設定に準じます。
+before_list : リストの前に付く文字列。デフォルトは <ul> です。
+after_list : リストの後ろに付く文字列。デフォルトは</ul> です。
+before_li : リストの各項目の前に付く文字列。デフォルトは <li> です。
+after_li : リストの各項目の後ろに付く文字列。デフォルトは </li> です。
+show_thumbnail : 画像を表示するか否か。表示する場合は true、表示しない場合は false を指定します。デフォルトは true です。
+show_title : タイトルなどの文字列を表示するか否か。表示する場合は true、表示しない場合は false を指定します。デフォルトは true です。
+
+　以下は WPLANG に ja が設定されている場合の設定例です。(日本語版を使用している場合は通常 ja が設定されていると思われます。)
+
+本 - コミックカテゴリの商品のタイトル(画像なし)を売れている順番でリストする場合。
+<?php
+$params = array('SearchIndex' => 'Books', 'BrowseNode' => '466280');
+$styles = array('show_thumbnail'=>false);
+simple_amazon_list_view($params, null, $styles);
+?>
+
+DVDカテゴリの商品の画像だけを売れている順番でリストする場合。
+<?php
+$style = array(before_list=>'<ul class="clearfix">','show_title'=>false);
+$params = array('SearchIndex' => 'DVD', 'BrowseNode' => '561958' );
+simple_amazon_list_view($params, null, $styles);
+?>
+
+　たぶん、設定次第でもっといろいろ出来ると思うので、いろいろ試してみてください。
 
 = 高度な使い方 =
 
@@ -70,6 +113,9 @@ $regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 
 
 == Changelog ==
+
+= 5.5 =
+* 商品リストの表示に対応した。
 
 = 5.4.1 =
 CSSファイルの読み込みが出来ていなかったのを修正した。

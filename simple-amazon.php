@@ -19,17 +19,9 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
-if ( ! defined( 'SIMPLE_AMAZON_VER' ) )
-	define( 'SIMPLE_AMAZON_VER', '5.4' );
-
-if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) )
-	define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
-
-if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_URL' ) )
-	define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-
-if ( ! defined( 'SIMPLE_AMAZON_IMG_URL' ) )
-	define( 'SIMPLE_AMAZON_IMG_URL', SIMPLE_AMAZON_PLUGIN_URL . 'images' );
+define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
+define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images' );
 
 
 /******************************************************************************
@@ -64,14 +56,19 @@ if ( ! $simple_amazon_options ){
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_view_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_xmlparse_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_cache_control_class.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/sa_admin_class.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_xml_parse.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_cache_control.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_lib.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_admin.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_view.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
 
-$simpleAmazonView  = new SimpleAmazonView();
-$simpleAmazonAdmin = new SimpleAmazonAdmin();
+$simpleAmazonView     = new SimpleAmazonView();
+$simpleAmazonListView = new SimpleAmazonListView();
 
+if (is_admin()) {
+	$simpleAmazonAdmin    = new SimpleAmazonAdmin();
+}
 
 /******************************************************************************
  * アクション&フィルタの設定
@@ -129,15 +126,28 @@ register_deactivation_hook(__FILE__, 'simple_amazon_deactivation');
  *****************************************************************************/
  
 /* 指定したasinの商品情報を表示する関数 */
-function simple_amazon_view( $asin, $code = null, $style = null ) {
+function simple_amazon_view( $asin, $code = null, $styles = null ) {
 	global $simpleAmazonView;
-	$simpleAmazonView->view( $asin, esc_html($code), $style );
+	$simpleAmazonView->view( $asin, esc_html($code), $styles );
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */
 function simple_amazon_custum_view() {
 	global $simpleAmazonView;
 	$simpleAmazonView->view_custom_field();
+}
+
+/* 指定したリクエストのリストを表示する関数 */
+function simple_amazon_list_view( $params, $code = null, $styles = null ) {
+	global $simpleAmazonListView;
+	$simpleAmazonListView->view( $params, esc_html($code), $styles );
+/*
+		$params = array(
+			'SearchIndex'   => 'Books',
+			'BrowseNode'    => '466280',
+			'Power'         => $power
+		);
+*/
 }
 
 ?>
