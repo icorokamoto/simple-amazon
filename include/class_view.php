@@ -233,12 +233,12 @@ class SimpleAmazonView {
 		//image
 		if( $layout_type == 'image' ) {
 			$img = $this->lib->get_img($item, $imgsize);
-			$output = '<a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" title="' . $attr->Title . '" class="sa-image" /></a>';
+			$output = '<a href="'.$url.'"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" title="' . $attr->Title . '" class="sa-image" /></a>';
 		}
 		
 		//Title
 		elseif( $layout_type == 3 || $layout_type == 'title' ) {
-			$output = '<a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a>';
+			$output = '<a href="'.$url.'"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a>';
 		}
 
 		//Title & Image
@@ -247,8 +247,8 @@ class SimpleAmazonView {
 			$img = $this->lib->get_img($item, $imgsize);
 
 			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
-			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a></p>' . "\n";
 			$output .= '</div>' . "\n";
 		}
 
@@ -259,8 +259,8 @@ class SimpleAmazonView {
 			$img = $this->lib->get_img($item, $imgsize);
 
 			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
-			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a></p>' . "\n";
 
 			$output_list = "";
 
@@ -309,8 +309,8 @@ class SimpleAmazonView {
 			$img = $this->lib->get_img($item, $imgsize);
 
 			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="' . $url . '"' . $windowtarget . '><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
-			$output .= "\t" . '<p class="sa-title"><a href="' . $url . '"' . $windowtarget . '>' . $attr->Title . '</a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-img-box"><a href="' . $url . '"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
+			$output .= "\t" . '<p class="sa-title"><a href="' . $url . '"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a></p>' . "\n";
 
 			$output_list = "";
 
