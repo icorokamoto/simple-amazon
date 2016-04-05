@@ -4,7 +4,7 @@ Plugin Name: Simple Amazon
 Plugin URI: http://www.icoro.com/
 Description: ASIN を指定して Amazon から個別商品の情報を取出します。BOOKS, DVD, CD は詳細情報を取り出せます。
 Author: icoro
-Version: 5.5
+Version: 6.0
 Author URI: http://www.icoro.com/
 Special Thanks: tomokame (http://http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)
@@ -16,12 +16,14 @@ Special Thanks: PHP による Amazon PAAPI の毎秒ルール制限の実装と�
 
 if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 
+
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
+define( 'SIMPLE_RECRUIT_VER', '6.0' );
 define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images' );
+//define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images' );
 
 
 /******************************************************************************
@@ -29,29 +31,6 @@ define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images' );
  *****************************************************************************/
 global $simple_amazon_options;
 
-$simple_amazon_options = get_option('simple_amazon_admin_options');
-
-if ( ! $simple_amazon_options ){
-	$simple_amazon_options = array(
-		'accesskeyid'     => '',
-		'associatesid_ca' => '',
-		'associatesid_cn' => '',
-		'associatesid_de' => '',
-		'associatesid_es' => '',
-		'associatesid_fr' => '',
-		'associatesid_it' => '',
-		'associatesid_jp' => '',
-		'associatesid_uk' => '',
-		'associatesid_us' => '',
-		'delete_setting'  => 'no',
-		'imgsize'         => 'medium',
-		'layout_type'     => 0,
-		'secretaccesskey' => '',
-		'setcss'          => 'yes',
-		'windowtarget'    => 'self'
-	);
-	update_option( 'simple_amazon_admin_options', $simple_amazon_options );
-}
 
 /******************************************************************************
  * クラスの読み込み
@@ -63,62 +42,146 @@ include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_admin.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_view.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
 
-$simpleAmazonView     = new SimpleAmazonView();
-$simpleAmazonListView = new SimpleAmazonListView();
-
-if (is_admin()) {
-	$simpleAmazonAdmin    = new SimpleAmazonAdmin();
-}
 
 /******************************************************************************
- * アクション&フィルタの設定
+ * Simple Amazon クラスの設定
  *****************************************************************************/
+$SimpleAmazon = new SimpleAmazon();
 
-/* amazon のURLをhtmlに置き換える */
-add_filter('the_content', array($simpleAmazonView, 'replace'));
+class SimpleAmazon {
 
-/* simple amazonのcssを読み込む */
-function add_simpleamazon_stylesheet(){
+	private $options;
 
-	global $simple_amazon_options;
+	private $view;
+	private $listview;
+	private $admin;
 
-	if( $simple_amazon_options['setcss'] == 'yes') {
-		wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'simple-amazon.css', array(), SIMPLE_AMAZON_VER);
+	/**
+	 * construct
+	 * @param none
+	 * @return none
+	 */
+	public function __construct() {
+
+		$this->set_options();
+
+		//オブジェクトの設定
+		$this->view     = new SimpleAmazonView();
+		$this->listview = new SimpleAmazonListView();
+
+		if (is_admin()) {
+			$this->admin = new SimpleAmazonAdmin();
+		}
+
+		//インストール&アンインストール時の処理
+		register_activation_hook(__FILE__, array($this, 'plugin_activation'));
+		register_deactivation_hook(__FILE__, array($this, 'plugin_deactivation'));
+
+		// 定期的に期限切れのキャッシュを削除する feat. wp-cron
+		add_action('simple_amazon_clear_chache_hook', array($this, 'clean_cache'));
+
+		// simple amazonのcssを読み込む
+		add_action('wp_head', array($this, 'add_stylesheet'), 1);
+
+		// amazon のURLをhtmlに置き換える
+		add_filter('the_content', array($this->view, 'replace'));
+
 	}
+
+
+	/**
+	 * オプションの設定
+	 * @param none
+	 * @return none
+	 */
+	private function set_options() {
+
+		global $simple_amazon_options;
+
+		$this->options = get_option('simple_amazon_admin_options');
+
+		// デフォルトの設定
+		if ( ! $this->options ){
+			$this->options = array(
+				'accesskeyid'     => '',
+				'associatesid_ca' => '',
+				'associatesid_cn' => '',
+				'associatesid_de' => '',
+				'associatesid_es' => '',
+				'associatesid_fr' => '',
+				'associatesid_it' => '',
+				'associatesid_jp' => '',
+				'associatesid_uk' => '',
+				'associatesid_us' => '',
+				'delete_setting'  => 'no',
+				'imgsize'         => 'medium',
+				'layout_type'     => 0,
+				'secretaccesskey' => '',
+				'setcss'          => 'yes',
+				'windowtarget'    => 'self'
+			);
+			update_option( 'simple_amazon_admin_options', $this->options );
+		}
+		
+		$simple_amazon_options = $this->options;
+
+	}
+
+
+	/**
+	 * インストール時の処理
+	 * @param none
+	 * @return none
+	 */
+	public function plugin_activation() {
+		// simple_amazon_clear_chache_hook を wp-cron に追加する
+		wp_schedule_event(time(), 'daily', 'simple_amazon_clear_chache_hook');
+	}
+
+
+	/**
+	 * アンインストール時の処理
+	 * @param none
+	 * @return none
+	 */
+	public function plugin_deactivation() {
+
+//		global $simpleAmazonAdmin;
+
+		// オプション値の削除
+		$this->admin->uninstall();
+
+		// simple_amazon_clear_chache_hook を wp-cron から削除する
+		wp_clear_scheduled_hook('simple_amazon_clear_chache_hook');
+	}
+
+
+	/**
+	 * simple amazonのcssを読み込む
+	 * @param none
+	 * @return none
+	 */
+	public function add_stylesheet() {
+
+		global $simple_amazon_options;
+
+		if( $simple_amazon_options['setcss'] == 'yes') {
+			wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'simple-amazon.css', array(), SIMPLE_AMAZON_VER);
+		}
+	}
+
+
+	/**
+	 * 定期的に期限切れのキャッシュを削除する feat. wp-cron
+	 * @param none
+	 * @return none
+	 */
+	private function clean_cache() {
+		$SimpleAmazonCacheController = new SimpleAmazonCacheControl();
+		$SimpleAmazonCacheController->clean();
+	}
+
 }
-add_action('wp_head', 'add_simpleamazon_stylesheet', 1);
-
-/* 定期的に期限切れのキャッシュを削除する feat. wp-cron */
-function simple_amazon_clean_cache() {
-	$SimpleAmazonCacheController = new SimpleAmazonCacheControl();
-	$SimpleAmazonCacheController->clean();
-}
-add_action('simple_amazon_clear_chache_hook', 'simple_amazon_clean_cache');
-
-
-/******************************************************************************
- * インストール&アンインストール時の設定
- *****************************************************************************/
-
-/* インストール時 */
-function simple_amazon_activation() {
-	// simple_amazon_clear_chache_hook を wp-cron に追加する
-	wp_schedule_event(time(), 'daily', 'simple_amazon_clear_chache_hook');
-}
-
-/* アンインストール時 */
-function simple_amazon_deactivation() {
-	global $simpleAmazonAdmin;
-
-	// オプション値の削除
-	$simpleAmazonAdmin->uninstall();
-
-	// simple_amazon_clear_chache_hook を wp-cron から削除する
-	wp_clear_scheduled_hook('simple_amazon_clear_chache_hook');
-}
-
-register_activation_hook(__FILE__, 'simple_amazon_activation');
-register_deactivation_hook(__FILE__, 'simple_amazon_deactivation');
 
 
 /******************************************************************************
