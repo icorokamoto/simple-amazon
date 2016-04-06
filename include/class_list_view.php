@@ -61,7 +61,7 @@ class SimpleAmazonListView {
 
 		// style
 		$default_styles = array(
-			'imgsize'        => $this->options['imgsize'],
+			'imgsize'        => 'small',
 			'before_list'    => '<ul>',
 			'after_list'     => '</ul>',
 			'before_li'      => '<li>',

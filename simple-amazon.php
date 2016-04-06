@@ -46,15 +46,15 @@ include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
 /******************************************************************************
  * Simple Amazon クラスの設定
  *****************************************************************************/
-$SimpleAmazon = new SimpleAmazon();
+$simpleAmazon = new SimpleAmazon();
 
 class SimpleAmazon {
 
 	private $options;
 
-	private $view;
-	private $listview;
-	private $admin;
+	public $saView;
+	public $saListView;
+	private $saAdmin;
 
 	/**
 	 * construct
@@ -67,11 +67,11 @@ class SimpleAmazon {
 		$this->set_options();
 
 		//オブジェクトの設定
-		$this->view     = new SimpleAmazonView();
-		$this->listview = new SimpleAmazonListView();
+		$this->saView     = new SimpleAmazonView();
+		$this->saListView = new SimpleAmazonListView();
 
 		if (is_admin()) {
-			$this->admin = new SimpleAmazonAdmin();
+			$this->saAdmin = new SimpleAmazonAdmin();
 		}
 
 		//インストール&アンインストール時の処理
@@ -85,7 +85,7 @@ class SimpleAmazon {
 		add_action('wp_head', array($this, 'add_stylesheet'), 1);
 
 		// amazon のURLをhtmlに置き換える
-		add_filter('the_content', array($this->view, 'replace'));
+		add_filter('the_content', array($this->saView, 'replace'));
 
 	}
 
@@ -188,21 +188,21 @@ class SimpleAmazon {
  *****************************************************************************/
  
 /* 指定したasinの商品情報を表示する関数 */
-function simple_amazon_view( $asin, $code = null, $styles = null ) {
-	global $simpleAmazonView;
-	$simpleAmazonView->view( $asin, esc_html($code), $styles );
+function simple_amazon_view( $asin, $code = null, $template = null ) {
+	global $simpleAmazon;
+	$simpleAmazon->saView->view( $asin, $code, $template );
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */
 function simple_amazon_custum_view() {
-	global $simpleAmazonView;
-	$simpleAmazonView->view_custom_field();
+	global $simpleAmazon;
+	$simpleAmazon->saView->view_custom_field();
 }
 
 /* 指定したリクエストのリストを表示する関数 */
 function simple_amazon_list_view( $params, $code = null, $styles = null ) {
-	global $simpleAmazonListView;
-	$simpleAmazonListView->view( $params, esc_html($code), $styles );
+	global $simpleAmazon;
+	$simpleAmazon->saListView->view( $params, $code, $styles );
 /*
 		$params = array(
 			'SearchIndex'   => 'Books',

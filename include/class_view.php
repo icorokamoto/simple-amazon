@@ -25,18 +25,23 @@ class SimpleAmazonView {
 
 	/**
 	 * PHP の関数として Amazon の個別商品 HTML を呼び出す
-	 * @param	string $asin
-	 * @param	string $tld
-	 * @param	array $style
+	 * @param	String $asin
+	 * @param	String $code
+	 * @param	String $template
 	 * @return	none
 	 */
-	public function view( $asin, $code, $styles ) {
+	public function view( $asin, $code, $template = null ) {
 
 		$sidplay = "";
 
 		if( $this->lib->check_options( $this->options ) ) {
+
+			if( $template ) {
+				$this->options['template'] = $template;
+			}
+
 			$domain = $this->lib->get_domain($code);
-			$display = $this->generate( $asin, $domain, $styles );
+			$display = $this->generate( $asin, $domain );
 		}
 
 		echo $display;
@@ -53,10 +58,10 @@ class SimpleAmazonView {
 		global $post;
 
 		if( $this->lib->check_options( $this->options ) ) {
-			$amazon_index = get_post_custom_values('amazon', $post->ID);
-			if($amazon_index) {
-				$html = '';
-				foreach($amazon_index as $content) {
+			$amazon_index = get_post_custom_values( 'amazon', $post->ID );
+			if( $amazon_index ) {
+				$html = "";
+				foreach( $amazon_index as $content ) {
 					$html .= $this->replace( $content );
 				}
 				echo $html;
@@ -100,7 +105,7 @@ class SimpleAmazonView {
 						$domain = $default_domain;
 					}
 
-					$display = $this->generate( $asin, $domain, array( 'name' => $name ) );
+					$display = $this->generate( $asin, $domain );
 
 					// URLの置換
 					$content = str_replace($arr[0][$i], $display, $content);
@@ -122,7 +127,7 @@ class SimpleAmazonView {
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $asin, $domain, $styles ) {
+	public function generate( $asin, $domain ) {
 
 		// ISBN13をISBN10に変換
 		if( strlen( $asin ) == 13 ) {
