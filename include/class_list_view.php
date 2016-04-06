@@ -139,7 +139,7 @@ class SimpleAmazonListView {
 			$author = $item->ItemAttributes->Author;
 
 			if($show_thumbnail) {
-				$img = $this->lib->get_img($item, $imgsize);
+				$img = $this->get_img($item, $imgsize);
 				$img_src = $img->URL;
 				$img_h =  $img->Height;
 				$img_w =  $img->Width;
@@ -157,6 +157,34 @@ class SimpleAmazonListView {
 		$html = $before_list . $list . $after_list;
 
 		return $html;
+	}
+
+	/**
+	 * 画像のURL、width、heightを設定する
+	 * @param Object $xml
+	 * @param String $imgsize
+	 * @return Object $img
+	 */
+	public function get_img( $xml, $imgsize ) {
+
+		$img = new stdClass();
+
+		if($xml == null )
+			$xml = new stdClass();
+
+		switch( $imgsize ) {
+			case 'small':
+				$img = $xml->SmallImage;
+				break;
+			case 'large':
+				$img = $xml->LargeImage;
+				break;
+			default:
+				$img = $xml->MediumImage;
+		}
+
+		return $img;
+
 	}
 
 }
