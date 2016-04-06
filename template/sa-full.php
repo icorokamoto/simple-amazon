@@ -1,10 +1,12 @@
 <?php
 
+// 商品詳細のリストを作成する
 $detail = "";
 $detail_list = "";
 
 $attr = $item->ItemAttributes;
 
+//商品のカテゴリ別に取得する情報を変える
 switch($attr->ProductGroup) {
 	case "Book":
 		if( $attr->Author !="" ) {
@@ -61,6 +63,6 @@ if ( $detail_list ) {
 
 <p class="sa-title"><a href="<?php echo $url; ?>" rel="nofollow"><?php echo $title; ?></a></p>
 
-<?php echo  $detail; ?>
+<?php echo $detail; //商品詳細リストを出力 ?>
 
 </div>

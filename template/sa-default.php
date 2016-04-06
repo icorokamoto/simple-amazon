@@ -21,7 +21,7 @@
   高さ: <?php echo $l_image_h; ?>
   幅:   <?php echo $l_image_w; ?>
 
-また、$item を使って、ItemAttributesレスポンスグループを使うことも出来ます。
+また、$item を使って、ItemAttributesレスポンスグループを使うことも出来ます。具体的には
 
 $item->ItemAttributes->Binding
 
