@@ -120,15 +120,6 @@ class SimpleAmazonView {
 		// TLD
 		$tld = $this->lib->get_TLD($domain);
 
-		//style
-		$default_styles = array(
-			'name'         => '',
-			'layout_type'  => $this->options['layout_type'],
-			'imgsize'      => $this->options['imgsize'],
-			'windowtarget' => $this->options['windowtarget']
-		);
-		$this->styles = wp_parse_args($styles, $default_styles);
-
 		// params
 		$params = array(
 			'AssociateTag'  => $this->lib->get_aid($tld, $this->options),
@@ -170,12 +161,6 @@ class SimpleAmazonView {
 		$tld = $this->lib->get_TLD($domain);
 		$name = ($this->styles['name']) ? $this->styles['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
 		$tag = '?tag=' . $this->lib->get_aid($tld, $this->options);
-		$windowtarget = $this->styles['windowtarget'];
-
-		switch( $windowtarget ) {
-			case 'newwin': $windowtarget = ' target="_blank"'; break;
-			case 'self': $windowtarget = '';
-		}
 
 		$amazonlink = 'http://www.' . $domain . '/dp/' . $asin . $tag;
 		$amazonimg_url = 'http://images.amazon.com/images/P/' . $asin . '.09.THUMBZZZ.jpg';
@@ -200,7 +185,7 @@ class SimpleAmazonView {
 //		$output = '<!--Amazonのサーバでエラーが起こっているかもしれません。一度ページを再読み込みしてみてください。-->';
 		$output =
 			"\n".'<div class="simple-amazon-view">' . "\n" .
-			'<p class="sa-img-box"><a href="' . $amazonlink . '"' . $windowtarget . '>' . $amazonimg_tag . '</a></p>' . "\n" .
+			'<p class="sa-img-box"><a href="' . $amazonlink . '">' . $amazonimg_tag . '</a></p>' . "\n" .
 			'<p class="sa-title"><a href="' . $amazonlink . '">' . $name . '</a></p>' . "\n" .
 			'</div>';
 
@@ -214,15 +199,6 @@ class SimpleAmazonView {
 	 * @return string $output ( HTML )
 	 */
 	private function generate_item_html( $AmazonXml ) {
-
-		$layout_type  = $this->styles['layout_type'];
-		$imgsize      = $this->styles['imgsize'];
-		$windowtarget = $this->styles['windowtarget'];
-
-		switch( $windowtarget ) {
-			case 'self' : $windowtarget = ''; break;
-			default     : $windowtarget = ' target="_blank"';
-		}
 
 		$item = $AmazonXml->Items->Item;
 //		$attr = $item->ItemAttributes;

@@ -52,39 +52,6 @@ class SimpleAmazonAdmin {
 			$message .= '<div class="updated"><p><strong>設定を保存しました。</strong></p></div>' . "\n"; 
 		}
 
-/*
-		if ( $_POST['action'] == 'clear_cache' ){
-			$this->cache->clear();
-			$message .= '<div class="updated"><p><strong>キャッシュを削除しました。</strong></p></div>' . "\n"; 
-		}
-*/
-
-		//リンクの動作
-		switch( $this->options['windowtarget']) {
-			case 'self': $newwindow = ''; $selfwindow = ' checked'; break;
-			default: $newwindow = ' checked'; $selfwindow = '';
-		}
-
-		//画像サイズ
-		switch( $this->options['imgsize'] ) {
-			case 'small': $s_imgsize = ' checked'; $m_imgsize = ''; $l_imgsize = ''; break;
-			case 'large': $s_imgsize = ''; $m_imgsize = ''; $l_imgsize = ' checked'; break;
-			default: $s_imgsize = ''; $m_imgsize = ' checked'; $l_imgsize = '';
-		}
-
-		//表示項目
-		switch( $this->options['layout_type'] ) {
-			case 'simple': $default_layout = ''; $simple_layout = ' checked'; $title_layout = '';         $image_layout = ''; break;
-			case 'title':  $default_layout = ''; $simple_layout = '';         $title_layout = ' checked'; $image_layout = ''; break;
-			case 'image':  $default_layout = ''; $simple_layout = '';         $title_layout = '';         $image_layout = ' checked'; break;
-
-			//旧Ver.互換用
-			case 2: $default_layout = ''; $simple_layout = ' checked'; $title_layout = ''; $image_layout = ''; break;
-			case 3: $default_layout = ''; $simple_layout = ''; $title_layout = ' checked'; $image_layout = ''; break;
-
-			default: $default_layout = ' checked'; $simple_layout = ''; $title_layout = ''; $image_layout = '';
-		}
-
 		//テンプレートの設定
 		$template_dir = SIMPLE_AMAZON_PLUGIN_DIR . '/template/';
 		$templates = scandir( $template_dir );
@@ -115,7 +82,6 @@ class SimpleAmazonAdmin {
 
 		// 管理画面のテンプレート
 		$simple_amazon_admin_html =
-//			'<div class="wrap" id="footnote-options">' . "\n".
 			'<div class="wrap">' . "\n".
 			'<h2>Simple Amazon プラグイン設定</h2>' . "\n";
 
@@ -156,13 +122,6 @@ class SimpleAmazonAdmin {
 			'<input type="hidden" name="action" value="save_options" />' . "\n";
 
 		// タブ
-/*
-		$simple_amazon_admin_html .=
-			'<div id="simple-amazon-options-menu"><ul class="subsubsub">' . "\n" .
-			'<li><a href="#tabs-1">オプション設定</a></li> | ' . "\n" .
-			'<li><a href="#tabs-2">基本設定</a></li>' . "\n" .
-			'</ul></div>' . "\n";
-*/
 		$simple_amazon_admin_html .=
 			'<h2 class="nav-tab-wrapper" id="simple-amazon-options-menu">' . "\n" .
 			'<a href="#tabs-1" class="nav-tab">オプション設定</a>' . "\n" .
@@ -175,24 +134,6 @@ class SimpleAmazonAdmin {
 
 			'<h3>オプション設定</h3>' . "\n" .
 			'<table class="form-table">' . "\n" .
-
-			'<tr><th>商品リンクの動作</th>' . "\n" .
-			'<td><input type="radio" name="windowtarget" value="self"' . $selfwindow . ' />&nbsp;同じウィンドウ ( target 指定なし )<br />' . "\n" .
-			'<input type="radio" name="windowtarget" value="blank"' . $newwindow . ' />&nbsp;新規ウィンドウ ( target="_blank" )</td>' . "\n" .
-			'</tr>' . "\n" .
-
-			'<tr><th>商品詳細の表示項目</th>' . "\n" .
-			'<td><input type="radio" name="layout_type" value="full"' . $default_layout . ' />&nbsp;Full ( 画像、タイトル、出版社、発売時期、著者、価格、本のタイプ、ページ数、ISBN。本以外はこれに準ずる項目 )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="simple"' . $simple_layout . ' />&nbsp;Simple ( 画像とタイトルのみ )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="title"' . $title_layout . ' />&nbsp;Title ( タイトルのみ )<br />' . "\n" .
-			'<input type="radio" name="layout_type" value="image"' . $image_layout . ' />&nbsp;Image ( 画像のみ )</td>' . "\n" .
-			'</tr>' . "\n" .
-
-			'<tr><th>商品画像のサイズ</th>' . "\n" .
-			'<td><input type="radio" name="imgsize" value="small"' . $s_imgsize . ' />&nbsp;Small ( 最大 75 x 75px )<br />' . "\n" .
-			'<input type="radio" name="imgsize" value="medium"' . $m_imgsize . ' />&nbsp;Medium ( 最大 160 x 160px )<br />' . "\n" .
-			'<input type="radio" name="imgsize" value="large"' . $l_imgsize . ' />&nbsp;Large ( 最大 500 x 500px )</td>' . "\n" .
-			'</tr>' . "\n" .
 
 			'<tr><th>テンプレート</th>' . "\n" .
 			'<td><select name="template">' . "\n" .
@@ -342,9 +283,6 @@ class SimpleAmazonAdmin {
 			'associatesid_uk' => isset($_POST['associatesid_uk']) ? esc_html($_POST['associatesid_uk']) : '',
 			'associatesid_us' => isset($_POST['associatesid_us']) ? esc_html($_POST['associatesid_us']) : '',
 
-			'windowtarget'    => $_POST['windowtarget'],
-			'layout_type'     => $_POST['layout_type'],
-			'imgsize'         => $_POST['imgsize'],
 			'template'        => $_POST['template'],
 			'setcss'          => $_POST['setcss'],
 			'delete_setting'  => $_POST['delete_setting']

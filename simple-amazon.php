@@ -115,11 +115,8 @@ class SimpleAmazon {
 				'associatesid_uk' => '',
 				'associatesid_us' => '',
 				'delete_setting'  => 'no',
-				'imgsize'         => 'medium',
-				'layout_type'     => 0,
 				'secretaccesskey' => '',
 				'setcss'          => 'yes',
-				'windowtarget'    => 'self',
 				'template'        => 'sa-default.php'
 			);
 			update_option( 'simple_amazon_admin_options', $this->options );
