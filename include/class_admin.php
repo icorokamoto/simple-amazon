@@ -31,15 +31,9 @@ class SimpleAmazonAdmin {
 	 */
 	function addScripts() {
 
-//		wp_enqueue_script('jquery-ui-tabs', array('jquery'));
-//		wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array('jquery-ui-tabs'), SIMPLE_AMAZON_VER);
-
 		// add jQuery tabs for options page. Use jQuery UI Tabs from WP
 		if ( isset($_GET['page']) && $_GET['page'] == 'simple_amazon' ) {
-			//javascript
 			wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array(), SIMPLE_AMAZON_VER);
-			//css
-//			wp_enqueue_style('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.css', array(), SIMPLE_AMAZON_VER);
 		}
 
 	}
@@ -65,17 +59,20 @@ class SimpleAmazonAdmin {
 		}
 */
 
+		//リンクの動作
 		switch( $this->options['windowtarget']) {
 			case 'self': $newwindow = ''; $selfwindow = ' checked'; break;
 			default: $newwindow = ' checked'; $selfwindow = '';
 		}
 
+		//画像サイズ
 		switch( $this->options['imgsize'] ) {
 			case 'small': $s_imgsize = ' checked'; $m_imgsize = ''; $l_imgsize = ''; break;
 			case 'large': $s_imgsize = ''; $m_imgsize = ''; $l_imgsize = ' checked'; break;
 			default: $s_imgsize = ''; $m_imgsize = ' checked'; $l_imgsize = '';
 		}
 
+		//表示項目
 		switch( $this->options['layout_type'] ) {
 			case 'simple': $default_layout = ''; $simple_layout = ' checked'; $title_layout = '';         $image_layout = ''; break;
 			case 'title':  $default_layout = ''; $simple_layout = '';         $title_layout = ' checked'; $image_layout = ''; break;

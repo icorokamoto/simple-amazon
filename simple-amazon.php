@@ -63,6 +63,7 @@ class SimpleAmazon {
 	 */
 	public function __construct() {
 
+		//オプション設定の読み込み
 		$this->set_options();
 
 		//オブジェクトの設定
