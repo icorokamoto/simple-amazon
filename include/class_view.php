@@ -32,9 +32,13 @@ class SimpleAmazonView {
 	 */
 	public function view( $asin, $code, $styles ) {
 
-		$domain = $this->lib->get_domain($code);
+		$sidplay = "";
 
-		$display = $this->generate( $asin, $domain, $styles );
+		if( $this->lib->check_options( $this->options ) ) {
+			$domain = $this->lib->get_domain($code);
+			$display = $this->generate( $asin, $domain, $styles );
+		}
+
 		echo $display;
 
 	}
@@ -48,14 +52,17 @@ class SimpleAmazonView {
 
 		global $post;
 
-		$amazon_index = get_post_custom_values('amazon', $post->ID);
-		if($amazon_index) {
-			$html = '';
-			foreach($amazon_index as $content) {
-				$html .= $this->replace( $content );
+		if( $this->lib->check_options( $this->options ) ) {
+			$amazon_index = get_post_custom_values('amazon', $post->ID);
+			if($amazon_index) {
+				$html = '';
+				foreach($amazon_index as $content) {
+					$html .= $this->replace( $content );
+				}
+				echo $html;
 			}
-			echo $html;
 		}
+
 	}
 	
 	/**
@@ -64,6 +71,12 @@ class SimpleAmazonView {
 	 * @return	string $content ( HTML )
 	 */
 	public function replace($content) { // 記事本文中の呼び出しコードを変換
+
+		//オプションの設定が終わってない場合は置換せずに返す
+		if( ! $this->lib->check_options( $this->options ) ) {
+			return $content;
+		}
+
 
 //		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';

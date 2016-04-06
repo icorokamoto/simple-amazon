@@ -39,10 +39,13 @@ class SimpleAmazonListView {
 	 */
 	public function view( $params, $code, $style ) {
 
-		$code   = esc_html($code);
-		$domain = $this->lib->get_domain($code);
+		$display = "";
 
-		$display = $this->generate( $params, $domain, $style );
+		if( $this->lib->check_options( $this->options ) ) {
+			$code    = esc_html($code);
+			$domain  = $this->lib->get_domain($code);
+			$display = $this->generate( $params, $domain, $style );
+		}
 
 		echo $display;
 

@@ -5,6 +5,34 @@
 class SimpleAmazonLib {
 
 	/**
+	 * オプションの必須項目が入力されているかチェックする
+	 * @param Array $options
+	 * @return Boolean $result
+	 */
+	public function check_options( $options ) {
+
+		$result = false;
+
+		$check_associatesid = 
+			$options['associatesid_ca'] .
+			$options['associatesid_cn'] .
+			$options['associatesid_de'] .
+			$options['associatesid_es'] .
+			$options['associatesid_fr'] .
+			$options['associatesid_it'] .
+			$options['associatesid_jp'] .
+			$options['associatesid_uk'] .
+			$options['associatesid_us'];
+
+		if( $options['accesskeyid'] && $options['secretaccesskey'] && $check_associatesid ) {
+			$result = true;
+		}
+
+		return $result;
+
+	}
+
+	/**
 	 * 国コードからドメインを取得する
 	 * 国コードがnullの場合は言語設定からdomainを設定する
 	 * @param String $code
