@@ -172,15 +172,39 @@ class SimpleAmazonListView {
 		if($xml == null )
 			$xml = new stdClass();
 
+		$default_img = array(
+			'small'  => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png',
+			'medium' => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png',
+			'large'  => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png'
+		);
+
 		switch( $imgsize ) {
 			case 'small':
-				$img = $xml->SmallImage;
+				if( property_exists($xml, 'SmallImage') ){
+					$img = $xml->SmallImage;
+				} else {
+					$img->URL    = $default_img['small'];
+					$img->Width  = 75;
+					$img->Height = 75;
+				}
 				break;
 			case 'large':
-				$img = $xml->LargeImage;
+				if( property_exists($xml, 'LargeImage') ){
+					$img = $xml->LargeImage;
+				} else {
+					$img->URL    = $default_img['large'];
+					$img->Width  = 500;
+					$img->Height = 500;
+				}
 				break;
 			default:
-				$img = $xml->MediumImage;
+				if( property_exists($xml, 'MediumImage') ){
+					$img = $xml->MediumImage;
+				} else {
+					$img->URL    = $default_img['medium'];
+					$img->Width  = 160;
+					$img->Height = 160;
+				}
 		}
 
 		return $img;
