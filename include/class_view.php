@@ -239,6 +239,10 @@ class SimpleAmazonView {
 
 		// テンプレート //
 		$template = $this->options['template'];
+		
+		if( ! file_exists( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template ) ) {
+			$template = 'sa-default.php';
+		}
 
 		ob_start();
 		include( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template );
