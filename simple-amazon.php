@@ -119,7 +119,8 @@ class SimpleAmazon {
 				'layout_type'     => 0,
 				'secretaccesskey' => '',
 				'setcss'          => 'yes',
-				'windowtarget'    => 'self'
+				'windowtarget'    => 'self',
+				'template'        => 'sa-default.php'
 			);
 			update_option( 'simple_amazon_admin_options', $this->options );
 		}

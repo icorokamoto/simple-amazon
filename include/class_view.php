@@ -225,143 +225,37 @@ class SimpleAmazonView {
 		}
 
 		$item = $AmazonXml->Items->Item;
-		$attr = $item->ItemAttributes;
+//		$attr = $item->ItemAttributes;
+
+		// よく使いそうな項目はあらかじめ簡単な変数にしておく
+
+		//商品名
+		$title = $item->ItemAttributes->Title;
+		
+		//URL
 		$url  = $item->DetailPageURL;
 
+		//images
+		$s_image_url = $item->SmallImage->URL;
+		$s_image_h   = $item->SmallImage->Height;
+		$s_image_w   = $item->SmallImage->Width;
+
+		$m_image_url = $item->MediumImage->URL;
+		$m_image_h   = $item->MediumImage->Height;
+		$m_image_w   = $item->MediumImage->Width;
+
+		$l_image_url = $item->LargeImage->URL;
+		$l_image_h   = $item->LargeImage->Height;
+		$l_image_w   = $item->LargeImage->Width;
+
 		// テンプレート //
+		$template = $this->options['template'];
+
+		ob_start();
+		include( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template );
+		$output = ob_get_contents();
+		ob_end_clean();
 		
-		//image
-		if( $layout_type == 'image' ) {
-			$img = $this->lib->get_img($item, $imgsize);
-			$output = '<a href="'.$url.'"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" title="' . $attr->Title . '" class="sa-image" /></a>';
-		}
-		
-		//Title
-		elseif( $layout_type == 3 || $layout_type == 'title' ) {
-			$output = '<a href="'.$url.'"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a>';
-		}
-
-		//Title & Image
-		elseif( $layout_type == 2 || $layout_type == 'simple' ) {
-
-			$img = $this->lib->get_img($item, $imgsize);
-
-			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
-			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a></p>' . "\n";
-			$output .= '</div>' . "\n";
-		}
-
-/*
-		//Detail
-		elseif( $layout_type == 1 || $layout_type == 'detail' ) {
-
-			$img = $this->lib->get_img($item, $imgsize);
-
-			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
-			$output .= "\t" . '<p class="sa-title"><a href="'.$url.'"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a></p>' . "\n";
-
-			$output_list = "";
-
-			switch($attr->ProductGroup) {
-				case "Book":
-					if( $attr->Author !="" ) {
-						$output_list .= "\t" ."<li>著者／訳者：";
-						if( count($attr->Author) == 1 ) {
-							$output_list .= $attr->Author; 
-						} else {
-							foreach($attr->Author as $auth){ $output_list .= $auth.' '; }
-						}
-						$output_list .= "</li>\n";
-					}
-					$output_list .= "\t" . "<li>出版社：" . $attr->Manufacturer . "( " . $attr->PublicationDate . " )</li>" . "\n";
-					$output_list .= "\t" . "<li>" . $attr->Binding . "：" . $attr->NumberOfPages . " ページ</li>\n";
-					break;
-				case "DVD":
-					$output_list .= "\t" . "<li>販売元：" . $attr->Manufacturer . "( " . $attr->ReleaseDate . " )</li>" . "\n";
-					$output_list .= "\t" . "<li>時間：" . $attr->RunningTime . " 分</li>" . "\n";
-					$output_list .= "\t" . "<li>" . $attr->NumberOfDiscs . " 枚組 ( " . $attr->Binding . " )</li>\n";
-					break;
-				case "Music":
-					$output_list .= "<li>アーティスト：" . $attr->Artist . "</li>" . "\n";
-					$output_list .= "\t" . "<li>レーベル：" . $attr->Manufacturer . "( " . $attr->ReleaseDate . " )</li>\n";
-					break;
-				default:
-					if( $attr->Manufacturer ) $output_list .= "\t" . "<li>メーカー：" . $attr->Manufacturer . "</li>\n";
-					if( $attr->Binding ) $output_list .= "\t" . "<li>カテゴリ：" . $attr->Binding . "</li>\n";
-					if( $attr->ReleaseDate ) $output_list .= "\t" . "<li>発売日：" . $attr->ReleaseDate . "</li>\n";
-			}
-
-			if ( $output_list ) {
-				$output .= "\t" .'<ul class="sa-detail">' . "\n";
-				$output .= $output_list;
-				$output .= "\t" . '</ul>' . "\n";
-			}
-
-			$output .= '</div>' . "\n";
-
-		}
-*/
-		//Full
-		else {
-
-			$img = $this->lib->get_img($item, $imgsize);
-
-			$output = '<div class="simple-amazon-view">' . "\n";
-			$output .= "\t" . '<p class="sa-img-box"><a href="' . $url . '"' . $windowtarget . ' rel="nofollow"><img src="' . $img->URL . '" height="' . $img->Height . '" width="' . $img->Width . '" alt="" class="sa-image" /></a></p>' . "\n";
-			$output .= "\t" . '<p class="sa-title"><a href="' . $url . '"' . $windowtarget . ' rel="nofollow">' . $attr->Title . '</a></p>' . "\n";
-
-			$output_list = "";
-
-			switch($attr->ProductGroup) {
-				case "Book":
-					if( $attr->Author !="" ) {
-						$output_list .= "\t" ."<li>著者／訳者：";
-						if( count($attr->Author) == 1 ) {
-							$output_list .= $attr->Author; 
-						} else {
-							foreach($attr->Author as $auth){ $output_list .= $auth.' '; }
-						}
-						$output_list .= "</li>\n";
-					}
-					$output_list .= "\t" . "<li>出版社：" . $attr->Manufacturer . "( " . $attr->PublicationDate . " )</li>" . "\n";
-					$output_list .= "\t" . "<li>" . $attr->Binding . "：" . $attr->NumberOfPages . " ページ</li>\n";
-					$output_list .= "\t" . "<li>ISBN-10 : " . $attr->ISBN . "</li>\n";
-					$output_list .= "\t" . "<li>ISBN-13 : " . $attr->EAN . "</li>\n";
-					break;
-				case "DVD":
-					$output_list .= "\t" . "<li>販売元：" . $attr->Manufacturer . "( " . $attr->ReleaseDate . " )</li>" . "\n";
-					$output_list .= "\t" . "<li>時間：" . $attr->RunningTime . " 分</li>" . "\n";
-					$output_list .= "\t" . "<li>" . $attr->NumberOfDiscs . " 枚組 ( " . $attr->Binding . " )</li>\n";
-					break;
-				case "Music":
-					$output_list .= "<li>アーティスト：" . $attr->Artist . "</li>" . "\n";
-					$output_list .= "\t" . "<li>レーベル：" . $attr->Manufacturer . "( " . $attr->ReleaseDate . " )</li>\n";
-					break;
-				default:
-//					$feature_array = array();
-//					foreach($attr->Feature as $f) {
-//						array_push($feature_array, $f);
-//					}
-//					$feature = implode(' / ', $feature_array);
-
-					if( $attr->Manufacturer ) $output_list .= "\t" . "<li>メーカー：" . $attr->Manufacturer . "</li>\n";
-					if( $attr->Binding ) $output_list .= "\t" . "<li>カテゴリ：" . $attr->Binding . "</li>\n";
-					if( $attr->ReleaseDate ) $output_list .= "\t" . "<li>発売日：" . $attr->ReleaseDate . "</li>\n";
-//					if( $feature ) $output_list .= "\t" . "<li>" . $feature . "</li>\n";
-			}
-			if( $attr->ListPrice->FormattedPrice ) $output_list .= "\t" . "<li>定価：" . $attr->ListPrice->FormattedPrice . "</li>\n";
-//			if( $rating ) $output_list .= "\t" . "<li>おすすめ度：" . $rating . "</li>\n";
-
-			if ( $output_list ) {
-				$output .= "\t" .'<ul class="sa-detail">' . "\n";
-				$output .= $output_list;
-				$output .= "\t" . '</ul>' . "\n";
-			}
-			$output .= '</div>' . "\n";
-		}
-
 		return $output;
 
 	}

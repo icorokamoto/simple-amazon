@@ -85,11 +85,29 @@ class SimpleAmazonAdmin {
 			default: $default_layout = ' checked'; $simple_layout = ''; $title_layout = ''; $image_layout = '';
 		}
 
+		//テンプレートの設定
+		$template_dir = SIMPLE_AMAZON_PLUGIN_DIR . '/template/';
+		$templates = scandir( $template_dir );
+
+		$options_template = "";
+		foreach ($templates as $template) {
+			if( is_file( $template_dir . $template ) ) {
+				if($template == $this->options['template']) {
+					$selected = ' selected';
+				} else {
+					$selected = '';
+				}
+				$options_template .= '<option value="' . $template . '"' . $selected . '>' . $template . '</option>' . "\n";
+			}
+		}
+
+		//CSS
 		switch( $this->options['setcss']) {
 			case 'yes': $setcss_yes = ' checked'; $setcss_no = ''; break;
 			default: $setcss_yes = ''; $setcss_no = ' checked';
 		}
 
+		//アンインストール時の処理
 		switch( $this->options['delete_setting']) {
 			case 'yes': $delete_setting_yes = ' checked'; $delete_setting_no = ''; break;
 			default: $delete_setting_yes = ''; $delete_setting_no = ' checked';
@@ -174,6 +192,12 @@ class SimpleAmazonAdmin {
 			'<td><input type="radio" name="imgsize" value="small"' . $s_imgsize . ' />&nbsp;Small ( 最大 75 x 75px )<br />' . "\n" .
 			'<input type="radio" name="imgsize" value="medium"' . $m_imgsize . ' />&nbsp;Medium ( 最大 160 x 160px )<br />' . "\n" .
 			'<input type="radio" name="imgsize" value="large"' . $l_imgsize . ' />&nbsp;Large ( 最大 500 x 500px )</td>' . "\n" .
+			'</tr>' . "\n" .
+
+			'<tr><th>テンプレート</th>' . "\n" .
+			'<td><select name="template">' . "\n" .
+			$options_template . 
+			'</select></td>' . "\n" .
 			'</tr>' . "\n" .
 
 			'<tr><th>CSSの読み込み</th>' . "\n" .
@@ -321,6 +345,7 @@ class SimpleAmazonAdmin {
 			'windowtarget'    => $_POST['windowtarget'],
 			'layout_type'     => $_POST['layout_type'],
 			'imgsize'         => $_POST['imgsize'],
+			'template'        => $_POST['template'],
 			'setcss'          => $_POST['setcss'],
 			'delete_setting'  => $_POST['delete_setting']
 		);

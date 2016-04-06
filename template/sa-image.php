@@ -1,0 +1,1 @@
+<a href="<?php echo $url; ?>" rel="nofollow"><img src="<?php echo $m_image_url; ?>" height="<?php echo $m_image_h; ?>" width="<?php echo $m_image_w; ?>" title="<?php echo $title; ?>" class="sa-image" /></a>
