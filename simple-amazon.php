@@ -146,10 +146,10 @@ class SimpleAmazon {
 	 */
 	public function plugin_deactivation() {
 
-//		global $simpleAmazonAdmin;
-
 		// オプション値の削除
-		$this->admin->uninstall();
+		if( $this->options['delete_setting'] == 'yes' ) {
+			delete_option( 'simple_amazon_admin_options' );
+		}
 
 		// simple_amazon_clear_chache_hook を wp-cron から削除する
 		wp_clear_scheduled_hook('simple_amazon_clear_chache_hook');

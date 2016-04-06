@@ -334,17 +334,6 @@ class SimpleAmazonAdmin {
 
 	}
 
-	/**
-	 * @brief	オプション設定をデータベースから削除する
-	 * @param none
-	 * @return none
-	 */
-	public function uninstall() {
-		if( $this->options['delete_setting'] == 'yes' ) {
-			delete_option( 'simple_amazon_admin_options' );
-		}
-	}
-
 }
 
 ?>
