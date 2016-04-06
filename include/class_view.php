@@ -20,7 +20,7 @@ class SimpleAmazonView {
 		$this->options = $simple_amazon_options;
 		$this->lib = new SimpleAmazonLib();
 
-  	}
+	}
  
 
 	/**
