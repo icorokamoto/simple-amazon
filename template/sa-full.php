@@ -64,7 +64,7 @@ if ( $detail_list ) {
 <div class="sa-detail-box">
 <p class="sa-title"><a href="<?php echo $url; ?>" rel="nofollow"><?php echo $title; ?></a></p>
 <?php echo $detail; //商品詳細リストを出力 ?>
-<p class="sa-link"><a href="' . $url . '"' . $windowtarget . ' rel="nofollow">Amazon詳細ページへ</a></p>
+<p class="sa-link"><a href="<?php echo $url; ?>" rel="nofollow">Amazon詳細ページへ</a></p>
 </div>
 
 </div>

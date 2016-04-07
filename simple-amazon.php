@@ -6,7 +6,7 @@ Description: ASIN を指定して Amazon から個別商品の情報を取出し
 Author: icoro
 Version: 6.0
 Author URI: http://www.icoro.com/
-Special Thanks: tomokame (http://http://tomokame.moo.jp/)
+Special Thanks: tomokame (http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)
 Special Thanks: hiromasa.zone :o) (http://hiromasa.zone.ne.jp/)
 Special Thanks: PEAR :: Package :: Cache_Lite (http://pear.php.net/package/Cache_Lite)
