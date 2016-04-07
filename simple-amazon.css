@@ -1,16 +1,14 @@
 /* ----------------------------------------------
 	div.simple-amazon-view
 ---------------------------------------------- */
+
+/* structure */
 div.simple-amazon-view {
-	margin: 10px 0;
-	padding: 5px 10px;
+	margin: 20px 0;
+	padding: 12px;
 	background-color: #fff;
 	border: 5px solid #ccc;
-	font-size: 12px;
-	clear: both;
 }
-
-/* cleafix */
 div.simple-amazon-view:after {
 	content: ".";
 	display: block;
@@ -18,28 +16,69 @@ div.simple-amazon-view:after {
 	clear: both;
 	visibility: hidden;
 }
-*html div.simple-amazon-view { zoom: 1; }
-*:first-child+html div.simple-amazon-view { zoom: 1; }
 
-div.simple-amazon-view img.sa-image {
-	float: left;
-	margin: 5px 10px 5px 0px;
-	padding: 5px;
-	background-color: #999;
-	border: none;
+.simple-amazon-view p {
+	margin: 0;
 }
 
-.simple-amazon-view p.sa-title {
-	padding: 5px 0 10px;
-	font-size: 14px;
+.sa-img-box {
+	float: left;
+	width: 175px;
+	line-height: 100%;
+	text-align: center;
+	border: 1px solid #ddd;
+}
+
+.sa-detail-box {
+	margin-left: 185px;
+}
+
+@media (max-width: 480px) {
+	.sa-img-box {
+		float: none;
+		margin: 0 auto;
+	}
+	.sa-detail-box {
+		margin-left: 0;
+		margin-top: 1.2em;
+	}
+}
+
+/* in sa-img-box */
+.sa-img-box a img {
+	display: inline;
+}
+
+/* in sa-detail-box */
+.sa-detail-box .sa-title {
+	padding: 0;
+	font-size: 1.4em;
 	font-weight: bold;
 }
 
-div.simple-amazon-view ul.sa-detail {
-	margin:0;
-	list-style-type: none
+.sa-detail-box ul.sa-detail {
+	margin: 10px 0;
+	padding-left: 1em;
+	list-style-type: none;
 }
 
-div.simple-amazon-view p {
+.sa-detail-box ul.sa-detail li {
 	margin: 0;
+	line-height: 120%;
+}
+
+.sa-detail-box .sa-link {
+	text-align: right;
+}
+
+.sa-detail-box .sa-link a {
+	background-color: #FEA909;
+	color: #fff;
+	padding: 7px 12px;
+	text-decoration: none;
+	border-radius: 5px;
+	font-weight: bold;
+}
+.sa-detail-box .sa-link a:hover {
+	color: #fff;
 }

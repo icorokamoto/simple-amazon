@@ -59,10 +59,12 @@ if ( $detail_list ) {
 ?>
 <div class="simple-amazon-view">
 
-<p class="sa-img-box"><a href="<?php echo $url; ?>" rel="nofollow"><img src="<?php echo $m_image_url; ?>" height="<?php echo $m_image_h; ?>" width="<?php echo $m_image_w; ?>" title="<?php echo $title; ?>" class="sa-image" /></a></p>
+<div class="sa-img-box"><a href="<?php echo $url; ?>" rel="nofollow"><img src="<?php echo $m_image_url; ?>" height="<?php echo $m_image_h; ?>" width="<?php echo $m_image_w; ?>" title="<?php echo $title; ?>" class="sa-image" /></a></div>
 
+<div class="sa-detail-box">
 <p class="sa-title"><a href="<?php echo $url; ?>" rel="nofollow"><?php echo $title; ?></a></p>
-
 <?php echo $detail; //商品詳細リストを出力 ?>
+<p class="sa-link"><a href="' . $url . '"' . $windowtarget . ' rel="nofollow">Amazon詳細ページへ</a></p>
+</div>
 
 </div>
