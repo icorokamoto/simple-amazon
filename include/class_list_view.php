@@ -143,12 +143,12 @@ class SimpleAmazonListView {
 				$img_src = $img->URL;
 				$img_h =  $img->Height;
 				$img_w =  $img->Width;
-				$list .= "<a href=\"{$url}\" class=\"pub_img\"><img src=\"{$img_src}\" width=\"{$img_w}\" height=\"{$img_h}\" title=\"{$title}\" /></a>";
+				$list .= "<a href=\"{$url}\" class=\"pub_img\" rel=\"nofollow\"><img src=\"{$img_src}\" width=\"{$img_w}\" height=\"{$img_h}\" title=\"{$title}\" /></a>";
 			}
 
 			if($show_title) {
 				$pubdate = $item->ItemAttributes->PublicationDate;
-				$list .= "<a href=\"{$url}\">{$title}</a> <span class=\"pub_info\">{$author} {$pubdate}</span>";
+				$list .= "<a href=\"{$url}\" rel=\"nofollow\">{$title}</a> <span class=\"pub_info\">{$author} {$pubdate}</span>";
 			}
 
 			$list .= $after_li;
