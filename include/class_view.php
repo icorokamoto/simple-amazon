@@ -94,7 +94,7 @@ class SimpleAmazonView {
 			if( preg_match_all($regexp, $content, $arr) ) {
 				for ($i=0; $i<count($arr[0]); $i++) {
 					$asin = $arr['asin'][$i];
-					$name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
+//					$name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
 
 					if( isset($arr['domain'][$i]) ) {
 						$domain = trim($arr['domain'][$i]);
