@@ -4,7 +4,7 @@ Donate link:
 Tags: amazon
 Requires at least: 2.6
 Tested up to: 4.4.2
-Stable tag: 6.0
+Stable tag: 6.0.1
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
 
@@ -61,6 +61,9 @@ PHPの関数として呼び出す場合：
 
 
 == Changelog ==
+
+= 6.0.1 =
+* Amazonのリンクを取得するための正規表現を更新した。
 
 = 6.0 =
 * テンプレート機能を実装した。
@@ -193,7 +196,7 @@ PHPの関数として呼び出す場合：
 
 php 関数として呼び出す場合は、テーマファイル等に以下のように記載します。
 
-<?php simple_amazon_view($asin, $domain, $template ); ?>
+<?php simple_amazon_view( $asin, $domain, $template ); ?>
 
 　$asin は Amazon の ASIN です。
 　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, jp, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
@@ -268,8 +271,7 @@ simple_amazon_list_view($params, null, $styles);
 　/include/class_view.php の 86行目以降にある $regexps[] を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。
 　以下のような正規表現を利用して「ASIN」を取り出しています。
 
-ASINを指定する部分(必須): (?P<asin>[A-Z0-9]{10,13})
-商品名を指定する部分(任意): (?P<name>[\S]+)
+ASINを指定する部分: (?P<asin>[A-Z0-9]{10,13})
 
 　たとえば、wp-tmkm-amazonとの互換を保ちたい場合は以下の行を追加します。
 
