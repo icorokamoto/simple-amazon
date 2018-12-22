@@ -188,7 +188,7 @@ class SimpleAmazonView {
 			$imgsize = getimagesize( $amazonimg_url );
 			if( $imgsize[0] == 1 && $imgsize[1] == 1 ) {
 				//画像キメ打ち
-				$amazonimg_url = SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png';
+				$amazonimg_url = SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';
 				$amazonimg_size = ' width="75" height="75"';
 			} else {
 				$amazonimg_size = ' ' . $imgsize[3];
@@ -229,17 +229,17 @@ class SimpleAmazonView {
 
 		//images
 		$eximg = property_exists($item, 'SmallImage');
-		$s_image_url = ( $eximg ) ? $item->SmallImage->URL    : SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png';
+		$s_image_url = ( $eximg ) ? $item->SmallImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';
 		$s_image_h   = ( $eximg ) ? $item->SmallImage->Height : 75;
 		$s_image_w   = ( $eximg ) ? $item->SmallImage->Width  : 75;
 
 		$eximg = property_exists($item, 'MediumImage');
-		$m_image_url = ( $eximg ) ? $item->MediumImage->URL    : SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png';
+		$m_image_url = ( $eximg ) ? $item->MediumImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg.png';
 		$m_image_h   = ( $eximg ) ? $item->MediumImage->Height : 160;
 		$m_image_w   = ( $eximg ) ? $item->MediumImage->Width  : 160;
 
 		$eximg = property_exists($item, 'LargeImage');
-		$l_image_url = ( $eximg ) ? $item->LargeImage->URL    : SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png';
+		$l_image_url = ( $eximg ) ? $item->LargeImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_large.png';
 		$l_image_h   = ( $eximg ) ? $item->LargeImage->Height : 500;
 		$l_image_w   = ( $eximg ) ? $item->LargeImage->Width  : 500;
 

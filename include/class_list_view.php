@@ -173,9 +173,9 @@ class SimpleAmazonListView {
 			$xml = new stdClass();
 
 		$default_img = array(
-			'small'  => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png',
-			'medium' => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png',
-			'large'  => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png'
+			'small'  => SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png',
+			'medium' => SIMPLE_AMAZON_IMG_URL . 'amazon_noimg.png',
+			'large'  => SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_large.png'
 		);
 
 		switch( $imgsize ) {
