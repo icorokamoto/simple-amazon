@@ -67,4 +67,4 @@ if ( $detail_list ) {
 <p class="sa-link"><a href="<?php echo $url; ?>" rel="nofollow">Amazon詳細ページへ</a></p>
 </div>
 
-</div>
+</div><!-- simple-amazon-view -->
