@@ -86,7 +86,7 @@ class SimpleAmazon {
 		add_action('wp_head', array($this, 'add_stylesheet'), 1);
 
 		// amazon のURLをhtmlに置き換える
-		add_filter('the_content', array($this->saView, 'replace'));
+		add_filter('the_content', array($this->saView, 'replace'), 1);
 
 	}
 
