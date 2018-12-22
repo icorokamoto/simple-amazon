@@ -158,13 +158,40 @@ class SimpleAmazonView {
 		$xml = $parser->getamazonxml( $tld, $params );
 
 		if( is_string($xml) ) {
-//			$html = $this->generate_item_html_nonres( $params['ItemId'], $domain );
-			$html = '<!--Amazonのサーバでエラーが起こっているかもしれません。ページを再読み込みしてみてください。-->';
+			//エラーログの出力
+			$this->errorlog( $asin );
+
+			//エラーメッセージの表示
+			if (is_user_logged_in()) {
+//				$html = $this->generate_item_html_nonres( $params['ItemId'], $domain );
+//				$html = '<!--Amazonのサーバでエラーが起こっているかもしれません。ページを再読み込みしてみてください。-->';
+				$html = '<div class="notice">' . "\n"
+						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
+						. '<pre>' . $xml . '</pre>' . "\n"
+						. '</div>' . "\n";
+			}
 		} else {
 			$html = $this->generate_item_html( $xml );
 		}
 
 		return $html;
+	}
+
+	/**
+	 * エラーログを書き出す
+	 * @param string $asin ( ASIN )
+	 * @return none
+	 */
+	private function errorlog( $asin ) {
+
+		global $post;
+
+		$logfile = SIMPLE_AMAZON_CACHE_DIR . 'error.log';
+
+		$url = get_permalink( $post->ID );
+		$data = $url . ', ' . $asin . "\n";
+
+		file_put_contents( $logfile, $data, FILE_APPEND );
 	}
 
 	/**

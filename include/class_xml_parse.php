@@ -91,7 +91,7 @@ class SimpleAmazonXmlParse {
 		// サーバーからレスポンスはある?
 		if( $xmldata === false ) {
 //			$error_message = '<!-- レスポンスがありません。 -->' . "\n";
-			$error_message = '<!-- ' . $http_response_header . ' -->';
+			$error_message = $http_response_header;
 			return $error_message;
 		}
 
@@ -100,18 +100,16 @@ class SimpleAmazonXmlParse {
 
 		// リクエストは有効?
 		if( !$AmazonXml->Items || $AmazonXml->Items->Request->IsValid == 'False' ) {
-			$error_message = '<!-- 与えられたリクエストが正しくありません -->';
+			$error_message = '与えられたリクエストが正しくありません。';
 			return $error_message;
 		}
 
 		// エラー発生してない？
 		if( $AmazonXml->Items->Request->Errors ) {
 			$error = $AmazonXml->Items->Request->Errors->Error;
-			$error_message = '<!-- ' . "\n"
-					. 'Occurrence of an Error' . "\n"
+			$error_message = ' Occurrence of an Error' . "\n"
 					. '  Code: ' . $error->Code . "\n"
-					. '  Message: ' . $error->Message . "\n"
-					. ' -->';
+					. '  Message: ' . $error->Message;
 			return $error_message;
 		}
 
