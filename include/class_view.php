@@ -9,9 +9,13 @@ class SimpleAmazonView {
 	private $styles;
 	private $lib;
 
+	private $asin;
+	private $domain;
+	private $aff; // Array( $word, $r, $y )
+
 	/**
-	 * @param	none
-	 * @return	none
+	 * @param none
+	 * @return none
 	 */
 	public function __construct() {
 
@@ -22,15 +26,19 @@ class SimpleAmazonView {
 
 	}
  
-
 	/**
 	 * PHP の関数として Amazon の個別商品 HTML を呼び出す
-	 * @param	String $asin
-	 * @param	String $code
-	 * @param	String $template
-	 * @return	none
+	 * @param String $asin
+	 * @param String $code
+	 * @param String $template
+	 * @param Array $aff
+	 * @return none
 	 */
-	public function view( $asin, $code, $template = null ) {
+	public function view( $asin, $code = null, $template = null, $aff = null ) {
+
+		$this->asin    = $asin;
+		$this->aff     = $aff;
+		$this->domain  = $this->lib->get_domain( trim( $code ) );
 
 		$sidplay = "";
 
@@ -40,18 +48,17 @@ class SimpleAmazonView {
 				$this->options['template'] = $template;
 			}
 
-			$domain = $this->lib->get_domain($code);
-			$display = $this->generate( $asin, $domain );
+			$display = $this->generate();
 		}
 
-		echo $display;
+		return $display;
 
 	}
 
 	/**
 	 * カスタムフィールドから値を取得して商品情報を表示する
-	 * @param	none
-	 * @return	none
+	 * @param none
+	 * @return none
 	 */
 	public function view_custom_field() {
 
@@ -72,8 +79,8 @@ class SimpleAmazonView {
 	
 	/**
 	 * 記事本文中のコードを個別商品表示 HTML に置き換える
-	 * @param	string $content
-	 * @return	string $content ( HTML )
+	 * @param string $content
+	 * @return string $content ( HTML )
 	 */
 	public function replace($content) { // 記事本文中の呼び出しコードを変換
 
@@ -93,17 +100,17 @@ class SimpleAmazonView {
 		foreach( $regexps as $regexp ) {
 			if( preg_match_all($regexp, $content, $arr) ) {
 				for ($i=0; $i<count($arr[0]); $i++) {
-					$asin = $arr['asin'][$i];
+					$this->asin = $arr['asin'][$i];
 //					$name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
 
 					if( isset($arr['domain'][$i]) ) {
-						$domain = trim($arr['domain'][$i]);
+						$this->domain = trim($arr['domain'][$i]);
 //						$this->tld = $this->lib->get_TLD($this->domain);
 					} else {
-						$domain = $default_domain;
+						$this->domain = $default_domain;
 					}
 
-					$display = $this->generate( $asin, $domain );
+					$display = $this->generate();
 
 					// URLの置換
 					$content = str_replace($arr[0][$i], $display, $content);
@@ -121,20 +128,19 @@ class SimpleAmazonView {
 	
 	/**
 	 * parserにパラメータを渡してレスポンスを得る
-	 * @param string $asin
 	 * @param array $style
 	 * @return string $html
 	 */
-	public function generate( $asin, $domain ) {
+	private function generate() {
 
 		// ISBN13をISBN10に変換
-		if( strlen( $asin ) == 13 ) {
+		if( strlen( $this->asin ) == 13 ) {
 			$generalfunclib = new CalcISBNLibrary();
-			$asin = $generalfunclib->calc_chkdgt_isbn10( substr( $asin, 3, 9 ) );
+			$this->asin = $generalfunclib->calc_chkdgt_isbn10( substr( $this->asin, 3, 9 ) );
 		}
 
 		// TLD
-		$tld = $this->lib->get_TLD($domain);
+		$tld = $this->lib->get_TLD( $this->domain );
 
 		// params
 		$params = array(
@@ -143,11 +149,11 @@ class SimpleAmazonView {
 			'Condition'     => 'All',
 			'Operation'     => 'ItemLookup',
 			'ResponseGroup' => 'Images,ItemAttributes',
-			'ItemId'        => $asin
+			'ItemId'        => $this->asin
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
-		if( $domain == "javari.jp" )
+		if( $this->domain == "javari.jp" )
 			$params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// HTMLを取得 //
@@ -159,7 +165,7 @@ class SimpleAmazonView {
 
 		if( is_string($xml) ) {
 			//エラーログの出力
-			$this->errorlog( $asin );
+			$this->errorlog( $this->asin );
 
 			//エラーメッセージの表示
 			if (is_user_logged_in()) {
@@ -179,34 +185,32 @@ class SimpleAmazonView {
 
 	/**
 	 * エラーログを書き出す
-	 * @param string $asin ( ASIN )
 	 * @return none
 	 */
-	private function errorlog( $asin ) {
+	private function errorlog() {
 
 		global $post;
 
 		$logfile = SIMPLE_AMAZON_CACHE_DIR . 'error.log';
 
 		$url = get_permalink( $post->ID );
-		$data = $url . ', ' . $asin . "\n";
+		$data = $url . ', ' . $this->asin . "\n";
 
 		file_put_contents( $logfile, $data, FILE_APPEND );
 	}
 
 	/**
 	 * Amazon 商品の HTML を生成(レスポンスがない場合)
-	 * @param string $asin ( ASIN )
 	 * @return string $output ( HTML )
 	 */
-	private function generate_item_html_nonres( $asin, $domain ) {
+	private function generate_item_html_nonres() {
 
-		$tld = $this->lib->get_TLD($domain);
+		$tld = $this->lib->get_TLD( $this->domain );
 		$name = ($this->styles['name']) ? $this->styles['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
 		$tag = '?tag=' . $this->lib->get_aid($tld, $this->options);
 
-		$amazonlink = 'http://www.' . $domain . '/dp/' . $asin . $tag;
-		$amazonimg_url = 'http://images.amazon.com/images/P/' . $asin . '.09.THUMBZZZ.jpg';
+		$amazonlink = 'http://www.' . $this->domain . '/dp/' . $this->asin . $tag;
+		$amazonimg_url = 'http://images.amazon.com/images/P/' . $this->asin . '.09.THUMBZZZ.jpg';
 		$amazonimg_size = '';
 
 //		if( !$name ) $name = "Amazon.co.jpの詳細ページへ &raquo;";
@@ -248,6 +252,9 @@ class SimpleAmazonView {
 
 		// よく使いそうな項目はあらかじめ簡単な変数にしておく
 
+		//アフィリエイトオプション
+		$aff = $this->aff;
+		
 		//商品名
 		$title = $item->ItemAttributes->Title;
 		

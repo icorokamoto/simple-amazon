@@ -191,13 +191,15 @@ class SimpleAmazon {
 /* 指定したasinの商品情報を表示する関数 */
 function simple_amazon_view( $asin, $code = null, $template = null ) {
 	global $simpleAmazon;
-	$simpleAmazon->saView->view( $asin, $code, $template );
+	$html = $simpleAmazon->saView->view( $asin, $code, $template );
+	echo $html;
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */
 function simple_amazon_custum_view() {
 	global $simpleAmazon;
-	$simpleAmazon->saView->view_custom_field();
+	$html = $simpleAmazon->saView->view_custom_field();
+	echo $html;
 }
 
 /* 指定したリクエストのリストを表示する関数 */
