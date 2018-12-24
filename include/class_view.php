@@ -169,8 +169,6 @@ class SimpleAmazonView {
 
 			//エラーメッセージの表示
 			if (is_user_logged_in()) {
-//				$html = $this->generate_item_html_nonres( $params['ItemId'], $domain );
-//				$html = '<!--Amazonのサーバでエラーが起こっているかもしれません。ページを再読み込みしてみてください。-->';
 				$html = '<div class="notice">' . "\n"
 						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
 						. '<pre>' . $xml . '</pre>' . "\n"
