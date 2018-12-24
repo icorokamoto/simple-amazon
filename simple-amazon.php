@@ -215,4 +215,33 @@ function simple_amazon_list_view( $params, $code = null, $styles = null ) {
 */
 }
 
+/******************************************************************************
+ * ショートコード
+ *****************************************************************************/
+
+/* ショートコード */
+// [sa asin="10文字のASIN" word="検索に使用するキーワード"]
+function sa_shotcode( $atts ) {
+    $op = shortcode_atts( array(
+        'asin'    => null,
+		'code'    => null,
+		'tpl'     => null,
+		'word'    => null,
+		'rakuten' => 1,
+		'yahoo'   => 1
+    ), $atts );
+
+	$aff = Array( 
+		'word' => trim( $op['word'] ),
+		'r' => trim( $op['rakuten'] ),
+		'y' => trim( $op['yahoo'] )
+	);
+
+	global $simpleAmazon;
+	$html = $simpleAmazon->saView->view( $op['asin'], $op['code'], $op['tpl'], $aff );
+
+	return $html;
+}
+add_shortcode( 'sa', 'sa_shotcode' );
+
 ?>
