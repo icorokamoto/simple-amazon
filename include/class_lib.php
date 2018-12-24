@@ -48,7 +48,6 @@ class SimpleAmazonLib {
 			case 'it':        $domain = 'amazon.it'; break;
 			case 'jp':        $domain = 'amazon.co.jp'; break;
 			case 'uk':        $domain = 'amazon.co.uk'; break;
-			case 'javari.jp': $domain = 'javari.jp'; break;
 			case 'us':        $domain = 'amazon.com'; break;
 			default:          $code = null;
 		}
@@ -85,7 +84,6 @@ class SimpleAmazonLib {
 			case 'amazon.it':    $tld = 'it'; break;
 			case 'amazon.co.jp': $tld = 'jp'; break;
 			case 'amazon.co.uk': $tld = 'uk'; break;
-			case 'javari.jp':    $tld = 'jp'; break;
 			case 'amazon.com':   $tld = 'com'; break;
 			default:             $tld = $this->tld;
 		}

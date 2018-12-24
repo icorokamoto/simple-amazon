@@ -92,7 +92,7 @@ class SimpleAmazonView {
 
 //		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
-		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
 
 		$default_domain = $this->lib->get_domain();
@@ -153,8 +153,8 @@ class SimpleAmazonView {
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
-		if( $this->domain == "javari.jp" )
-			$params['MarketplaceDomain'] = 'www.javari.jp';
+//		if( $this->domain == "javari.jp" )
+//			$params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// HTMLを取得 //
 

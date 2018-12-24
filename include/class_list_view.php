@@ -84,8 +84,8 @@ class SimpleAmazonListView {
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
-		if( $domain == "javari.jp" )
-			$default_params['MarketplaceDomain'] = 'www.javari.jp';
+//		if( $domain == "javari.jp" )
+//			$default_params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// $params として リクエストの配列が与えられた場合
 		// 商品一覧のHTMLを取得
