@@ -125,10 +125,17 @@ class SimpleAmazonView {
 	
 	/**
 	 * parserにパラメータを渡してレスポンスを得る
-	 * @param array $style
+	 * @param none
 	 * @return string $html
 	 */
 	private function generate() {
+
+		$html = '';
+
+		//オプションの設定が終わってない場合は置換せずに返す
+		if( ! $this->lib->check_options( $this->options ) ) {
+			return $html;
+		}
 
 		// ISBN13をISBN10に変換
 		if( strlen( $this->asin ) == 13 ) {
