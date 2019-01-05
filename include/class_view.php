@@ -22,7 +22,8 @@ class SimpleAmazonView {
 		global $simple_amazon_options;
 
 		$this->options = $simple_amazon_options;
-		$this->lib = new SimpleAmazonLib();
+		$this->domain  = $this->options['default_domain'];
+		$this->lib     = new SimpleAmazonLib();
 
 	}
  
@@ -32,26 +33,26 @@ class SimpleAmazonView {
 	 * @param String $code
 	 * @param String $template
 	 * @param Array $aff
-	 * @return none
+	 * @return String $html
 	 */
 	public function view( $asin, $code = null, $template = null, $aff = null ) {
 
 		$this->asin    = $asin;
 		$this->aff     = $aff;
-		$this->domain  = $this->lib->get_domain( trim( $code ) );
 
-		$sidplay = "";
-
-		if( $this->lib->check_options( $this->options ) ) {
-
-			if( $template ) {
-				$this->options['template'] = $template;
-			}
-
-			$display = $this->generate();
+		if( $code ) {
+			$this->domain  = $this->lib->get_domain( trim( $code ) );
 		}
 
-		return $display;
+		$html = "";
+
+		if( $template ) {
+			$this->options['template'] = $template;
+		}
+
+		$html = $this->generate();
+
+		return $html;
 
 	}
 
@@ -64,17 +65,14 @@ class SimpleAmazonView {
 
 		global $post;
 
-		if( $this->lib->check_options( $this->options ) ) {
-			$amazon_index = get_post_custom_values( 'amazon', $post->ID );
-			if( $amazon_index ) {
-				$html = "";
-				foreach( $amazon_index as $content ) {
-					$html .= $this->replace( $content );
-				}
-				echo $html;
+		$amazon_index = get_post_custom_values( 'amazon', $post->ID );
+		if( $amazon_index ) {
+			$html = "";
+			foreach( $amazon_index as $content ) {
+				$html .= $this->replace( $content );
 			}
+			echo $html;
 		}
-
 	}
 	
 	/**
@@ -89,13 +87,13 @@ class SimpleAmazonView {
 			return $content;
 		}
 
-
 //		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
 		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
 
-		$default_domain = $this->lib->get_domain();
+//		$default_domain = $this->lib->get_domain();
+//		$default_domain = $this->options['default_domain'];
 
 		foreach( $regexps as $regexp ) {
 			if( preg_match_all($regexp, $content, $arr) ) {
@@ -105,15 +103,14 @@ class SimpleAmazonView {
 
 					if( isset($arr['domain'][$i]) ) {
 						$this->domain = trim($arr['domain'][$i]);
-//						$this->tld = $this->lib->get_TLD($this->domain);
-					} else {
-						$this->domain = $default_domain;
+//					} else {
+//						$this->domain = $default_domain;
 					}
 
-					$display = $this->generate();
+					$html = $this->generate();
 
 					// URLの置換
-					$content = str_replace($arr[0][$i], $display, $content);
+					$content = str_replace($arr[0][$i], $html, $content);
 				}
 			}
 		}
@@ -144,7 +141,7 @@ class SimpleAmazonView {
 
 		// params
 		$params = array(
-			'AssociateTag'  => $this->lib->get_aid($tld, $this->options),
+			'AssociateTag'  => $this->lib->get_aid( $this->domain, $this->options ),
 			'MerchantId'    => 'All',
 			'Condition'     => 'All',
 			'Operation'     => 'ItemLookup',
@@ -203,9 +200,9 @@ class SimpleAmazonView {
 	 */
 	private function generate_item_html_nonres() {
 
-		$tld = $this->lib->get_TLD( $this->domain );
+//		$tld = $this->lib->get_TLD( $this->domain );
 		$name = ($this->styles['name']) ? $this->styles['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
-		$tag = '?tag=' . $this->lib->get_aid($tld, $this->options);
+		$tag = '?tag=' . $this->lib->get_aid( $this->domain, $this->options );
 
 		$amazonlink = 'http://www.' . $this->domain . '/dp/' . $this->asin . $tag;
 		$amazonimg_url = 'http://images.amazon.com/images/P/' . $this->asin . '.09.THUMBZZZ.jpg';

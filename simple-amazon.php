@@ -55,6 +55,8 @@ class SimpleAmazon {
 
 	public $saView;
 	public $saListView;
+
+	private $lib;
 	private $saAdmin;
 
 	/**
@@ -63,6 +65,8 @@ class SimpleAmazon {
 	 * @return none
 	 */
 	public function __construct() {
+
+		$this->lib = new SimpleAmazonLib();
 
 		//オプション設定の読み込み
 		$this->set_options();
@@ -104,6 +108,7 @@ class SimpleAmazon {
 
 		// デフォルトの設定
 		if ( ! $this->options ){
+			$domain = $this->lib->get_domain();
 			$this->options = array(
 				'accesskeyid'     => '',
 				'associatesid_ca' => '',
@@ -115,6 +120,7 @@ class SimpleAmazon {
 				'associatesid_jp' => '',
 				'associatesid_uk' => '',
 				'associatesid_us' => '',
+				'default_domain'  => $domain,
 				'delete_setting'  => 'no',
 				'secretaccesskey' => '',
 				'setcss'          => 'yes',

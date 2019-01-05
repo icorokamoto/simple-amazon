@@ -10,8 +10,8 @@ class SimpleAmazonListView {
 	private $lib;
 
 	/**
-	 * @param	none
-	 * @return	none
+	 * @param none
+	 * @return none
 	 */
 	public function __construct() {
 
@@ -71,12 +71,11 @@ class SimpleAmazonListView {
 		);
 		$this->styles = wp_parse_args($styles, $default_styles);
 
-		$domain = $this->lib->get_domain();
 		$tld    = $this->lib->get_TLD($domain);
 
 		// params
 		$default_params = array(
-			'AssociateTag'  => $this->lib->get_aid($tld, $this->options),
+			'AssociateTag'  => $this->lib->get_aid($domain, $this->options),
 			'MerchantId'    => 'All',
 			'Condition'     => 'All',
 			'Operation'     => 'ItemSearch',

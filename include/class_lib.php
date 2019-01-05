@@ -4,6 +4,30 @@
  *****************************************************************************/
 class SimpleAmazonLib {
 
+	public $lang_domain_list = array(
+		'en_CA' => 'amazon.ca',
+		'zh_CN' => 'amazon.cn',
+		'de_DE' => 'amazon.de',
+		'es_ES' => 'amazon.es',
+		'fr_FR' => 'amazon.fr',
+		'it_IT' => 'amazon.it',
+		'ja'    => 'amazon.co.jp',
+		'en_GB' => 'amazon.co.uk',
+		'en_US' => 'amazon.com'
+	);
+
+	public $code_domain_list = array(
+		'ca'  => 'amazon.ca',
+		'cn'  => 'amazon.cn',
+		'de'  => 'amazon.de',
+		'es'  => 'amazon.es',
+		'fr'  => 'amazon.fr',
+		'it'  => 'amazon.it',
+		'jp'  => 'amazon.co.jp',
+		'uk'  => 'amazon.co.uk',
+		'com' => 'amazon.com'
+	);
+
 	/**
 	 * オプションの必須項目が入力されているかチェックする
 	 * @param Array $options
@@ -39,30 +63,19 @@ class SimpleAmazonLib {
 	 * @return String $domain
 	 */
 	public function get_domain( $code = null ) {
-		switch($code) {
-			case 'ca':        $domain = 'amazon.ca'; break;
-			case 'cn':        $domain = 'amazon.cn'; break;
-			case 'de':        $domain = 'amazon.de'; break;
-			case 'es':        $domain = 'amazon.es'; break;
-			case 'fr':        $domain = 'amazon.fr'; break;
-			case 'it':        $domain = 'amazon.it'; break;
-			case 'jp':        $domain = 'amazon.co.jp'; break;
-			case 'uk':        $domain = 'amazon.co.uk'; break;
-			case 'us':        $domain = 'amazon.com'; break;
-			default:          $code = null;
+
+		$domain = 'amazon.com';
+
+		if( $code && array_key_exists( $code, $this->code_domain_list ) ) {
+			$domain = $this->code_domain_list[$code];
+		} else {
+			$code = null;
 		}
 
-		if($code == null) {
-			switch(WPLANG) {
-				case 'en_CA': $domain = 'amazon.ca'; break;
-				case 'zh_CN': $domain = 'amazon.cn'; break;
-				case 'de_DE': $domain = 'amazon.de'; break;
-				case 'es_ES': $domain = 'amazon.es'; break;
-				case 'fr_FR': $domain = 'amazon.fr'; break;
-				case 'it_IT': $domain = 'amazon.it'; break;
-				case 'ja':    $domain = 'amazon.co.jp'; break;
-				case 'en_GB': $domain = 'amazon.co.uk'; break;
-				default:      $domain = 'amazon.com';
+		if( !$code ) {
+			$wplang = get_locale();
+			if( array_key_exists( $wplang, $this->lang_domain_list ) ) {
+				$domain = $this->lang_domain_list[$wplang];
 			}
 		}
 		
@@ -75,36 +88,24 @@ class SimpleAmazonLib {
 	 * @return String $tld
 	 */
 	public function get_TLD( $domain ) {
-		switch($domain) {
-			case 'amazon.ca':    $tld = 'ca'; break;
-			case 'amazon.cn':    $tld = 'cn'; break;
-			case 'amazon.de':    $tld = 'de'; break;
-			case 'amazon.es':    $tld = 'es'; break;
-			case 'amazon.fr':    $tld = 'fr'; break;
-			case 'amazon.it':    $tld = 'it'; break;
-			case 'amazon.co.jp': $tld = 'jp'; break;
-			case 'amazon.co.uk': $tld = 'uk'; break;
-			case 'amazon.com':   $tld = 'com'; break;
-			default:             $tld = $this->tld;
+		$domain_code_list = array_flip( $this->code_domain_list );
+		if( array_key_exists( $domain, $domain_code_list ) ) {
+			$tld = $domain_code_list[$domain];
 		}
 		return $tld;
 	}
 	
 	/**
-	 * TLDからアソシエイトIDを取得する
-	 * @param String $tld
-	 * @param Array $ids
+	 * ドメインからアソシエイトIDを取得する
+	 * @param String $domain
+	 * @param Array $array_id
 	 * @return String $aid
 	 */
-	public function get_aid($tld, $array_id) {
-		
-		if($tld == 'com')
-			$tld = 'us';
-
-		$associatesid_key = 'associatesid_' . $tld;
-
-		$aid = $array_id[$associatesid_key];
-
+	public function get_aid( $domain, $array_id ) {
+		$domain_code_list = array_flip( $this->code_domain_list );
+		$code = $domain_code_list[$domain];
+		if( $code == 'com' ) $code = 'us';
+		$aid = $array_id['associatesid_' . $code];
 		return $aid;
 	}
 

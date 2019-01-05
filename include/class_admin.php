@@ -7,6 +7,7 @@ class SimpleAmazonAdmin {
 
 	private $cache;
 	private $options;
+	private $lib;
 
 	/**
 	 * Construct
@@ -17,8 +18,9 @@ class SimpleAmazonAdmin {
 
 		global $simple_amazon_options;
 
-		$this->options  = $simple_amazon_options;
-		$this->cache    = new SimpleAmazonCacheControl();
+		$this->options = $simple_amazon_options;
+		$this->cache   = new SimpleAmazonCacheControl();
+		$this->lib     = new SimpleAmazonLib();
 
 		//アクションの設定
 		add_action('admin_menu', array($this, 'simple_amazon_add_options'));
@@ -66,7 +68,7 @@ class SimpleAmazonAdmin {
 			}
 		}
 		
-		//テンプレートの設定
+		//「テンプレート」の設定
 		$template_dir = SIMPLE_AMAZON_PLUGIN_DIR . '/template/';
 		$templates = scandir( $template_dir );
 
@@ -80,6 +82,17 @@ class SimpleAmazonAdmin {
 				}
 				$options_template .= '<option value="' . $template . '"' . $selected . '>' . $template . '</option>' . "\n";
 			}
+		}
+
+		//「デフォルトの国」の設定
+		$options_default_domain = "";
+		foreach ( $this->lib->lang_domain_list as $domain ) {
+			if( $domain == $this->options['default_domain'] ) {
+				$selected = ' selected';
+			} else {
+				$selected = '';
+			}
+			$options_default_domain .= '<option value="' . $domain . '"' . $selected . '>' . $domain . '</option>' . "\n";
 		}
 
 		//CSS
@@ -107,11 +120,11 @@ class SimpleAmazonAdmin {
 		$simple_amazon_admin_html .= $this->cache->is_error();
 
 		if( ! $this->options['accesskeyid'] ) {
-			$simple_amazon_admin_html .= '<div class="error"><p><strong>Access Key ID</strong> を設定して下さい。</p></div>' . "\n";
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>Access Key ID</strong> を設定して下さい。</p></div>' . "\n";
 		}
 
 		if( ! $this->options['secretaccesskey'] ) {
-			$simple_amazon_admin_html .= '<div class="error"><p><strong>Secret Access Key</strong> を設定して下さい。</p></div>' . "\n";
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>Secret Access Key</strong> を設定して下さい。</p></div>' . "\n";
 		}
 
 		$check_associatesid = 
@@ -126,7 +139,11 @@ class SimpleAmazonAdmin {
 			$this->options['associatesid_us'];
 
 		if( !$check_associatesid ) {
-			$simple_amazon_admin_html .= '<div class="error"><p><strong>アソシエイト ID</strong> を設定して下さい。</p></div>' . "\n";
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>アソシエイト ID</strong> を設定して下さい。</p></div>' . "\n";
+		}
+
+		if( ! $this->options['default_domain'] ) {
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>デフォルトのドメイン</strong> を設定して下さい。</p></div>' . "\n";
 		}
 
 		$simple_amazon_admin_html .=
@@ -192,9 +209,20 @@ class SimpleAmazonAdmin {
 			'<td><input type="text" size="42" name="secretaccesskey" value="' . $this->options['secretaccesskey'] . '" /></td>' . "\n" .
 			'</tr>' . "\n" .
 
-			'</table>' . "\n" .
+			'<tr>' .
+			'<th>デフォルトのドメイン</th>' .
+			'<td><select name="default_domain">' . "\n" .
+			$options_default_domain . 
+			'</select></td>' . "\n" .
+			'</tr>' . "\n" .
 
-			'<h2>アソシエイト ID</h2>' . "\n" .
+			'</table>' . "\n";
+
+		$simple_amazon_admin_html .=
+
+			'<h2>アソシエイト ID</h2>' . "\n";
+			
+		$simple_amazon_admin_html .=
 			'<table class="form-table">' . "\n";
 
 		$simple_amazon_admin_html .=
@@ -326,6 +354,8 @@ class SimpleAmazonAdmin {
 		$options = array(
 			'accesskeyid'     => esc_html( $_POST['accesskeyid'] ),
 			'secretaccesskey' => esc_html( $_POST['secretaccesskey'] ),
+
+			'default_domain'  => $_POST['default_domain'],
 
 			'associatesid_ca' => isset($_POST['associatesid_ca']) ? esc_html($_POST['associatesid_ca']) : '',
 			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
