@@ -231,11 +231,15 @@ function sa_shotcode( $atts ) {
 		'yahoo'   => 1
     ), $atts );
 
-	$aff = Array( 
-		'word' => trim( $op['word'] ),
-		'r' => trim( $op['rakuten'] ),
-		'y' => trim( $op['yahoo'] )
-	);
+	$aff = null;
+	
+	if( $op['word'] ) {
+		$aff = Array( 
+			'word' => trim( $op['word'] ),
+			'r' => trim( $op['rakuten'] ),
+			'y' => trim( $op['yahoo'] )
+		);
+	}
 
 	global $simpleAmazon;
 	$html = $simpleAmazon->saView->view( $op['asin'], $op['code'], $op['tpl'], $aff );
