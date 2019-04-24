@@ -293,9 +293,11 @@ class SimpleAmazonAdmin {
 		// オプション設定
 
 		//ログファイルの読み込み
-		$log = file_get_contents(  SIMPLE_AMAZON_CACHE_DIR . 'error.log' );
+		$log = file_get_contents( SIMPLE_AMAZON_CACHE_DIR . 'error.log' );
 		$log = str_replace( "\n", "<br />", $log );
-		$log = preg_replace('/(https?:\/\/.+?), /i', "<a href=\"$1\">$1</a>,", $log );
+		$log = preg_replace('/(https?:\/\/.+?),/i', "<a href=\"$1\">$1</a>,", $log );
+
+		$logfile_url = SIMPLE_AMAZON_PLUGIN_URL . 'cache/error.log';
 
 		$simple_amazon_admin_html .=
 			'<div class="group" id="tabs-3">' . "\n" .
@@ -306,7 +308,7 @@ class SimpleAmazonAdmin {
 
 			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
 			'<input type="hidden" name="action" value="clear_log" />' . "\n" .
-			'<p><input type="submit" class="button-primary" name="Submit" value="ログを削除する" /></p>' . "\n" .
+			'<p><input type="submit" class="button-primary" name="Submit" value="ログを削除する" />　<a href="' . $logfile_url . '">ログファイルを参照する</a></p>' . "\n" .
 			'</form>' . "\n" .
 
 			'<h2>キャッシュの削除</h2>' . "\n" .
