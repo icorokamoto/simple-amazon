@@ -4,7 +4,7 @@ Donate link:
 Tags: amazon
 Requires at least: 2.6
 Tested up to: 4.4.2
-Stable tag: 6.0.1
+Stable tag: 7.0
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
 
@@ -61,6 +61,16 @@ PHPの関数として呼び出す場合：
 
 
 == Changelog ==
+
+= 7.0 =
+* 商品情報を取得できなかった場合、ログインユーザだけにエラー情報を表示するようにした。
+* 商品情報を取得できなかった場合、cache ディレクトリに error.log に URL と ASIN を記録するようにした。
+* 管理画面で error.log の確認と削除をできるようにした。
+* 管理画面でキャッシュを削除できるようにした。
+* ショートコードでのリンク表示に対応した。
+* javari.jp の対応を削除。（javari.jp は2014年6月に終了。）
+* 管理画面でデフォルトのドメインを指定できるようにした。
+* キーワードでのリンク表示に対応した。
 
 = 6.0.1 =
 * Amazonのリンクを取得するための正規表現を更新した。
@@ -199,7 +209,7 @@ php 関数として呼び出す場合は、テーマファイル等に以下の�
 <?php simple_amazon_view( $asin, $domain, $template ); ?>
 
 　$asin は Amazon の ASIN です。
-　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, jp, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, jp, uk)です。この項目は省略可能です。省略した場合は WordPress の言語設定に合わせたドメインが設定されます。
 　$template は表示の際に使用するテンプレートです。この項目は省略可能です。
 
 　以下は WPLANG に ja が設定されている場合の設定例です。(日本語版を使用している場合は通常 ja が設定されていると思われます。)
@@ -212,9 +222,6 @@ amazon.co.jp にある、ASIN が 4883377245 の商品を画像だけ(sa-image.p
 
 Amazon.co.uk にある、ASINが B000BMUVKQ の商品を表示させたい場合。
 <?php simple_amazon_view('B000BMUVKQ', 'uk'); ?>
-
-javari.jp にある、ASINが B000Z5N4EO の商品を商品名だけ(sa-title.php)で表示させたい場合。
-<?php simple_amazon_view('B000Z5N4EO', 'javari.jp', 'sa-title.php') ?>
 
 
 = カスタムフィールドを使って表示 =
@@ -236,7 +243,7 @@ javari.jp にある、ASINが B000Z5N4EO の商品を商品名だけ(sa-title.ph
 <?php simple_amazon_list_view( $params, $domain, $styles ); ?>
 
 　$params はProduct Advertising APIのリクエストパラメータがそのまま使えます。より詳しい内容は [Product Advertising](https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html) API の APIリファレンス -> オペレーション -> ItemSearch のページを参照してください。
-　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk, javari.jp)です。この項目は省略可能です。省略した場合は WordPress の wp-config.php に設定されている WPLANG に合わせたドメインが設定されます。
+　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk)です。この項目は省略可能です。省略した場合は WordPress の言語設定に合わせたドメインが設定されます。
 $styles はリスト表示する際のタグなどを指定することが出来ます。設定出来る項目は以下のようになっています。この項目は省略可能です。
 
 imgsize        : 設定出来る値は small / medium / large の3つ。オプション設定の「商品画像サイズ」に相当します。デフォルトはオプション設定に準じます。
@@ -267,6 +274,19 @@ simple_amazon_list_view($params, null, $styles);
 
 
 = ショートコードで商品情報を表示させる方法 =
+
+　投稿中に以下のようにショートコードを書くことで商品を表示することができます。
+
+ASINを指定して表示する場合
+[sa asin="(ASINコード)"]
+
+キーワードを指定して表示する場合
+[sa word="(キーワード)"]
+
+キーワードはAmazonでそのキーワードを検索したときに一番最初に出てくる商品が表示されます。
+ASINとキーワードを両方指定した場合はASINが優先されます。
+
+= 商品情報を表示するコードのカスタマイズ =
 
 　/include/class_view.php の 86行目以降にある $regexps[] を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。
 　以下のような正規表現を利用して「ASIN」を取り出しています。

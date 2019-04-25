@@ -21,9 +21,10 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
 define( 'SIMPLE_AMAZON_VER', '6.0' );
-define( 'SIMPLE_AMAZON_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
+define( 'SIMPLE_AMAZON_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SIMPLE_AMAZON_CACHE_DIR',  SIMPLE_AMAZON_PLUGIN_DIR . 'cache/' );
 define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images' );
+define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images/' );
 
 
 /******************************************************************************
@@ -54,6 +55,8 @@ class SimpleAmazon {
 
 	public $saView;
 	public $saListView;
+
+	private $lib;
 	private $saAdmin;
 
 	/**
@@ -62,6 +65,8 @@ class SimpleAmazon {
 	 * @return none
 	 */
 	public function __construct() {
+
+		$this->lib = new SimpleAmazonLib();
 
 		//オプション設定の読み込み
 		$this->set_options();
@@ -85,7 +90,7 @@ class SimpleAmazon {
 		add_action('wp_head', array($this, 'add_stylesheet'), 1);
 
 		// amazon のURLをhtmlに置き換える
-		add_filter('the_content', array($this->saView, 'replace'));
+		add_filter('the_content', array($this->saView, 'replace'), 1);
 
 	}
 
@@ -103,6 +108,7 @@ class SimpleAmazon {
 
 		// デフォルトの設定
 		if ( ! $this->options ){
+			$domain = $this->lib->get_domain();
 			$this->options = array(
 				'accesskeyid'     => '',
 				'associatesid_ca' => '',
@@ -114,6 +120,7 @@ class SimpleAmazon {
 				'associatesid_jp' => '',
 				'associatesid_uk' => '',
 				'associatesid_us' => '',
+				'default_domain'  => $domain,
 				'delete_setting'  => 'no',
 				'secretaccesskey' => '',
 				'setcss'          => 'yes',
@@ -190,13 +197,15 @@ class SimpleAmazon {
 /* 指定したasinの商品情報を表示する関数 */
 function simple_amazon_view( $asin, $code = null, $template = null ) {
 	global $simpleAmazon;
-	$simpleAmazon->saView->view( $asin, $code, $template );
+	$html = $simpleAmazon->saView->generate_html( $asin, $code, $template );
+	echo $html;
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */
 function simple_amazon_custum_view() {
 	global $simpleAmazon;
-	$simpleAmazon->saView->view_custom_field();
+	$html = $simpleAmazon->saView->generate_html_custom_field();
+	echo $html;
 }
 
 /* 指定したリクエストのリストを表示する関数 */
@@ -211,5 +220,37 @@ function simple_amazon_list_view( $params, $code = null, $styles = null ) {
 		);
 */
 }
+
+/******************************************************************************
+ * ショートコード
+ *****************************************************************************/
+
+/* ショートコード */
+// [sa asin="10文字のASIN" word="検索に使用するキーワード"]
+function sa_shotcode( $atts ) {
+    $atts = shortcode_atts( array(
+        'asin'    => null,
+		'code'    => null,
+		'tpl'     => null,
+		'word'    => null,
+		'rakuten' => 1,
+		'yahoo'   => 1
+    ), $atts );
+
+	$options = null;
+	
+	if( $atts['word'] ) {
+		$options = Array( 
+			'r' => trim( $atts['rakuten'] ),
+			'y' => trim( $atts['yahoo'] )
+		);
+	}
+
+	global $simpleAmazon;
+	$html = $simpleAmazon->saView->generate_html( $atts['asin'], $atts['code'], $atts['tpl'], $atts['word'], $options );
+
+	return $html;
+}
+add_shortcode( 'sa', 'sa_shotcode' );
 
 ?>

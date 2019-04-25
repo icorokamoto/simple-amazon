@@ -10,8 +10,8 @@ class SimpleAmazonListView {
 	private $lib;
 
 	/**
-	 * @param	none
-	 * @return	none
+	 * @param none
+	 * @return none
 	 */
 	public function __construct() {
 
@@ -71,12 +71,11 @@ class SimpleAmazonListView {
 		);
 		$this->styles = wp_parse_args($styles, $default_styles);
 
-		$domain = $this->lib->get_domain();
 		$tld    = $this->lib->get_TLD($domain);
 
 		// params
 		$default_params = array(
-			'AssociateTag'  => $this->lib->get_aid($tld, $this->options),
+			'AssociateTag'  => $this->lib->get_aid($domain, $this->options),
 			'MerchantId'    => 'All',
 			'Condition'     => 'All',
 			'Operation'     => 'ItemSearch',
@@ -84,8 +83,8 @@ class SimpleAmazonListView {
 		);
 
 		// MarketplaceDomain(というかjavari.jp)を設定
-		if( $domain == "javari.jp" )
-			$default_params['MarketplaceDomain'] = 'www.javari.jp';
+//		if( $domain == "javari.jp" )
+//			$default_params['MarketplaceDomain'] = 'www.javari.jp';
 
 		// $params として リクエストの配列が与えられた場合
 		// 商品一覧のHTMLを取得
@@ -173,9 +172,9 @@ class SimpleAmazonListView {
 			$xml = new stdClass();
 
 		$default_img = array(
-			'small'  => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png',
-			'medium' => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png',
-			'large'  => SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png'
+			'small'  => SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png',
+			'medium' => SIMPLE_AMAZON_IMG_URL . 'amazon_noimg.png',
+			'large'  => SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_large.png'
 		);
 
 		switch( $imgsize ) {

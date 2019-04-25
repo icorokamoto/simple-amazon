@@ -1,264 +1,306 @@
 <?php
-
 /******************************************************************************
- * 記事本文中に Amazon から取得した商品情報を表示するクラス
+ * Amazon から取得した商品情報を操作するクラス
  *****************************************************************************/
 class SimpleAmazonView {
 
 	private $options;
-	private $styles;
 	private $lib;
 
 	/**
-	 * @param	none
-	 * @return	none
+	 * @param none
+	 * @return none
 	 */
 	public function __construct() {
 
 		global $simple_amazon_options;
 
 		$this->options = $simple_amazon_options;
-		$this->lib = new SimpleAmazonLib();
+		$this->lib     = new SimpleAmazonLib();
 
 	}
  
-
-	/**
-	 * PHP の関数として Amazon の個別商品 HTML を呼び出す
-	 * @param	String $asin
-	 * @param	String $code
-	 * @param	String $template
-	 * @return	none
-	 */
-	public function view( $asin, $code, $template = null ) {
-
-		$sidplay = "";
-
-		if( $this->lib->check_options( $this->options ) ) {
-
-			if( $template ) {
-				$this->options['template'] = $template;
-			}
-
-			$domain = $this->lib->get_domain($code);
-			$display = $this->generate( $asin, $domain );
-		}
-
-		echo $display;
-
-	}
-
-	/**
-	 * カスタムフィールドから値を取得して商品情報を表示する
-	 * @param	none
-	 * @return	none
-	 */
-	public function view_custom_field() {
-
-		global $post;
-
-		if( $this->lib->check_options( $this->options ) ) {
-			$amazon_index = get_post_custom_values( 'amazon', $post->ID );
-			if( $amazon_index ) {
-				$html = "";
-				foreach( $amazon_index as $content ) {
-					$html .= $this->replace( $content );
-				}
-				echo $html;
-			}
-		}
-
-	}
-	
 	/**
 	 * 記事本文中のコードを個別商品表示 HTML に置き換える
-	 * @param	string $content
-	 * @return	string $content ( HTML )
+	 * @param String $content
+	 * @return String $content ( HTML )
 	 */
-	public function replace($content) { // 記事本文中の呼び出しコードを変換
+	public function replace( $content ) { // 記事本文中の呼び出しコードを変換
 
 		//オプションの設定が終わってない場合は置換せずに返す
 		if( ! $this->lib->check_options( $this->options ) ) {
 			return $content;
 		}
 
-
 //		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
-		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp|javari\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-
-
-		$default_domain = $this->lib->get_domain();
+		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
 		foreach( $regexps as $regexp ) {
 			if( preg_match_all($regexp, $content, $arr) ) {
-				for ($i=0; $i<count($arr[0]); $i++) {
+				for ( $i=0; $i<count($arr[0]); $i++ ) {
 					$asin = $arr['asin'][$i];
-//					$name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
-
-					if( isset($arr['domain'][$i]) ) {
-						$domain = trim($arr['domain'][$i]);
-//						$this->tld = $this->lib->get_TLD($this->domain);
-					} else {
-						$domain = $default_domain;
+					// $name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
+					$domain_code = null;
+					if( isset( $arr['domain'][$i] ) ) {
+						$domain_code = trim( $arr['domain'][$i] );
 					}
 
-					$display = $this->generate( $asin, $domain );
-
+					//商品情報の出力
+					$item = new SimpleAmazonItem( $domain_code );
+					$item->set_asin( $asin );
+					$item_html = $item->generate_html();
+// echo '<!--';
+// var_dump( $item );
+// echo '-->';
 					// URLの置換
-					$content = str_replace($arr[0][$i], $display, $content);
+					$content = str_replace( $arr[0][$i], $item_html, $content );
 				}
 			}
 		}
-
-		/* for WYSWYG Editer */
-//	  $content = str_replace('<p><div class="simple-amazon-view">', '<div class="simple-amazon-view">', $content);
-//	  $content = str_replace('<hr class="simple-amazon-clear" /></div></p>', '<hr class="simple-amazon-clear" /></div>', $content);
 
 		return $content;
 
 	}
 	
 	/**
-	 * parserにパラメータを渡してレスポンスを得る
-	 * @param string $asin
-	 * @param array $style
-	 * @return string $html
+	 * PHP の関数として Amazon の個別商品 HTML を呼び出す
+	 * @param String $asin
+	 * @param String $code
+	 * @param String $template
+	 * @param Array $options
+	 * @return String $html
 	 */
-	public function generate( $asin, $domain ) {
+	public function generate_html( $asin, $code = null, $template = null, $keyword = null, $options = null ) {
+
+		$item_html = "";
+
+		//オプションの設定が終わってない場合は置換せずに返す
+		if( ! $this->lib->check_options( $this->options ) ) {
+			return $item_html;
+		}
+
+		//商品情報の出力
+		$item = new SimpleAmazonItem( $code );
+		$item->set_asin( $asin );
+		$item->set_keyword( $keyword );
+		$item_html = $item->generate_html( $template, $options );
+
+		return $item_html;
+
+	}
+
+	/**
+	 * カスタムフィールドからURLを取得して商品情報を表示する
+	 * @param none
+	 * @return none
+	 */
+	public function generate_html_custom_field() {
+
+		global $post;
+
+		$amazon_index = get_post_custom_values( 'amazon', $post->ID );
+		if( $amazon_index ) {
+			$html = "";
+			foreach( $amazon_index as $content ) {
+				$html .= $this->replace( $content );
+			}
+			echo $html;
+		}
+	}
+
+}
+
+
+/******************************************************************************
+ * 商品情報のクラス
+ *****************************************************************************/
+class SimpleAmazonItem {
+
+	private $asin;
+	private $keyword;
+
+	private $domain;
+
+	private $item;
+	private $error_message;
+
+	private $options;
+	private $lib;
+
+	/**
+	 * @param String $domain_code
+	 * @return none
+	 */
+	public function __construct( $domain_code = null ) {
+
+		global $simple_amazon_options;
+
+		$this->options = $simple_amazon_options;
+		$this->lib     = new SimpleAmazonLib();
+		$this->domain  = $this->lib->get_domain( trim( $domain_code ) );
+	}
+ 
+	/**
+	 * ASINから商品情報を設定する
+	 * @param String $asin
+	 * @return none
+	 */
+	public function set_asin( $asin ) {
 
 		// ISBN13をISBN10に変換
 		if( strlen( $asin ) == 13 ) {
-			$generalfunclib = new CalcISBNLibrary();
-			$asin = $generalfunclib->calc_chkdgt_isbn10( substr( $asin, 3, 9 ) );
+			$asin = $this->lib->calc_chkdgt_isbn10( substr( $asin, 3, 9 ) );
 		}
 
-		// TLD
-		$tld = $this->lib->get_TLD($domain);
+		$this->asin = $asin;
+		
+	}
 
-		// params
-		$params = array(
-			'AssociateTag'  => $this->lib->get_aid($tld, $this->options),
-			'MerchantId'    => 'All',
-			'Condition'     => 'All',
-			'Operation'     => 'ItemLookup',
-			'ResponseGroup' => 'Images,ItemAttributes',
-			'ItemId'        => $asin
-		);
+	/**
+	 * キーワードから商品情報を設定する
+	 * @param String $keyword
+	 * @return none
+	 */
+	public function set_keyword( $keyword ) {
 
-		// MarketplaceDomain(というかjavari.jp)を設定
-		if( $domain == "javari.jp" )
-			$params['MarketplaceDomain'] = 'www.javari.jp';
+		$this->keyword = $keyword;
 
-		// HTMLを取得 //
+	}
+
+	/**
+	 * 商品情報のXMLオブジェクトを取得して設定する
+	 * @param none
+	 * @return none
+	 */
+	private function set_item_object()  {
+
+		$aid = $this->lib->get_aid( $this->domain, $this->options ); //アソシエイトID
+		$tld = $this->lib->get_TLD( $this->domain ); //TLD
+
+		if( $this->asin ) {
+			// ItemLookup
+			$params = array(
+				'AssociateTag'  => $aid,
+				'MerchantId'    => 'All',
+				'Condition'     => 'All',
+				'ResponseGroup' => 'Images,ItemAttributes',
+				'Operation'     => 'ItemLookup',
+				'ItemId'        => $this->asin
+			);
+		} else {
+			// ItemSearch
+			$params = array(
+				'AssociateTag'  => $aid,
+				'MerchantId'    => 'All',
+//				'Condition'     => 'New',
+				'ResponseGroup' => 'Images,ItemAttributes',
+				'Operation'     => 'ItemSearch',
+				'SearchIndex'   => 'All',
+				'Keywords'      => $this->keyword
+			);
+		}
 
 		// レスポンスの取得
 		// 正常に取得出来た場合は xml オブジェクトが、エラーの場合は文字列が返ってくる
 		$parser = new SimpleAmazonXmlParse();
 		$xml = $parser->getamazonxml( $tld, $params );
 
-		if( is_string($xml) ) {
-//			$html = $this->generate_item_html_nonres( $params['ItemId'], $domain );
-			$html = '<!--Amazonのサーバでエラーが起こっているかもしれません。ページを再読み込みしてみてください。-->';
-		} else {
-			$html = $this->generate_item_html( $xml );
-		}
-
-		return $html;
-	}
-
-	/**
-	 * Amazon 商品の HTML を生成(レスポンスがない場合)
-	 * @param string $asin ( ASIN )
-	 * @return string $output ( HTML )
-	 */
-	private function generate_item_html_nonres( $asin, $domain ) {
-
-		$tld = $this->lib->get_TLD($domain);
-		$name = ($this->styles['name']) ? $this->styles['name'] : "Amazon.co.jpの詳細ページへ &raquo;";
-		$tag = '?tag=' . $this->lib->get_aid($tld, $this->options);
-
-		$amazonlink = 'http://www.' . $domain . '/dp/' . $asin . $tag;
-		$amazonimg_url = 'http://images.amazon.com/images/P/' . $asin . '.09.THUMBZZZ.jpg';
-		$amazonimg_size = '';
-
-//		if( !$name ) $name = "Amazon.co.jpの詳細ページへ &raquo;";
-
-		if( function_exists('getimagesize') ) {
-			$imgsize = getimagesize( $amazonimg_url );
-			if( $imgsize[0] == 1 && $imgsize[1] == 1 ) {
-				//画像キメ打ち
-				$amazonimg_url = SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png';
-				$amazonimg_size = ' width="75" height="75"';
-			} else {
-				$amazonimg_size = ' ' . $imgsize[3];
-			}
-		}
-
-		$amazonimg_tag = '<img src="' . $amazonimg_url . '"' . $amazonimg_size . ' class="sa-image" />';
-
-		// レスポンスがない場合のテンプレート
-//		$output = '<!--Amazonのサーバでエラーが起こっているかもしれません。一度ページを再読み込みしてみてください。-->';
-		$output =
-			"\n".'<div class="simple-amazon-view">' . "\n" .
-			'<p class="sa-img-box"><a href="' . $amazonlink . '">' . $amazonimg_tag . '</a></p>' . "\n" .
-			'<p class="sa-title"><a href="' . $amazonlink . '">' . $name . '</a></p>' . "\n" .
-			'</div>';
-
-		return $output;
-
-	}
-
-	/**
-	 * Amazon 商品の HTML を生成 ( レスポンスがある場合 )
-	 * @param object $AmazonXml ( レスポンス )
-	 * @return string $output ( HTML )
-	 */
-	private function generate_item_html( $AmazonXml ) {
-
-		$item = $AmazonXml->Items->Item;
-//		$attr = $item->ItemAttributes;
-
-		// よく使いそうな項目はあらかじめ簡単な変数にしておく
-
-		//商品名
-		$title = $item->ItemAttributes->Title;
+		// echo '<!--';
+		// var_dump($xml);
+		// echo '-->';
 		
-		//URL
-		$url  = $item->DetailPageURL;
+		if( is_string( $xml ) ) {
+			//エラーログの出力
+			$this->errorlog( $this->asin );
+
+			//エラーメッセージ
+			if ( is_user_logged_in() ) {
+				$this->error_message = '<div class="notice">' . "\n"
+						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
+						. '<pre>' . $xml . '</pre>' . "\n"
+						. '</div>' . "\n";
+			}
+		} else {
+			$this->item = $xml->Items->Item;
+		}
+
+	}
+
+	/**
+	 * Amazon 商品の HTML を生成
+	 * @param object $options
+	 * @return string $item_html
+	 */
+	public function generate_html( $template = null, $options = null ) {
+
+		//商品情報を設定
+		$this->set_item_object();
+
+		//商品情報がない場合はエラーメッセージを返す
+		if( !$this->item ) {
+			return $this->error_message;
+		}
+
+		//テンプレートの設定
+		if( !file_exists( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template ) || !$template ) {
+			$template = $this->options['template'];
+		}
+
+		// よく使いそうな項目をあらかじめ簡単な変数にしておく
+
+		//キーワード
+		$keyword = $this->keyword;
+
+		//アフィリエイトオプション
+		$aff = $options;
+		
+		//商品情報
+		$item  = $this->item;
+		$title = $item->ItemAttributes->Title; //商品名
+		$url   = $item->DetailPageURL; //URL
 
 		//images
 		$eximg = property_exists($item, 'SmallImage');
-		$s_image_url = ( $eximg ) ? $item->SmallImage->URL    : SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_small.png';
+		$s_image_url = ( $eximg ) ? $item->SmallImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';
 		$s_image_h   = ( $eximg ) ? $item->SmallImage->Height : 75;
 		$s_image_w   = ( $eximg ) ? $item->SmallImage->Width  : 75;
 
 		$eximg = property_exists($item, 'MediumImage');
-		$m_image_url = ( $eximg ) ? $item->MediumImage->URL    : SIMPLE_AMAZON_IMG_URL . '/amazon_noimg.png';
+		$m_image_url = ( $eximg ) ? $item->MediumImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg.png';
 		$m_image_h   = ( $eximg ) ? $item->MediumImage->Height : 160;
 		$m_image_w   = ( $eximg ) ? $item->MediumImage->Width  : 160;
 
 		$eximg = property_exists($item, 'LargeImage');
-		$l_image_url = ( $eximg ) ? $item->LargeImage->URL    : SIMPLE_AMAZON_IMG_URL . '/amazon_noimg_large.png';
+		$l_image_url = ( $eximg ) ? $item->LargeImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_large.png';
 		$l_image_h   = ( $eximg ) ? $item->LargeImage->Height : 500;
 		$l_image_w   = ( $eximg ) ? $item->LargeImage->Width  : 500;
 
-		// テンプレート //
-		$template = $this->options['template'];
-		
-		if( ! file_exists( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template ) ) {
-			$template = 'sa-default.php';
-		}
-
+		// テンプレート出力 //
 		ob_start();
 		include( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template );
-		$output = ob_get_contents();
+		$item_html = ob_get_contents();
 		ob_end_clean();
 		
-		return $output;
+		return $item_html;
 
 	}
 
-}
+	/**
+	 * エラーログを書き出す
+	 * @return none
+	 */
+	private function errorlog() {
 
+		global $post;
+
+		$logfile = SIMPLE_AMAZON_CACHE_DIR . 'error.log';
+
+		$url = get_permalink( $post->ID );
+		$data = $url . ', ' . $this->asin . "\n";
+
+		file_put_contents( $logfile, $data, FILE_APPEND );
+	}
+
+}
 ?>

@@ -34,4 +34,4 @@ $item->ItemAttributes->Binding
 	<div class="sa-detail-box">
 		<p class="sa-title"><a href="<?php echo $url; ?>" rel="nofollow"><?php echo $title; ?></a></p>
 	</div>
-</div>
+</div><!-- simple-amazon-view -->

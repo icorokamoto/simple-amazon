@@ -79,6 +79,7 @@ div.simple-amazon-view:after {
 	border-radius: 5px;
 	font-weight: bold;
 }
+.sa-detail-box .sa-link a:focus,
 .sa-detail-box .sa-link a:hover {
 	color: #fff;
 }

@@ -7,6 +7,7 @@ class SimpleAmazonAdmin {
 
 	private $cache;
 	private $options;
+	private $lib;
 
 	/**
 	 * Construct
@@ -17,8 +18,9 @@ class SimpleAmazonAdmin {
 
 		global $simple_amazon_options;
 
-		$this->options  = $simple_amazon_options;
-		$this->cache    = new SimpleAmazonCacheControl();
+		$this->options = $simple_amazon_options;
+		$this->cache   = new SimpleAmazonCacheControl();
+		$this->lib     = new SimpleAmazonLib();
 
 		//アクションの設定
 		add_action('admin_menu', array($this, 'simple_amazon_add_options'));
@@ -47,12 +49,26 @@ class SimpleAmazonAdmin {
 
 		$message = "";
 
-		if ( isset($_POST['action']) && $_POST['action'] == 'save_options' ){
-			$this->simple_amazon_save_options();
-			$message .= '<div class="updated"><p><strong>設定を保存しました。</strong></p></div>' . "\n"; 
-		}
+		//　設定の更新
+		if ( isset($_POST['action']) ){
 
-		//テンプレートの設定
+			if ( $_POST['action'] == 'save_options' ){
+				$this->simple_amazon_save_options();
+				$message .= '<div class="updated"><p><strong>設定を保存しました。</strong></p></div>' . "\n"; 
+			}
+
+			if ( $_POST['action'] == 'clear_cache' ){
+				$this->cache->clear();
+				$message .= '<div class="updated"><p><strong>キャッシュを削除しました。</strong></p></div>' . "\n"; 
+			}
+
+			if ( $_POST['action'] == 'clear_log' ){
+				file_put_contents( SIMPLE_AMAZON_CACHE_DIR . 'error.log', '' );
+				$message .= '<div class="updated"><p><strong>ログを削除しました。</strong></p></div>' . "\n"; 
+			}
+		}
+		
+		//「テンプレート」の設定
 		$template_dir = SIMPLE_AMAZON_PLUGIN_DIR . '/template/';
 		$templates = scandir( $template_dir );
 
@@ -66,6 +82,17 @@ class SimpleAmazonAdmin {
 				}
 				$options_template .= '<option value="' . $template . '"' . $selected . '>' . $template . '</option>' . "\n";
 			}
+		}
+
+		//「デフォルトの国」の設定
+		$options_default_domain = "";
+		foreach ( $this->lib->lang_domain_list as $domain ) {
+			if( $domain == $this->options['default_domain'] ) {
+				$selected = ' selected';
+			} else {
+				$selected = '';
+			}
+			$options_default_domain .= '<option value="' . $domain . '"' . $selected . '>' . $domain . '</option>' . "\n";
 		}
 
 		//CSS
@@ -93,11 +120,11 @@ class SimpleAmazonAdmin {
 		$simple_amazon_admin_html .= $this->cache->is_error();
 
 		if( ! $this->options['accesskeyid'] ) {
-			$simple_amazon_admin_html .= '<div class="error"><p><strong>Access Key ID</strong> を設定して下さい。</p></div>' . "\n";
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>Access Key ID</strong> を設定して下さい。</p></div>' . "\n";
 		}
 
 		if( ! $this->options['secretaccesskey'] ) {
-			$simple_amazon_admin_html .= '<div class="error"><p><strong>Secret Access Key</strong> を設定して下さい。</p></div>' . "\n";
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>Secret Access Key</strong> を設定して下さい。</p></div>' . "\n";
 		}
 
 		$check_associatesid = 
@@ -112,27 +139,35 @@ class SimpleAmazonAdmin {
 			$this->options['associatesid_us'];
 
 		if( !$check_associatesid ) {
-			$simple_amazon_admin_html .= '<div class="error"><p><strong>アソシエイト ID</strong> を設定して下さい。</p></div>' . "\n";
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>アソシエイト ID</strong> を設定して下さい。</p></div>' . "\n";
+		}
+
+		if( ! $this->options['default_domain'] ) {
+			$simple_amazon_admin_html .= '<div class="error"><p><strong>基本設定</strong> の <strong>デフォルトのドメイン</strong> を設定して下さい。</p></div>' . "\n";
 		}
 
 		$simple_amazon_admin_html .=
-			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
-//			'<input type="hidden" name="action" value="save_options" />' . "\n" .
-//			'<div id="simple-amazon-options">' . "\n";
-			'<input type="hidden" name="action" value="save_options" />' . "\n";
+			'<div id="simple-amazon-options">' . "\n";
 
 		// タブ
 		$simple_amazon_admin_html .=
-			'<h2 class="nav-tab-wrapper" id="simple-amazon-options-menu">' . "\n" .
+			'<div class="nav-tab-wrapper" id="simple-amazon-options-menu">' . "\n" .
 			'<a href="#tabs-1" class="nav-tab">オプション設定</a>' . "\n" .
 			'<a href="#tabs-2" class="nav-tab">基本設定</a>' . "\n" .
-			'</h2>' . "\n";
-			
+			'<a href="#tabs-3" class="nav-tab">キャッシュ設定</a>' . "\n" .
+			'</div>' . "\n";
+		
+		$simple_amazon_admin_html .=
+			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
+			'<input type="hidden" name="action" value="save_options" />' . "\n";
+
+
+
 		// オプション設定
 		$simple_amazon_admin_html .=
 			'<div class="group" id="tabs-1">' . "\n" .
 
-			'<h3>オプション設定</h3>' . "\n" .
+			'<h2>オプション設定</h2>' . "\n" .
 			'<table class="form-table">' . "\n" .
 
 			'<tr><th>テンプレート</th>' . "\n" .
@@ -152,13 +187,16 @@ class SimpleAmazonAdmin {
 			'</tr>' . "\n" .
 
 			'</table>' . "\n" .
+
+			'<p><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
+
 			'</div>' . "\n";
 
 		// 基本設定
 		$simple_amazon_admin_html .=
 			'<div class="group" id="tabs-2">' . "\n" .
 
-			'<h3>基本設定</h3>' . "\n" .
+			'<h2>基本設定</h2>' . "\n" .
 			'<table class="form-table">' . "\n" .
 
 			'<tr>' . "\n" .
@@ -171,9 +209,20 @@ class SimpleAmazonAdmin {
 			'<td><input type="text" size="42" name="secretaccesskey" value="' . $this->options['secretaccesskey'] . '" /></td>' . "\n" .
 			'</tr>' . "\n" .
 
-			'</table>' . "\n" .
+			'<tr>' .
+			'<th>デフォルトのドメイン</th>' .
+			'<td><select name="default_domain">' . "\n" .
+			$options_default_domain . 
+			'</select></td>' . "\n" .
+			'</tr>' . "\n" .
 
-			'<h3>アソシエイト ID</h3>' . "\n" .
+			'</table>' . "\n";
+
+		$simple_amazon_admin_html .=
+
+			'<h2>アソシエイト ID</h2>' . "\n";
+			
+		$simple_amazon_admin_html .=
 			'<table class="form-table">' . "\n";
 
 		$simple_amazon_admin_html .=
@@ -232,12 +281,47 @@ class SimpleAmazonAdmin {
 
 		$simple_amazon_admin_html .=
 			'</table>' . "\n" .
+
+			'<p><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
+
+			'</div>' .
+
+			'</form>' . "\n";
+
+		//キャッシュ設定
+
+		// オプション設定
+
+		//ログファイルの読み込み
+		$log = file_get_contents( SIMPLE_AMAZON_CACHE_DIR . 'error.log' );
+		$log = str_replace( "\n", "<br />", $log );
+		$log = preg_replace('/(https?:\/\/.+?),/i', "<a href=\"$1\">$1</a>,", $log );
+
+		$logfile_url = SIMPLE_AMAZON_PLUGIN_URL . 'cache/error.log';
+
+		$simple_amazon_admin_html .=
+			'<div class="group" id="tabs-3">' . "\n" .
+
+			'<h2>エラーログ</h2>' . "\n" .
+
+			'<div style="padding: 0 0.5em; border: 1px solid #ccc; background-color:#f6f6f6; height:30vh; overflow:auto;">' . $log . '</div>' . "\n" .
+
+			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
+			'<input type="hidden" name="action" value="clear_log" />' . "\n" .
+			'<p><input type="submit" class="button-primary" name="Submit" value="ログを削除する" />　<a href="' . $logfile_url . '">ログファイルを参照する</a></p>' . "\n" .
+			'</form>' . "\n" .
+
+			'<h2>キャッシュの削除</h2>' . "\n" .
+
+			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
+			'<input type="hidden" name="action" value="clear_cache" />' . "\n" .
+			'<p><input type="submit" class="button-primary" name="Submit" value="キャッシュを削除する" /></p>' . "\n" .
+			'</form>' . "\n" .
+
 			'</div>' . "\n";
 
 		$simple_amazon_admin_html .=
-			'<p><input type="submit" class="button-primary" name="Submit" value="設定を保存 &raquo;" /></p>' . "\n" .
-//			'</div>' . "\n" .
-			'</form>' . "\n";
+			'</div><!-- //.simple-amazon-options -->' . "\n";
 
 		echo $simple_amazon_admin_html;
 	}
@@ -273,6 +357,8 @@ class SimpleAmazonAdmin {
 			'accesskeyid'     => esc_html( $_POST['accesskeyid'] ),
 			'secretaccesskey' => esc_html( $_POST['secretaccesskey'] ),
 
+			'default_domain'  => $_POST['default_domain'],
+
 			'associatesid_ca' => isset($_POST['associatesid_ca']) ? esc_html($_POST['associatesid_ca']) : '',
 			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
 			'associatesid_de' => isset($_POST['associatesid_de']) ? esc_html($_POST['associatesid_de']) : '',
@@ -295,5 +381,4 @@ class SimpleAmazonAdmin {
 	}
 
 }
-
 ?>
