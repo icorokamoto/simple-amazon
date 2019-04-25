@@ -197,14 +197,14 @@ class SimpleAmazon {
 /* 指定したasinの商品情報を表示する関数 */
 function simple_amazon_view( $asin, $code = null, $template = null ) {
 	global $simpleAmazon;
-	$html = $simpleAmazon->saView->view( $asin, $code, $template );
+	$html = $simpleAmazon->saView->generate_html( $asin, $code, $template );
 	echo $html;
 }
 
 /* カスタムフィールドから値を取得して表示する関数 */
 function simple_amazon_custum_view() {
 	global $simpleAmazon;
-	$html = $simpleAmazon->saView->view_custom_field();
+	$html = $simpleAmazon->saView->generate_html_custom_field();
 	echo $html;
 }
 
@@ -228,7 +228,7 @@ function simple_amazon_list_view( $params, $code = null, $styles = null ) {
 /* ショートコード */
 // [sa asin="10文字のASIN" word="検索に使用するキーワード"]
 function sa_shotcode( $atts ) {
-    $op = shortcode_atts( array(
+    $atts = shortcode_atts( array(
         'asin'    => null,
 		'code'    => null,
 		'tpl'     => null,
@@ -237,18 +237,17 @@ function sa_shotcode( $atts ) {
 		'yahoo'   => 1
     ), $atts );
 
-	$aff = null;
+	$options = null;
 	
-	if( $op['word'] ) {
-		$aff = Array( 
-			'word' => trim( $op['word'] ),
-			'r' => trim( $op['rakuten'] ),
-			'y' => trim( $op['yahoo'] )
+	if( $atts['word'] ) {
+		$options = Array( 
+			'r' => trim( $atts['rakuten'] ),
+			'y' => trim( $atts['yahoo'] )
 		);
 	}
 
 	global $simpleAmazon;
-	$html = $simpleAmazon->saView->view( $op['asin'], $op['code'], $op['tpl'], $aff );
+	$html = $simpleAmazon->saView->generate_html( $atts['asin'], $atts['code'], $atts['tpl'], $atts['word'], $options );
 
 	return $html;
 }
