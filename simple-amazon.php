@@ -20,7 +20,7 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
-define( 'SIMPLE_AMAZON_VER', '7.0' );
+define( 'SIMPLE_AMAZON_VER', '7.0.1' );
 define( 'SIMPLE_AMAZON_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIMPLE_AMAZON_CACHE_DIR',  SIMPLE_AMAZON_PLUGIN_DIR . 'cache/' );
 define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

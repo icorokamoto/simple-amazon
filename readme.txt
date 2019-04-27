@@ -4,7 +4,7 @@ Donate link:
 Tags: amazon
 Requires at least: 2.6
 Tested up to: 4.4.2
-Stable tag: 7.0
+Stable tag: 7.0.1
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
 
