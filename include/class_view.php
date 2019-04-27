@@ -294,13 +294,19 @@ class SimpleAmazonItem {
 
 		global $post;
 
-		$logfile = SIMPLE_AMAZON_CACHE_DIR . 'error.log';
+		$log_file = SIMPLE_AMAZON_CACHE_DIR . 'error.log';
+		$log_line = 500; //ログの最大行数
 
-		$url = get_permalink( $post->ID );
-		$data = $url . ', ' . $this->asin . "\n";
+		if( count( file( $log_file ) ) < $log_line ) {
 
-		file_put_contents( $logfile, $data, FILE_APPEND );
+			// log data
+			$url = get_permalink( $post->ID );
+			$date = date("Y/m/d H:i:s");
+			$log = $url . ', ' . $this->asin . ', ' . $date . "\n";
+
+			//ログの書き込み
+			file_put_contents( $log_file, $log, FILE_APPEND );
+		}
 	}
-
 }
 ?>
