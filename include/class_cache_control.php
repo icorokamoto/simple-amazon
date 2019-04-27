@@ -21,7 +21,7 @@ class SimpleAmazonCacheControl {
 		$litephp_path = SIMPLE_AMAZON_PLUGIN_DIR . 'include/Lite.php';
 
 		// cacheの有効時間(秒単位)
- 		$cache_time = 60*60*24*7;
+ 		$cache_time = 60*60*24; // Amazonのキャッシュは最大で24時間まで保存可能
 
 		if( !class_exists('Icoro_Cache_Lite') ) {
 			include_once($litephp_path);
