@@ -257,7 +257,7 @@ class SimpleAmazonItem {
 		
 		//商品情報
 		$item  = $this->item;
-		$title = $item->ItemAttributes->Title; //商品名
+		$title = htmlspecialchars( $item->ItemAttributes->Title ); //商品名
 		$url   = $item->DetailPageURL; //URL
 
 		//images
