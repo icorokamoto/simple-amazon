@@ -5,8 +5,14 @@
 class SimpleAmazonLib {
 
 	public $lang_domain_list = array(
+		'en_AU' => 'amazon.com.au',
+		'pt_BR' => 'amazon.com.br',
+		'en_IN' => 'amazon.in',
+		'en_SG' => 'amazon.sg',
+		'es_MX' => 'amazon.com.mx',
+		'ar'    => 'amazon.ae',
+		'tr_TR' => 'amazon.com.tr',
 		'en_CA' => 'amazon.ca',
-		'zh_CN' => 'amazon.cn',
 		'de_DE' => 'amazon.de',
 		'es_ES' => 'amazon.es',
 		'fr_FR' => 'amazon.fr',
@@ -17,8 +23,15 @@ class SimpleAmazonLib {
 	);
 
 	public $code_domain_list = array(
+		'au'  => 'amazon.com.au',
+		'br'  => 'amazon.com.br',
+		'in'  => 'amazon.in',
+		'sg'  => 'amazon.sg',
+		'mx'  => 'amazon.com.mx',
+		'ar'  => 'amazon.ae',
+		'tr'  => 'amazon.com.tr',
 		'ca'  => 'amazon.ca',
-		'cn'  => 'amazon.cn',
+//		'cn'  => 'amazon.cn',
 		'de'  => 'amazon.de',
 		'es'  => 'amazon.es',
 		'fr'  => 'amazon.fr',
@@ -38,8 +51,15 @@ class SimpleAmazonLib {
 		$result = false;
 
 		$check_associatesid = 
+			$options['associatesid_au'] .
+			$options['associatesid_br'] .
+			$options['associatesid_in'] .
+			$options['associatesid_mx'] .
+			$options['associatesid_tr'] .
+			$options['associatesid_ae'] .
+			$options['associatesid_sg'] .
 			$options['associatesid_ca'] .
-			$options['associatesid_cn'] .
+//			$options['associatesid_cn'] .
 			$options['associatesid_de'] .
 			$options['associatesid_es'] .
 			$options['associatesid_fr'] .

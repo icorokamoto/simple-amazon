@@ -128,8 +128,15 @@ class SimpleAmazonAdmin {
 		}
 
 		$check_associatesid = 
+			$this->options['associatesid_au'] .
+			$this->options['associatesid_br'] .
+			$this->options['associatesid_in'] .
+			$this->options['associatesid_mx'] .
+			$this->options['associatesid_tr'] .
+			$this->options['associatesid_ae'] .
+			$this->options['associatesid_sg'] .
 			$this->options['associatesid_ca'] .
-			$this->options['associatesid_cn'] .
+//			$this->options['associatesid_cn'] .
 			$this->options['associatesid_de'] .
 			$this->options['associatesid_es'] .
 			$this->options['associatesid_fr'] .
@@ -231,11 +238,11 @@ class SimpleAmazonAdmin {
 			'<td><input type="text" name="associatesid_ca" value="' . $this->options['associatesid_ca'] . '" /></td>' .
 			'</tr>' . "\n";
 
-		$simple_amazon_admin_html .=
-			'<tr>' .
-			'<th>CN (中国)</th>' .
-			'<td><input type="text" name="associatesid_cn" value="' . $this->options['associatesid_cn'] . '" /></td>' .
-			'</tr>' . "\n";
+		// $simple_amazon_admin_html .=
+		// 	'<tr>' .
+		// 	'<th>CN (中国)</th>' .
+		// 	'<td><input type="text" name="associatesid_cn" value="' . $this->options['associatesid_cn'] . '" /></td>' .
+		// 	'</tr>' . "\n";
 
 		$simple_amazon_admin_html .=
 			'<tr>' .
@@ -277,6 +284,48 @@ class SimpleAmazonAdmin {
 			'<tr>' .
 			'<th>US (アメリカ)</th>' .
 			'<td><input type="text" name="associatesid_us" value="' . $this->options['associatesid_us'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>AU (オーストラリア)</th>' .
+			'<td><input type="text" name="associatesid_au" value="' . $this->options['associatesid_au'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>BR (ブラジル)</th>' .
+			'<td><input type="text" name="associatesid_br" value="' . $this->options['associatesid_br'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>IN (インド)</th>' .
+			'<td><input type="text" name="associatesid_in" value="' . $this->options['associatesid_in'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>MX (メキシコ)</th>' .
+			'<td><input type="text" name="associatesid_mx" value="' . $this->options['associatesid_mx'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>TR (トルコ)</th>' .
+			'<td><input type="text" name="associatesid_tr" value="' . $this->options['associatesid_tr'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>AE (アラブ首長国連邦)</th>' .
+			'<td><input type="text" name="associatesid_au" value="' . $this->options['associatesid_ae'] . '" /></td>' .
+			'</tr>' . "\n";
+
+		$simple_amazon_admin_html .=
+			'<tr>' .
+			'<th>SG (シンガポール)</th>' .
+			'<td><input type="text" name="associatesid_sg" value="' . $this->options['associatesid_sg'] . '" /></td>' .
 			'</tr>' . "\n";
 
 		$simple_amazon_admin_html .=
@@ -359,8 +408,15 @@ class SimpleAmazonAdmin {
 
 			'default_domain'  => $_POST['default_domain'],
 
+			'associatesid_au' => isset($_POST['associatesid_au']) ? esc_html($_POST['associatesid_au']) : '',
+			'associatesid_br' => isset($_POST['associatesid_br']) ? esc_html($_POST['associatesid_br']) : '',
+			'associatesid_in' => isset($_POST['associatesid_in']) ? esc_html($_POST['associatesid_in']) : '',
+			'associatesid_mx' => isset($_POST['associatesid_mx']) ? esc_html($_POST['associatesid_mx']) : '',
+			'associatesid_tr' => isset($_POST['associatesid_tr']) ? esc_html($_POST['associatesid_tr']) : '',
+			'associatesid_ae' => isset($_POST['associatesid_ae']) ? esc_html($_POST['associatesid_ae']) : '',
+			'associatesid_sg' => isset($_POST['associatesid_sg']) ? esc_html($_POST['associatesid_sg']) : '',
 			'associatesid_ca' => isset($_POST['associatesid_ca']) ? esc_html($_POST['associatesid_ca']) : '',
-			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
+//			'associatesid_cn' => isset($_POST['associatesid_cn']) ? esc_html($_POST['associatesid_cn']) : '',
 			'associatesid_de' => isset($_POST['associatesid_de']) ? esc_html($_POST['associatesid_de']) : '',
 			'associatesid_es' => isset($_POST['associatesid_es']) ? esc_html($_POST['associatesid_es']) : '',
 			'associatesid_fr' => isset($_POST['associatesid_fr']) ? esc_html($_POST['associatesid_fr']) : '',

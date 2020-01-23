@@ -111,8 +111,15 @@ class SimpleAmazon {
 			$domain = $this->lib->get_domain();
 			$this->options = array(
 				'accesskeyid'     => '',
+				'associatesid_au' => '',
+				'associatesid_br' => '',
+				'associatesid_in' => '',
+				'associatesid_mx' => '',
+				'associatesid_tr' => '',
+				'associatesid_ae' => '',
+				'associatesid_sg' => '',
 				'associatesid_ca' => '',
-				'associatesid_cn' => '',
+//				'associatesid_cn' => '',
 				'associatesid_de' => '',
 				'associatesid_es' => '',
 				'associatesid_fr' => '',
