@@ -36,12 +36,13 @@ global $simple_amazon_options;
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_xml_parse.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_parse_json.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_cache_control.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_lib.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_admin.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_view.php');
-include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
+//include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_list_view.php');
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/awsv4.php');
 
 
 /******************************************************************************
@@ -73,7 +74,7 @@ class SimpleAmazon {
 
 		//オブジェクトの設定
 		$this->saView     = new SimpleAmazonView();
-		$this->saListView = new SimpleAmazonListView();
+//		$this->saListView = new SimpleAmazonListView();
 
 		if (is_admin()) {
 			$this->saAdmin = new SimpleAmazonAdmin();

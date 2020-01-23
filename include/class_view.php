@@ -176,41 +176,65 @@ class SimpleAmazonItem {
 	private function set_item_object()  {
 
 		$aid = $this->lib->get_aid( $this->domain, $this->options ); //アソシエイトID
-		$tld = $this->lib->get_TLD( $this->domain ); //TLD
+
+		$searchItemRequest = new SearchItemsRequest();
+		$searchItemRequest->PartnerType = "Associates";
+		$searchItemRequest->PartnerTag = $aid;
+		$searchItemRequest->Resources = [
+			"Images.Primary.Small",
+			"Images.Primary.Medium",
+			"Images.Primary.Large",
+			"ItemInfo.Title",
+			"ItemInfo.ByLineInfo",
+			"ItemInfo.ContentInfo",
+			"ItemInfo.Classifications",
+			"ItemInfo.ProductInfo",
+			"ItemInfo.Title",
+			"ItemInfo.TradeInInfo"
+		];
 
 		if( $this->asin ) {
-			// ItemLookup
-			$params = array(
-				'AssociateTag'  => $aid,
-				'MerchantId'    => 'All',
-				'Condition'     => 'All',
-				'ResponseGroup' => 'Images,ItemAttributes',
-				'Operation'     => 'ItemLookup',
-				'ItemId'        => $this->asin
-			);
+			// getitems
+			$path = '/paapi5/getitems';
+			$searchItemRequest->ItemIds = array( $this->asin );
+
+			// $params = array(
+			// 	'AssociateTag'  => $aid,
+			// 	'MerchantId'    => 'All',
+			// 	'Condition'     => 'All',
+			// 	'ResponseGroup' => 'Images,ItemAttributes',
+			// 	'Operation'     => 'ItemLookup',
+			// 	'ItemId'        => $this->asin
+			// );
 		} else {
-			// ItemSearch
-			$params = array(
-				'AssociateTag'  => $aid,
-				'MerchantId'    => 'All',
-//				'Condition'     => 'New',
-				'ResponseGroup' => 'Images,ItemAttributes',
-				'Operation'     => 'ItemSearch',
-				'SearchIndex'   => 'All',
-				'Keywords'      => $this->keyword
-			);
+			// searchitems
+			$path = "/paapi5/searchitems";
+			$searchItemRequest->Keywords = $this->keyword;
+			$searchItemRequest->ItemCount = 1;
+//			$searchItemRequest->SearchIndex = "All";
+
+			// $params = array(
+			// 	'AssociateTag'  => $aid,
+			// 	'MerchantId'    => 'All',
+			// 	'ResponseGroup' => 'Images,ItemAttributes',
+			// 	'Operation'     => 'ItemSearch',
+			// 	'SearchIndex'   => 'All',
+			// 	'Keywords'      => $this->keyword
+			// );
 		}
+
+		$payload = json_encode( $searchItemRequest );
 
 		// レスポンスの取得
 		// 正常に取得出来た場合は xml オブジェクトが、エラーの場合は文字列が返ってくる
-		$parser = new SimpleAmazonXmlParse();
-		$xml = $parser->getamazonxml( $tld, $params );
+		$parser = new SimpleAmazonParseJSON();
+		$json = $parser->getamazonjson( $this->domain, $path, $payload );
 
 		// echo '<!--';
 		// var_dump($xml);
 		// echo '-->';
 		
-		if( is_string( $xml ) ) {
+		if( is_string( $json ) ) {
 			//エラーログの出力
 			$this->errorlog( $this->asin );
 
@@ -218,11 +242,13 @@ class SimpleAmazonItem {
 			if ( is_user_logged_in() ) {
 				$this->error_message = '<div class="notice">' . "\n"
 						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
-						. '<pre>' . $xml . '</pre>' . "\n"
+						. '<pre>' . $json . '</pre>' . "\n"
 						. '</div>' . "\n";
 			}
 		} else {
-			$this->item = $xml->Items->Item;
+//			$this->item = $json->{'ItemsResult'}->{'Items'}[0];
+			$this->item = $json;
+//			$this->item = $xml->Items->Item;
 		}
 
 	}
@@ -256,25 +282,39 @@ class SimpleAmazonItem {
 		$aff = $options;
 		
 		//商品情報
-		$item  = $this->item;
-		$title = htmlspecialchars( $item->ItemAttributes->Title ); //商品名
-		$url   = $item->DetailPageURL; //URL
+		$Item  = $this->item;
+
+		$ItemInfo        = $Item->{'ItemInfo'};
+		$ByLineInfo      = $ItemInfo->{'ByLineInfo'};
+		$Classifications = $ItemInfo->{'Classifications'};
+		$ContentInfo     = $ItemInfo->{'ContentInfo'};
+		$ProductInfo     = $ItemInfo->{'ProductInfo'};
+		$TradeInInfo     = $ItemInfo->{'TradeInInfo'};
+
+		$title           = $ItemInfo->{'Title'}->{'DisplayValue'}; // 商品名
+		$url             = esc_url( $Item->DetailPageURL ); // リンクURL
+		$Price           = $TradeInInfo->{'Price'}->{'DisplayAmount'}; //価格
+		$ProductGroup    = $Classifications->{'ProductGroup'}->{'DisplayValue'}; //グループ
 
 		//images
-		$eximg = property_exists($item, 'SmallImage');
-		$s_image_url = ( $eximg ) ? $item->SmallImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';
-		$s_image_h   = ( $eximg ) ? $item->SmallImage->Height : 75;
-		$s_image_w   = ( $eximg ) ? $item->SmallImage->Width  : 75;
+		// $Images = $item->{'Images'};
+		// $ImageItem = $Images->{'Primary'};
+		$images = $Item->{'Images'}->{'Primary'};
 
-		$eximg = property_exists($item, 'MediumImage');
-		$m_image_url = ( $eximg ) ? $item->MediumImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg.png';
-		$m_image_h   = ( $eximg ) ? $item->MediumImage->Height : 160;
-		$m_image_w   = ( $eximg ) ? $item->MediumImage->Width  : 160;
+		$eximg = property_exists( $images, 'Small');
+		$s_image_url = ( $eximg ) ? $images->{'Small'}->{'URL'}    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';
+		$s_image_h   = ( $eximg ) ? $images->{'Small'}->{'Height'} : 75;
+		$s_image_w   = ( $eximg ) ? $images->{'Small'}->{'Width'}  : 75;
 
-		$eximg = property_exists($item, 'LargeImage');
-		$l_image_url = ( $eximg ) ? $item->LargeImage->URL    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_large.png';
-		$l_image_h   = ( $eximg ) ? $item->LargeImage->Height : 500;
-		$l_image_w   = ( $eximg ) ? $item->LargeImage->Width  : 500;
+		$eximg = property_exists($images, 'Medium');
+		$m_image_url = ( $eximg ) ? $images->{'Medium'}->{'URL'}    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg.png';
+		$m_image_h   = ( $eximg ) ? $images->{'Medium'}->{'Height'} : 160;
+		$m_image_w   = ( $eximg ) ? $images->{'Medium'}->{'Width'}  : 160;
+
+		$eximg = property_exists($images, 'Large');
+		$l_image_url = ( $eximg ) ? $images->{'Large'}->{'URL'}    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_large.png';
+		$l_image_h   = ( $eximg ) ? $images->{'Large'}->{'Height'} : 500;
+		$l_image_w   = ( $eximg ) ? $images->{'Large'}->{'Width'}  : 500;
 
 		// テンプレート出力 //
 		ob_start();
@@ -309,4 +349,13 @@ class SimpleAmazonItem {
 		}
 	}
 }
+
+class SearchItemsRequest {
+    public $PartnerType;
+    public $PartnerTag;
+    public $Keywords;
+    public $SearchIndex;
+    public $Resources;
+}
+
 ?>
