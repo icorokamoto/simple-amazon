@@ -26,12 +26,14 @@ class SimpleAmazonAdmin {
 
 	/**
 	 * JavascriptとCSSを読み込む
+	 * @param none
+	 * @return none
 	 */
-	function addScripts() {
+	public function addScripts() {
 
 		// add jQuery tabs for options page. Use jQuery UI Tabs from WP
-		if ( isset($_GET['page']) && $_GET['page'] == 'simple_amazon' ) {
-			wp_enqueue_script('simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array(), SIMPLE_AMAZON_VER);
+		if ( isset( $_GET['page'] ) && $_GET['page'] == 'simple_amazon' ) {
+			wp_enqueue_script( 'simple-amazon-admin', SIMPLE_AMAZON_PLUGIN_URL.'include/simple-amazon-admin.js', array(), SIMPLE_AMAZON_VER );
 		}
 
 	}
@@ -155,8 +157,6 @@ class SimpleAmazonAdmin {
 		$simple_amazon_admin_html .=
 			'<form method="post" action="' . str_replace( '%7E', '~', $_SERVER['REQUEST_URI'] ) . '">' . "\n" .
 			'<input type="hidden" name="action" value="save_options" />' . "\n";
-
-
 
 		// オプション設定
 		$simple_amazon_admin_html .=

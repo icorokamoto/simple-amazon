@@ -157,7 +157,7 @@ class SimpleAmazon {
 /******************************************************************************
  * 関数の設定
  *****************************************************************************/
- 
+
 /* 指定したasinの商品情報を表示する関数 */
 function simple_amazon_view( $asin, $code = null, $template = null ) {
 	global $simpleAmazon;
@@ -204,6 +204,7 @@ function sa_shotcode( $atts ) {
 
 	$options = null;
 	
+	//実は楽天とヤフーのアフィリエイトも仕込める
 	if( $atts['word'] ) {
 		$options = Array( 
 			'r' => trim( $atts['rakuten'] ),

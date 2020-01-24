@@ -134,7 +134,7 @@ class SimpleAmazonListView {
 			$list .= $before_li;
 
 			$url = $item->DetailPageURL;
-			$title = htmlspecialchars( $item->ItemAttributes->Title );
+			$title = $item->ItemAttributes->Title;
 			$author = $item->ItemAttributes->Author;
 
 			if($show_thumbnail) {
