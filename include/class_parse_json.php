@@ -5,9 +5,8 @@
  *****************************************************************************/
 class SimpleAmazonParseJSON {
 
-	private $options;
+	private $opt;
 	private $cp_path;
-	private $tld;
 
 	/**
 	 * Construct
@@ -15,23 +14,22 @@ class SimpleAmazonParseJSON {
 	 * @return none
 	 */
 	function __construct() {
-
-		global $simple_amazon_options;
-
-		$this->options = $simple_amazon_options;
+		$this->opt     = new SimpleAmazonOptionsControl();
 		$this->cp_path = 'checkpoint.php';
-
 	}
 
 	/**
 	 * Amazonのレスポンスを返す
-	 * @param String $tld
-	 * @param Array $params
-	 * @rerturn Object $AmazonXml
+	 * @param String $domain
+	 * @param String $path
+	 * @param Array $payload
+	 * @return Object $AmazonXml
 	 */
 	public function getamazonjson( $domain, $path, $payload ) {
 
-		if( !$this->options['accesskeyid'] || !$this->options['secretaccesskey'] ) {
+		//必須項目が入力されているかチェック
+		$flag = $this->opt->isset_required_options();
+		if( ! $flag ) {
 			return false;
 		}
 
@@ -63,6 +61,8 @@ class SimpleAmazonParseJSON {
 
 				$region = $this->get_region( $domain );
 				$host = "webservices." . $domain;
+				$option_accesskeyid = $this->opt->get_option( 'accesskeyid' );
+				$option_secretaccesskey = $this->opt->get_option( 'secretaccesskey' );
 
 				if( $path == '/paapi5/getitems' ) {
 					$target = 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.GetItems';
@@ -70,18 +70,18 @@ class SimpleAmazonParseJSON {
 					$target = 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems';
 				}
 
-				$awsv4 = new AwsV4( $this->options['accesskeyid'], $this->options['secretaccesskey'] );
+				$awsv4 = new AwsV4( $option_accesskeyid, $option_secretaccesskey );
 				$awsv4->setRegionName( $region );
 				$awsv4->setServiceName( "ProductAdvertisingAPI" );
 				$awsv4->setPath ( $path );
 				$awsv4->setPayload ( $payload );
-				$awsv4->setRequestMethod ("POST");
-				$awsv4->addHeader ('content-encoding', 'amz-1.0');
-				$awsv4->addHeader ('content-type', 'application/json; charset=utf-8');
-				$awsv4->addHeader ('host', $host);
-				$awsv4->addHeader ('x-amz-target', $target);
+				$awsv4->setRequestMethod ( "POST" );
+				$awsv4->addHeader ( 'content-encoding', 'amz-1.0' );
+				$awsv4->addHeader ( 'content-type', 'application/json; charset=utf-8' );
+				$awsv4->addHeader ( 'host', $host );
+				$awsv4->addHeader ( 'x-amz-target', $target );
 
-				$headers = $awsv4->getHeaders ();
+				$headers = $awsv4->getHeaders();
 
 				$headerString = "";
 				foreach ( $headers as $key => $value ) {

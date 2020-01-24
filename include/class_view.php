@@ -4,7 +4,7 @@
  *****************************************************************************/
 class SimpleAmazonView {
 
-	private $options;
+	private $opt;
 	private $lib;
 
 	/**
@@ -12,14 +12,10 @@ class SimpleAmazonView {
 	 * @return none
 	 */
 	public function __construct() {
-
-		global $simple_amazon_options;
-
-		$this->options = $simple_amazon_options;
-		$this->lib     = new SimpleAmazonLib();
-
+		$this->opt = new SimpleAmazonOptionsControl();
+		$this->lib = new SimpleAmazonLib();
 	}
- 
+
 	/**
 	 * 記事本文中のコードを個別商品表示 HTML に置き換える
 	 * @param String $content
@@ -28,26 +24,29 @@ class SimpleAmazonView {
 	public function replace( $content ) { // 記事本文中の呼び出しコードを変換
 
 		//オプションの設定が終わってない場合は置換せずに返す
-		if( ! $this->lib->check_options( $this->options ) ) {
+		$flag = $this->opt->isset_required_options();
+		if( ! $flag ) {
 			return $content;
 		}
 
 //		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
 		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
-		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+//		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com\.au|amazon\.com\.br|amazon\.in|amazon\.sg|amazon\.com\.mx|amazon\.ae|amazon\.com\.tr|amazon\.ca|amazon\.de|amazon\.es|amazon\.fr|amazon\.it|amazon\.co\.jp|amazon\.co\.uk|amazon\.com)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
 		foreach( $regexps as $regexp ) {
 			if( preg_match_all($regexp, $content, $arr) ) {
 				for ( $i=0; $i<count($arr[0]); $i++ ) {
 					$asin = $arr['asin'][$i];
 					// $name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
-					$domain_code = null;
+					$domain = null;
 					if( isset( $arr['domain'][$i] ) ) {
-						$domain_code = trim( $arr['domain'][$i] );
+						$domain = trim( $arr['domain'][$i] );
 					}
 
 					//商品情報の出力
-					$item = new SimpleAmazonItem( $domain_code );
+					$item = new SimpleAmazonItem();
+					$item->set_domain( $domain );
 					$item->set_asin( $asin );
 					$item_html = $item->generate_html();
 // echo '<!--';
@@ -76,12 +75,14 @@ class SimpleAmazonView {
 		$item_html = "";
 
 		//オプションの設定が終わってない場合は置換せずに返す
-		if( ! $this->lib->check_options( $this->options ) ) {
+		$flag = $this->opt->isset_required_options();
+		if( ! $flag ) {
 			return $item_html;
 		}
 
 		//商品情報の出力
-		$item = new SimpleAmazonItem( $code );
+		$item = new SimpleAmazonItem();
+		$item->set_domain_bycode( $code );
 		$item->set_asin( $asin );
 		$item->set_keyword( $keyword );
 		$item_html = $item->generate_html( $template, $options );
@@ -117,6 +118,7 @@ class SimpleAmazonView {
  *****************************************************************************/
 class SimpleAmazonItem {
 
+	private $aid;
 	private $asin;
 	private $keyword;
 
@@ -125,28 +127,69 @@ class SimpleAmazonItem {
 	private $item;
 	private $error_message;
 
-	private $options;
+	private $opt;
 	private $lib;
 
 	/**
 	 * @param String $domain_code
 	 * @return none
 	 */
-	public function __construct( $domain_code = null ) {
-
-		global $simple_amazon_options;
-
-		$this->options = $simple_amazon_options;
+	public function __construct() {
+		$this->opt     = new SimpleAmazonOptionsControl();
 		$this->lib     = new SimpleAmazonLib();
-		$this->domain  = $this->lib->get_domain( trim( $domain_code ) );
 	}
- 
+
 	/**
-	 * ASINから商品情報を設定する
+	 * ドメインを設定する
+	 * @param String $domain
+	 * @return none
+	 */
+	public function set_domain( $domain ) {
+
+		$domain = trim( $domain );
+
+		$domain_list  = $this->opt->get_list( 'domain' );
+		$flag = array_key_exists( $domain, $domain_list );
+
+		if( ! $flag ) {
+			$this->domain  = $this->opt->get_option( 'default_domain' );
+		}
+
+		$this->domain = $domain;
+	}
+
+	/**
+	 * 国コードからドメインを設定する
+	 * @param String $domain
+	 * @return none
+	 */
+	public function set_domain_bycode( $code ) {
+
+		$code = trim( $code );
+
+		//ドメインを国コードに変換
+		if( $code == 'com' )  $code = 'us';
+
+		$code_domain_list  = $this->opt->get_list( 'domain', 'code' );
+		$flag = array_key_exists( $code, $code_domain_list );
+		
+		if( $flag ) {
+			$domain = $code_domain_list[$code];
+		} else {
+			$domain = $this->opt->get_option( 'default_domain' );
+		}
+
+		$this->domain = $domain;
+	}
+
+	/**
+	 * ASINを設定する
 	 * @param String $asin
 	 * @return none
 	 */
 	public function set_asin( $asin ) {
+
+		$asin = trim( $asin );
 
 		// ISBN13をISBN10に変換
 		if( strlen( $asin ) == 13 ) {
@@ -158,98 +201,13 @@ class SimpleAmazonItem {
 	}
 
 	/**
-	 * キーワードから商品情報を設定する
+	 * キーワードを設定する
 	 * @param String $keyword
 	 * @return none
 	 */
 	public function set_keyword( $keyword ) {
 
-		$this->keyword = $keyword;
-
-	}
-
-	/**
-	 * 商品情報のXMLオブジェクトを取得して設定する
-	 * @param none
-	 * @return none
-	 */
-	private function set_item_object()  {
-
-		$aid = $this->lib->get_aid( $this->domain, $this->options ); //アソシエイトID
-
-		$searchItemRequest = new SearchItemsRequest();
-		$searchItemRequest->PartnerType = "Associates";
-		$searchItemRequest->PartnerTag = $aid;
-		$searchItemRequest->Resources = [
-			"Images.Primary.Small",
-			"Images.Primary.Medium",
-			"Images.Primary.Large",
-			"ItemInfo.Title",
-			"ItemInfo.ByLineInfo",
-			"ItemInfo.ContentInfo",
-			"ItemInfo.Classifications",
-			"ItemInfo.ProductInfo",
-			"ItemInfo.Title",
-			"ItemInfo.TradeInInfo"
-		];
-
-		if( $this->asin ) {
-			// getitems
-			$path = '/paapi5/getitems';
-			$searchItemRequest->ItemIds = array( $this->asin );
-
-			// $params = array(
-			// 	'AssociateTag'  => $aid,
-			// 	'MerchantId'    => 'All',
-			// 	'Condition'     => 'All',
-			// 	'ResponseGroup' => 'Images,ItemAttributes',
-			// 	'Operation'     => 'ItemLookup',
-			// 	'ItemId'        => $this->asin
-			// );
-		} else {
-			// searchitems
-			$path = "/paapi5/searchitems";
-			$searchItemRequest->Keywords = $this->keyword;
-			$searchItemRequest->ItemCount = 1;
-//			$searchItemRequest->SearchIndex = "All";
-
-			// $params = array(
-			// 	'AssociateTag'  => $aid,
-			// 	'MerchantId'    => 'All',
-			// 	'ResponseGroup' => 'Images,ItemAttributes',
-			// 	'Operation'     => 'ItemSearch',
-			// 	'SearchIndex'   => 'All',
-			// 	'Keywords'      => $this->keyword
-			// );
-		}
-
-		$payload = json_encode( $searchItemRequest );
-
-		// レスポンスの取得
-		// 正常に取得出来た場合は xml オブジェクトが、エラーの場合は文字列が返ってくる
-		$parser = new SimpleAmazonParseJSON();
-		$json = $parser->getamazonjson( $this->domain, $path, $payload );
-
-		// echo '<!--';
-		// var_dump($xml);
-		// echo '-->';
-		
-		if( is_string( $json ) ) {
-			//エラーログの出力
-			$this->errorlog( $this->asin );
-
-			//エラーメッセージ
-			if ( is_user_logged_in() ) {
-				$this->error_message = '<div class="notice">' . "\n"
-						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
-						. '<pre>' . $json . '</pre>' . "\n"
-						. '</div>' . "\n";
-			}
-		} else {
-//			$this->item = $json->{'ItemsResult'}->{'Items'}[0];
-			$this->item = $json;
-//			$this->item = $xml->Items->Item;
-		}
+		$this->keyword = trim( $keyword );
 
 	}
 
@@ -260,17 +218,31 @@ class SimpleAmazonItem {
 	 */
 	public function generate_html( $template = null, $options = null ) {
 
-		//商品情報を設定
-		$this->set_item_object();
+		//ドメインに対応するアソシエイトIDを取得
+		$this->aid = $this->opt->get_aid( $this->domain );
+
+		if( $this->aid ) {
+			//商品情報を取得する
+			$Item = $this->get_item_object();
+		} else {
+			$Item = "対応するアソシエイトIDが設定されていません";
+		}
 
 		//商品情報がない場合はエラーメッセージを返す
-		if( !$this->item ) {
-			return $this->error_message;
+		if( is_string( $Item ) ) {
+			//エラーメッセージ
+			if ( is_user_logged_in() ) {
+				$error_message = '<div class="notice">' . "\n"
+						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
+						. '<pre>' . $json . '</pre>' . "\n"
+						. '</div>' . "\n";
+				return $error_message;
+			}
 		}
 
 		//テンプレートの設定
 		if( !file_exists( SIMPLE_AMAZON_PLUGIN_DIR . '/template/' . $template ) || !$template ) {
-			$template = $this->options['template'];
+			$template = $this->opt->get_option('template');
 		}
 
 		// よく使いそうな項目をあらかじめ簡単な変数にしておく
@@ -282,7 +254,7 @@ class SimpleAmazonItem {
 		$aff = $options;
 		
 		//商品情報
-		$Item  = $this->item;
+//		$Item  = $this->item;
 
 		$ItemInfo        = $Item->{'ItemInfo'};
 		$ByLineInfo      = $ItemInfo->{'ByLineInfo'};
@@ -324,6 +296,60 @@ class SimpleAmazonItem {
 		
 		return $item_html;
 
+	}
+
+	/**
+	 * 商品情報のXMLオブジェクトを取得する
+	 * @param none
+	 * @return json $json
+	 */
+	private function get_item_object() {
+
+		$searchItemRequest = new SearchItemsRequest();
+		$searchItemRequest->PartnerType = "Associates";
+		$searchItemRequest->PartnerTag = $this->aid;
+		$searchItemRequest->Resources = [
+			"Images.Primary.Small",
+			"Images.Primary.Medium",
+			"Images.Primary.Large",
+			"ItemInfo.Title",
+			"ItemInfo.ByLineInfo",
+			"ItemInfo.ContentInfo",
+			"ItemInfo.Classifications",
+			"ItemInfo.ProductInfo",
+			"ItemInfo.Title",
+			"ItemInfo.TradeInInfo"
+		];
+
+		if( $this->asin ) {
+			// getitems
+			$path = '/paapi5/getitems';
+			$searchItemRequest->ItemIds = array( $this->asin );
+		} else {
+			// searchitems
+			$path = "/paapi5/searchitems";
+			$searchItemRequest->Keywords = $this->keyword;
+			$searchItemRequest->ItemCount = 1;
+//			$searchItemRequest->SearchIndex = "All";
+		}
+
+		$payload = json_encode( $searchItemRequest );
+
+		// レスポンスの取得
+		// 正常に取得出来た場合は xml オブジェクトが、エラーの場合は文字列が返ってくる
+		$parser = new SimpleAmazonParseJSON();
+		$json_item = $parser->getamazonjson( $this->domain, $path, $payload );
+
+		// echo '<!--';
+		// var_dump( $json_item );
+		// echo '-->';
+		
+		if( is_string( $json_item ) ) {
+			//エラーログの出力
+			$this->errorlog( $this->asin );
+		}
+
+		return $json_item;
 	}
 
 	/**

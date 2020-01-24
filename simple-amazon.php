@@ -30,12 +30,13 @@ define( 'SIMPLE_AMAZON_IMG_URL',    SIMPLE_AMAZON_PLUGIN_URL . 'images/' );
 /******************************************************************************
  * globalな変数の設定
  *****************************************************************************/
-global $simple_amazon_options;
+//global $simple_amazon_options; //不使用
 
 
 /******************************************************************************
  * クラスの読み込み
  *****************************************************************************/
+include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_options.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_parse_json.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_cache_control.php');
 include_once(SIMPLE_AMAZON_PLUGIN_DIR . 'include/class_lib.php');
@@ -52,12 +53,12 @@ $simpleAmazon = new SimpleAmazon();
 
 class SimpleAmazon {
 
-	private $options;
-
 	public $saView;
 	public $saListView;
 
 	private $lib;
+	private $opt;
+
 	private $saAdmin;
 
 	/**
@@ -68,15 +69,17 @@ class SimpleAmazon {
 	public function __construct() {
 
 		$this->lib = new SimpleAmazonLib();
+		$this->opt = new SimpleAmazonOptionsControl();
 
 		//オプション設定の読み込み
-		$this->set_options();
+		$this->opt->load_options();
 
 		//オブジェクトの設定
 		$this->saView     = new SimpleAmazonView();
+//書換が必要なのでとりあえず一時停止
 //		$this->saListView = new SimpleAmazonListView();
 
-		if (is_admin()) {
+		if ( is_admin() ) {
 			$this->saAdmin = new SimpleAmazonAdmin();
 		}
 
@@ -94,53 +97,6 @@ class SimpleAmazon {
 		add_filter('the_content', array($this->saView, 'replace'), 1);
 
 	}
-
-
-	/**
-	 * オプションの設定
-	 * @param none
-	 * @return none
-	 */
-	private function set_options() {
-
-		global $simple_amazon_options;
-
-		$this->options = get_option('simple_amazon_admin_options');
-
-		// デフォルトの設定
-		if ( ! $this->options ){
-			$domain = $this->lib->get_domain();
-			$this->options = array(
-				'accesskeyid'     => '',
-				'associatesid_au' => '',
-				'associatesid_br' => '',
-				'associatesid_in' => '',
-				'associatesid_mx' => '',
-				'associatesid_tr' => '',
-				'associatesid_ae' => '',
-				'associatesid_sg' => '',
-				'associatesid_ca' => '',
-//				'associatesid_cn' => '',
-				'associatesid_de' => '',
-				'associatesid_es' => '',
-				'associatesid_fr' => '',
-				'associatesid_it' => '',
-				'associatesid_jp' => '',
-				'associatesid_uk' => '',
-				'associatesid_us' => '',
-				'default_domain'  => $domain,
-				'delete_setting'  => 'no',
-				'secretaccesskey' => '',
-				'setcss'          => 'yes',
-				'template'        => 'sa-default.php'
-			);
-			update_option( 'simple_amazon_admin_options', $this->options );
-		}
-		
-		$simple_amazon_options = $this->options;
-
-	}
-
 
 	/**
 	 * インストール時の処理
@@ -161,12 +117,11 @@ class SimpleAmazon {
 	public function plugin_deactivation() {
 
 		// オプション値の削除
-		if( $this->options['delete_setting'] == 'yes' ) {
-			delete_option( 'simple_amazon_admin_options' );
-		}
+		$this->opt->delete_options();
 
 		// simple_amazon_clear_chache_hook を wp-cron から削除する
 		wp_clear_scheduled_hook('simple_amazon_clear_chache_hook');
+
 	}
 
 
@@ -177,11 +132,12 @@ class SimpleAmazon {
 	 */
 	public function add_stylesheet() {
 
-		global $simple_amazon_options;
+		$setting = $this->opt->get_option( 'setcss' );
 
-		if( $simple_amazon_options['setcss'] == 'yes') {
+		if( $setting == 'yes') {
 			wp_enqueue_style('simple-amazon', SIMPLE_AMAZON_PLUGIN_URL.'simple-amazon.css', array(), SIMPLE_AMAZON_VER);
 		}
+
 	}
 
 
