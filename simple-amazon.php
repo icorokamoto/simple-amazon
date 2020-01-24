@@ -175,7 +175,8 @@ function simple_amazon_custum_view() {
 /* 指定したリクエストのリストを表示する関数 */
 function simple_amazon_list_view( $params, $code = null, $styles = null ) {
 	global $simpleAmazon;
-	$simpleAmazon->saListView->view( $params, $code, $styles );
+//書換が必要なのでとりあえず一時停止
+//	$simpleAmazon->saListView->view( $params, $code, $styles );
 /*
 		$params = array(
 			'SearchIndex'   => 'Books',
