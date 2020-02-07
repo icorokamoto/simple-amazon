@@ -229,12 +229,13 @@ class SimpleAmazonItem {
 		}
 
 		//商品情報がない場合はエラーメッセージを返す
+		//（商品情報 $Item にエラーメッセージが入っている）
 		if( is_string( $Item ) ) {
-			//エラーメッセージ
+			//管理者の場合のみエラーメッセージを表示
 			if ( is_user_logged_in() ) {
 				$error_message = '<div class="notice">' . "\n"
-						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
-						. '<pre>' . $json . '</pre>' . "\n"
+						. 'Amazonの商品情報取得時にエラーが発生したようです。<br />（このメッセージは管理者にのみ表示されています。）'  . "\n"
+						. '<pre>' . esc_html( $Item ) . '</pre>' . "\n"
 						. '</div>' . "\n";
 				return $error_message;
 			}
