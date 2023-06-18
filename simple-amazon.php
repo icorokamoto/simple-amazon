@@ -4,7 +4,7 @@ Plugin Name: Simple Amazon
 Plugin URI: http://www.icoro.com/
 Description: ASIN を指定して Amazon から個別商品の情報を取出します。BOOKS, DVD, CD は詳細情報を取り出せます。
 Author: icoro
-Version: 7.0
+Version: 8.0.1
 Author URI: http://www.icoro.com/
 Special Thanks: tomokame (http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)
@@ -20,7 +20,7 @@ if( $_SERVER['SCRIPT_FILENAME'] == __FILE__ ) die();
 /******************************************************************************
  * 定数の設定 (主にディレクトリのパスとか)
  *****************************************************************************/
-define( 'SIMPLE_AMAZON_VER', '7.0.1' );
+define( 'SIMPLE_AMAZON_VER', '8.0.1' );
 define( 'SIMPLE_AMAZON_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SIMPLE_AMAZON_CACHE_DIR',  SIMPLE_AMAZON_PLUGIN_DIR . 'cache/' );
 define( 'SIMPLE_AMAZON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
