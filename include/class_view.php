@@ -124,7 +124,6 @@ class SimpleAmazonItem {
 
 	private $domain;
 
-	private $item;
 	private $error_message;
 
 	private $opt;
@@ -229,15 +228,18 @@ class SimpleAmazonItem {
 		}
 
 		//商品情報がない場合はエラーメッセージを返す
+		//（商品情報 $Item にエラーメッセージが入っている）
 		if( is_string( $Item ) ) {
-			//エラーメッセージ
+			//管理者の場合のみエラーメッセージを表示
 			if ( is_user_logged_in() ) {
 				$error_message = '<div class="notice">' . "\n"
-						. 'Amazonの商品情報取得時に以下のエラーが発生したようです。<br />（このメッセージはログインしているユーザにのみ表示されています。）'  . "\n"
-						. '<pre>' . $json . '</pre>' . "\n"
+						. 'Amazonの商品情報取得時にエラーが発生したようです。<br />（このメッセージは管理者にのみ表示されています。）'  . "\n"
+						. '<pre>' . esc_html( $Item ) . '</pre>' . "\n"
 						. '</div>' . "\n";
 				return $error_message;
 			}
+			// 管理者以外にはなにも表示しない
+			return '';
 		}
 
 		//テンプレートの設定
@@ -254,24 +256,22 @@ class SimpleAmazonItem {
 		$aff = $options;
 		
 		//商品情報
-//		$Item  = $this->item;
-
 		$ItemInfo        = $Item->{'ItemInfo'};
-		$ByLineInfo      = $ItemInfo->{'ByLineInfo'};
-		$Classifications = $ItemInfo->{'Classifications'};
-		$ContentInfo     = $ItemInfo->{'ContentInfo'};
-		$ProductInfo     = $ItemInfo->{'ProductInfo'};
-		$TradeInInfo     = $ItemInfo->{'TradeInInfo'};
+		$ByLineInfo      = $ItemInfo->{'ByLineInfo'} ?? null;
+		$Classifications = $ItemInfo->{'Classifications'} ?? null;
 
-		$title           = $ItemInfo->{'Title'}->{'DisplayValue'}; // 商品名
-		$url             = esc_url( $Item->DetailPageURL ); // リンクURL
-		$Price           = $TradeInInfo->{'Price'}->{'DisplayAmount'}; //価格
-		$ProductGroup    = $Classifications->{'ProductGroup'}->{'DisplayValue'}; //グループ
+		$ContentInfo = $ItemInfo->{'ContentInfo'} ?? null;
+		$ProductInfo = $ItemInfo->{'ProductInfo'} ?? null;
+		$TradeInInfo = $ItemInfo->{'TradeInInfo'} ?? null;
+
+		$title        = $ItemInfo->{'Title'}->{'DisplayValue'}; // 商品名
+		$url          = esc_url( $Item->DetailPageURL ); // リンクURL
+		$ProductGroup = $Classifications->{'ProductGroup'}->{'DisplayValue'} ?? null; //グループ
+
+		$Price        = $TradeInInfo->{'Price'}->{'DisplayAmount'} ?? null; //価格
 
 		//images
-		// $Images = $item->{'Images'};
-		// $ImageItem = $Images->{'Primary'};
-		$images = $Item->{'Images'}->{'Primary'};
+		$images = $Item->{'Images'}->{'Primary'} ?? null;
 
 		$eximg = property_exists( $images, 'Small');
 		$s_image_url = ( $eximg ) ? $images->{'Small'}->{'URL'}    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';

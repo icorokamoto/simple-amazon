@@ -1,1 +1,1 @@
-<a href="<?php echo $url; ?>" rel="nofollow"><?php echo $title; ?></a>
+<a href="<?php echo $url; ?>" rel="sponsored"><?php echo $title; ?></a>

@@ -133,11 +133,19 @@ class SimpleAmazonParseJSON {
 			return $error_message;
 		}
 
+		//レスポンスの振替
+		if( property_exists( $json, 'ItemsResult' ) ) {
+			$json_res = $json->{'ItemsResult'};
+		} elseif( property_exists( $json, 'SearchResult' ) ) {
+			$json_res = $json->{'SearchResult'};
+		} else {
+			$error_message = '該当する商品がありませんでした' . "\n";
+			return $error_message;
+		}
+
 		// 商品はある？
-		if( property_exists( $json->{'ItemsResult'}, 'Items' ) ) {
-			$json_item = $json->{'ItemsResult'}->{'Items'}[0];
-		} elseif ( property_exists( $json->{'SearchResult'}, 'Items' ) ) {
-			$json_item = $json->{'SearchResult'}->{'Items'}[0];
+		if( property_exists( $json_res, 'Items' ) ) {
+			$json_item = $json_res->{'Items'}[0];
 		} else {
 			$error_message = '該当する商品がありませんでした' . "\n";
 			return $error_message;

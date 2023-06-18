@@ -30,8 +30,8 @@ $item->ItemAttributes->Binding
 */
 ?>
 <div class="simple-amazon-view">
-	<div class="sa-img-box"><a href="<?php echo $url; ?>" rel="nofollow"><img src="<?php echo $m_image_url; ?>" height="<?php echo $m_image_h; ?>" width="<?php echo $m_image_w; ?>" title="<?php echo $title; ?>" class="sa-image" /></a></div>
+	<div class="sa-img-box"><a href="<?php echo $url; ?>" rel="sponsored"><img src="<?php echo $m_image_url; ?>" height="<?php echo $m_image_h; ?>" width="<?php echo $m_image_w; ?>" title="<?php echo $title; ?>" class="sa-image" /></a></div>
 	<div class="sa-detail-box">
-		<p class="sa-title"><a href="<?php echo $url; ?>" rel="nofollow"><?php echo $title; ?></a></p>
+		<p class="sa-title"><a href="<?php echo $url; ?>" rel="sponsored"><?php echo $title; ?></a></p>
 	</div>
 </div><!-- simple-amazon-view -->

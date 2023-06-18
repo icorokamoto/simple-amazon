@@ -16,6 +16,10 @@ class SimpleAmazonOptionsControl {
 		$this->options = get_option( 'simple_amazon_admin_options' );
 
 		$this->country_list = array(
+			array( 'code' => 'jp', 'domain' => 'amazon.co.jp',  'lang' => 'ja',    'name' => '日本' ),
+			array( 'code' => 'uk', 'domain' => 'amazon.co.uk',  'lang' => 'en_GB', 'name' => 'イギリス' ),
+			array( 'code' => 'us', 'domain' => 'amazon.com',    'lang' => 'en_US', 'name' => 'アメリカ' ),
+
 			array( 'code' => 'ae', 'domain' => 'amazon.ae',     'lang' => 'ar',    'name' => 'アラブ首長国連邦' ),
 			array( 'code' => 'au', 'domain' => 'amazon.com.au', 'lang' => 'en_AU', 'name' => 'オーストラリア' ),
 			array( 'code' => 'br', 'domain' => 'amazon.com.br', 'lang' => 'pt_BR', 'name' => 'ブラジル' ),
@@ -24,12 +28,9 @@ class SimpleAmazonOptionsControl {
 			array( 'code' => 'fr', 'domain' => 'amazon.fr',     'lang' => 'fr_FR', 'name' => 'フランス' ),
 			array( 'code' => 'in', 'domain' => 'amazon.in',     'lang' => 'en_IN', 'name' => 'インド' ),
 			array( 'code' => 'it', 'domain' => 'amazon.it',     'lang' => 'it_IT', 'name' => 'イタリア' ),
-			array( 'code' => 'jp', 'domain' => 'amazon.co.jp',  'lang' => 'ja',    'name' => '日本' ),
 			array( 'code' => 'mx', 'domain' => 'amazon.com.mx', 'lang' => 'es_MX', 'name' => 'メキシコ' ),
 			array( 'code' => 'sg', 'domain' => 'amazon.sg',     'lang' => 'en_SG', 'name' => 'シンガポール' ),
-			array( 'code' => 'tr', 'domain' => 'amazon.com.tr', 'lang' => 'tr_TR', 'name' => 'トルコ' ),
-			array( 'code' => 'uk', 'domain' => 'amazon.co.uk',  'lang' => 'en_GB', 'name' => 'イギリス' ),
-			array( 'code' => 'us', 'domain' => 'amazon.com',    'lang' => 'en_US', 'name' => 'アメリカ' )
+			array( 'code' => 'tr', 'domain' => 'amazon.com.tr', 'lang' => 'tr_TR', 'name' => 'トルコ' )
 		);
 
 	}
