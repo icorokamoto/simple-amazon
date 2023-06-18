@@ -26,7 +26,7 @@
 define('CACHE_LITE_ERROR_RETURN', 1);
 define('CACHE_LITE_ERROR_DIE', 8);
 
-// based on Cache_Lite 1.7.15
+// based on Cache_Lite 1.8.3
 class Icoro_Cache_Lite
 {
 
@@ -38,7 +38,7 @@ class Icoro_Cache_Lite
     *
     * @var string $_cacheDir
     */
-    private $_cacheDir = '/tmp/';
+    var $_cacheDir = '/tmp/';
 
     /**
     * Enable / disable caching
@@ -47,7 +47,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_caching
     */
-    private $_caching = true;
+    var $_caching = true;
 
     /**
     * Cache lifetime (in seconds)
@@ -56,7 +56,7 @@ class Icoro_Cache_Lite
     *
     * @var int $_lifeTime
     */
-    private $_lifeTime = 3600;
+    var $_lifeTime = 3600;
 
     /**
     * Enable / disable fileLocking
@@ -65,28 +65,28 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_fileLocking
     */
-    private $_fileLocking = true;
+    var $_fileLocking = true;
 
     /**
     * Timestamp of the last valid cache
     *
     * @var int $_refreshTime
     */
-    private $_refreshTime;
+    var $_refreshTime;
 
     /**
     * File name (with path)
     *
     * @var string $_file
     */
-    private $_file;
+    var $_file;
     
     /**
     * File name (without path)
     *
     * @var string $_fileName
     */
-    private $_fileName;
+    var $_fileName;
 
     /**
     * Enable / disable write control (the cache is read just after writing to detect corrupt entries)
@@ -96,7 +96,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_writeControl
     */
-    private $_writeControl = true;
+    var $_writeControl = true;
 
     /**
     * Enable / disable read control
@@ -106,7 +106,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_writeControl
     */
-    private $_readControl = true;
+    var $_readControl = true;
 
     /**
     * Type of read control (only if read control is enabled)
@@ -118,7 +118,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_readControlType
     */
-    private $_readControlType = 'crc32';
+    var $_readControlType = 'crc32';
 
     /**
     * Pear error mode (when raiseError is called)
@@ -128,21 +128,21 @@ class Icoro_Cache_Lite
     * @see setToDebug()
     * @var int $_pearErrorMode
     */
-    private $_pearErrorMode = CACHE_LITE_ERROR_RETURN;
+    var $_pearErrorMode = CACHE_LITE_ERROR_RETURN;
     
     /**
     * Current cache id
     *
     * @var string $_id
     */
-    private $_id;
+    var $_id;
 
     /**
     * Current cache group
     *
     * @var string $_group
     */
-    private $_group;
+    var $_group;
 
     /**
     * Enable / Disable "Memory Caching"
@@ -151,7 +151,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_memoryCaching
     */
-    private $_memoryCaching = false;
+    var $_memoryCaching = false;
 
     /**
     * Enable / Disable "Only Memory Caching"
@@ -159,28 +159,28 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_onlyMemoryCaching
     */
-    private $_onlyMemoryCaching = false;
+    var $_onlyMemoryCaching = false;
 
     /**
     * Memory caching array
     *
     * @var array $_memoryCachingArray
     */
-    private $_memoryCachingArray = array();
+    var $_memoryCachingArray = array();
 
     /**
     * Memory caching counter
     *
     * @var int $memoryCachingCounter
     */
-    private $_memoryCachingCounter = 0;
+    var $_memoryCachingCounter = 0;
 
     /**
     * Memory caching limit
     *
     * @var int $memoryCachingLimit
     */
-    private $_memoryCachingLimit = 1000;
+    var $_memoryCachingLimit = 1000;
     
     /**
     * File Name protection
@@ -192,7 +192,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $fileNameProtection
     */
-    private $_fileNameProtection = true;
+    var $_fileNameProtection = true;
     
     /**
     * Enable / disable automatic serialization
@@ -202,7 +202,7 @@ class Icoro_Cache_Lite
     *
     * @var boolean $_serialize
     */
-    private $_automaticSerialization = false;
+    var $_automaticSerialization = false;
     
     /**
     * Disable / Tune the automatic cleaning process
@@ -215,7 +215,7 @@ class Icoro_Cache_Lite
     *
     * @var int $_automaticCleaning
     */
-    private $_automaticCleaningFactor = 0;
+    var $_automaticCleaningFactor = 0;
     
     /**
     * Nested directory level
@@ -228,14 +228,14 @@ class Icoro_Cache_Lite
     *
     * @var int $_hashedDirectoryLevel
     */
-    private $_hashedDirectoryLevel = 0;
+    var $_hashedDirectoryLevel = 0;
     
     /**
     * Umask for hashed directory structure
     *
     * @var int $_hashedDirectoryUmask
     */
-    private $_hashedDirectoryUmask = 0700;
+    var $_hashedDirectoryUmask = 0700;
     
     /**
      * API break for error handling in CACHE_LITE_ERROR_RETURN mode
@@ -247,7 +247,13 @@ class Icoro_Cache_Lite
      * 
      * @var boolean
      */
-    private $_errorHandlingAPIBreak = false;
+    var $_errorHandlingAPIBreak = false;
+	
+	var $_hashedDirectoryGroup = NULL;
+	
+	var $_cacheFileMode = NULL;
+	
+	var $_cacheFileGroup = NULL;
     
     // --- Public methods ---
 
@@ -273,6 +279,9 @@ class Icoro_Cache_Lite
     *     'hashedDirectoryLevel' => level of the hashed directory system (int),
     *     'hashedDirectoryUmask' => umask for hashed directory structure (int),
     *     'errorHandlingAPIBreak' => API break for better error handling ? (boolean)
+	*     'hashedDirectoryGroup' => group of hashed directory structure (int | string) (see function chgrp)
+	*     'cacheFileMode' => filesystem mode of newly created cache files (int)
+	*     'cacheFileGroup' => group of newly created cache files (int | string) (see function chgrp)
     * );
     * 
     * If sys_get_temp_dir() is available and the 
@@ -286,7 +295,7 @@ class Icoro_Cache_Lite
     * @param array $options options
     * @access public
     */
-    public function __construct($options = array(NULL))
+    function __construct($options = array(NULL))
     {
         foreach($options as $key => $value) {
             $this->setOption($key, $value);
@@ -294,6 +303,16 @@ class Icoro_Cache_Lite
         if (!isset($options['cacheDir']) && function_exists('sys_get_temp_dir')) {
         	$this->setOption('cacheDir', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
         }
+    }
+
+    /**
+     * PHP4 constructor for backwards compatibility with older code
+     *
+     * @param array $options Options
+     */
+    function Cache_Lite($options = array(NULL))
+    {
+        self::__construct($options);
     }
     
     /**
@@ -305,9 +324,9 @@ class Icoro_Cache_Lite
     * @var mixed $value value of the option
     * @access public
     */
-    public function setOption($name, $value) 
+    function setOption($name, $value) 
     {
-        $availableOptions = array('errorHandlingAPIBreak', 'hashedDirectoryUmask', 'hashedDirectoryLevel', 'automaticCleaningFactor', 'automaticSerialization', 'fileNameProtection', 'memoryCaching', 'onlyMemoryCaching', 'memoryCachingLimit', 'cacheDir', 'caching', 'lifeTime', 'fileLocking', 'writeControl', 'readControl', 'readControlType', 'pearErrorMode');
+        $availableOptions = array('errorHandlingAPIBreak', 'hashedDirectoryUmask', 'hashedDirectoryLevel', 'automaticCleaningFactor', 'automaticSerialization', 'fileNameProtection', 'memoryCaching', 'onlyMemoryCaching', 'memoryCachingLimit', 'cacheDir', 'caching', 'lifeTime', 'fileLocking', 'writeControl', 'readControl', 'readControlType', 'pearErrorMode', 'hashedDirectoryGroup', 'cacheFileMode', 'cacheFileGroup');
         if (in_array($name, $availableOptions)) {
             $property = '_'.$name;
             $this->$property = $value;
@@ -323,7 +342,7 @@ class Icoro_Cache_Lite
     * @return string data of the cache (else : false)
     * @access public
     */
-    public function get($id, $group = 'default', $doNotTestCacheValidity = false)
+    function get($id, $group = 'default', $doNotTestCacheValidity = false)
     {
         $this->_id = $id;
         $this->_group = $group;
@@ -372,7 +391,7 @@ class Icoro_Cache_Lite
     * @return boolean true if no problem (else : false or a PEAR_Error object)
     * @access public
     */
-    public function save($data, $id = NULL, $group = 'default')
+    function save($data, $id = NULL, $group = 'default')
     {
         if ($this->_caching) {
             if ($this->_automaticSerialization) {
@@ -423,7 +442,7 @@ class Icoro_Cache_Lite
     * @return boolean true if no problem
     * @access public
     */
-    public function remove($id, $group = 'default', $checkbeforeunlink = false)
+    function remove($id, $group = 'default', $checkbeforeunlink = false)
     {
         $this->_setFileName($id, $group);
         if ($this->_memoryCaching) {
@@ -453,7 +472,7 @@ class Icoro_Cache_Lite
     * @return boolean true if no problem
     * @access public
     */
-    public function clean($group = false, $mode = 'ingroup')
+    function clean($group = false, $mode = 'ingroup')
     {
         return $this->_cleanDir($this->_cacheDir, $group, $mode);
     }
@@ -466,7 +485,7 @@ class Icoro_Cache_Lite
     *
     * @access public
     */
-    public function setToDebug()
+    function setToDebug()
     {
         $this->setOption('pearErrorMode', CACHE_LITE_ERROR_DIE);
     }
@@ -477,7 +496,7 @@ class Icoro_Cache_Lite
     * @param int $newLifeTime new life time (in seconds)
     * @access public
     */
-    public function setLifeTime($newLifeTime)
+    function setLifeTime($newLifeTime)
     {
         $this->_lifeTime = $newLifeTime;
         $this->_setRefreshTime();
@@ -490,7 +509,7 @@ class Icoro_Cache_Lite
     * @param string $group name of the cache group
     * @access public
     */
-    public function saveMemoryCachingState($id, $group = 'default')
+    function saveMemoryCachingState($id, $group = 'default')
     {
         if ($this->_caching) {
             $array = array(
@@ -510,7 +529,7 @@ class Icoro_Cache_Lite
     * @param boolean $doNotTestCacheValidity if set to true, the cache validity won't be tested
     * @access public
     */
-    public function getMemoryCachingState($id, $group = 'default', $doNotTestCacheValidity = false)
+    function getMemoryCachingState($id, $group = 'default', $doNotTestCacheValidity = false)
     {
         if ($this->_caching) {
             if ($data = $this->get($id, $group, $doNotTestCacheValidity)) {
@@ -528,7 +547,7 @@ class Icoro_Cache_Lite
     *
     * @return int last modification time
     */
-    public function lastModified() 
+    function lastModified() 
     {
         return @filemtime($this->_file);
     }
@@ -544,13 +563,10 @@ class Icoro_Cache_Lite
     * @param int $code error code
     * @access public
     */
-    public function raiseError($msg, $code)
+    function raiseError($msg, $code)
     {
-/*
         include_once('PEAR.php');
         return PEAR::raiseError($msg, $code, $this->_pearErrorMode);
-*/
-		return true;
     }
     
     /**
@@ -560,7 +576,7 @@ class Icoro_Cache_Lite
      * 
      * @access public
      */
-    public function extendLife()
+    function extendLife()
     {
         @touch($this->_file);
     }
@@ -572,7 +588,7 @@ class Icoro_Cache_Lite
     *
     * @access private
     */
-    private function _setRefreshTime() 
+    function _setRefreshTime() 
     {
         if (is_null($this->_lifeTime)) {
             $this->_refreshTime = null;
@@ -588,7 +604,7 @@ class Icoro_Cache_Lite
     * @return boolean true if no problem
     * @access private
     */
-    private function _unlink($file)
+    function _unlink($file)
     {
         if (!@unlink($file)) {
             return $this->raiseError('Cache_Lite : Unable to remove cache !', -3);
@@ -606,7 +622,7 @@ class Icoro_Cache_Lite
     * @return boolean true if no problem
     * @access private
     */
-    private function _cleanDir($dir, $group = false, $mode = 'ingroup')     
+    function _cleanDir($dir, $group = false, $mode = 'ingroup')     
     {
         if ($this->_fileNameProtection) {
             $motif = ($group) ? 'cache_'.md5($group).'_' : 'cache_';
@@ -669,19 +685,34 @@ class Icoro_Cache_Lite
         }
         return $result;
     }
-      
+
+    /**
+    * Touch the cache file while are recreating it to avoid
+    * launch this task more then once when necessary
+    * When the cache recreated and Added in Cache Memory
+    * @return void
+    * @access private
+    */
+    function _touchCacheFile(){
+        if (file_exists($this->_file)) {
+            @touch($this->_file);
+        }
+    }
     /**
     * Add some date in the memory caching array
     *
     * @param string $data data to cache
     * @access private
     */
-    private function _memoryCacheAdd($data)
+    function _memoryCacheAdd($data)
     {
+        $this->_touchCacheFile();
         $this->_memoryCachingArray[$this->_file] = $data;
         if ($this->_memoryCachingCounter >= $this->_memoryCachingLimit) {
-            list($key, ) = each($this->_memoryCachingArray);
+            $key = key($this->_memoryCachingArray);
+            next($this->_memoryCachingArray);
             unset($this->_memoryCachingArray[$key]);
+            
         } else {
             $this->_memoryCachingCounter = $this->_memoryCachingCounter + 1;
         }
@@ -694,7 +725,7 @@ class Icoro_Cache_Lite
     * @param string $group name of the group
     * @access private
     */
-    private function _setFileName($id, $group)
+    function _setFileName($id, $group)
     {
         
         if ($this->_fileNameProtection) {
@@ -719,14 +750,14 @@ class Icoro_Cache_Lite
     * @return string content of the cache file (else : false or a PEAR_Error object)
     * @access private
     */
-    private function _read()
+    function _read()
     {
         $fp = @fopen($this->_file, "rb");
         if ($fp) {
 	    if ($this->_fileLocking) @flock($fp, LOCK_SH);
             clearstatcache();
             $length = @filesize($this->_file);
-            $mqr = get_magic_quotes_runtime();
+            $mqr = (function_exists('get_magic_quotes_runtime') ? @get_magic_quotes_runtime() : 0);
             if ($mqr) {
                 set_magic_quotes_runtime(0);
             }
@@ -771,7 +802,7 @@ class Icoro_Cache_Lite
     * @return boolean true if ok (a PEAR_Error object else)
     * @access private
     */
-    private function _write($data)
+    function _write($data)
     {
         if ($this->_hashedDirectoryLevel > 0) {
             $hash = md5($this->_fileName);
@@ -779,17 +810,33 @@ class Icoro_Cache_Lite
             for ($i=0 ; $i<$this->_hashedDirectoryLevel ; $i++) {
                 $root = $root . 'cache_' . substr($hash, 0, $i + 1) . '/';
                 if (!(@is_dir($root))) {
-                    @mkdir($root, $this->_hashedDirectoryUmask);
+					if (@mkdir($root))
+					{
+						@chmod($root, $this->_hashedDirectoryUmask);
+						if (! is_null($this->_hashedDirectoryGroup))
+							@chgrp($root, $this->_hashedDirectoryGroup);
+					}
                 }
             }
         }
+		// if both _cacheFileMode and _cacheFileGroup is null, then we don't need to call
+		// file_exists (see below: if ($is_newfile) ...)
+		$is_newfile = (! is_null($this->_cacheFileMode) || !is_null($this->_cacheFileGroup)) 
+			&& ! @file_exists($this->_file);
         $fp = @fopen($this->_file, "wb");
         if ($fp) {
             if ($this->_fileLocking) @flock($fp, LOCK_EX);
+			if ($is_newfile)
+			{
+				if (! is_null($this->_cacheFileMode))
+					@chmod($this->_file, $this->_cacheFileMode);
+				if (! is_null($this->_cacheFileGroup))
+					@chgrp($this->_file, $this->_cacheFileGroup);
+			}
             if ($this->_readControl) {
                 @fwrite($fp, $this->_hash($data, $this->_readControlType), 32);
             }
-            $mqr = get_magic_quotes_runtime();
+            $mqr = (function_exists('get_magic_quotes_runtime') ? @get_magic_quotes_runtime() : 0);
             if ($mqr) {
                 set_magic_quotes_runtime(0);
             }
@@ -811,7 +858,7 @@ class Icoro_Cache_Lite
     * @return boolean true if the test is ok (else : false or a PEAR_Error object)
     * @access private
     */
-    private function _writeAndControl($data)
+    function _writeAndControl($data)
     {
         $result = $this->_write($data);
         if (is_object($result)) {
@@ -835,7 +882,7 @@ class Icoro_Cache_Lite
     * @return string control key
     * @access private
     */
-    private function _hash($data, $controlType)
+    function _hash($data, $controlType)
     {
         switch ($controlType) {
         case 'md5':
@@ -850,5 +897,3 @@ class Icoro_Cache_Lite
     }
     
 } 
-
-?>

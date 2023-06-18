@@ -124,7 +124,6 @@ class SimpleAmazonItem {
 
 	private $domain;
 
-	private $item;
 	private $error_message;
 
 	private $opt;
@@ -239,6 +238,8 @@ class SimpleAmazonItem {
 						. '</div>' . "\n";
 				return $error_message;
 			}
+			// 管理者以外にはなにも表示しない
+			return '';
 		}
 
 		//テンプレートの設定
@@ -255,24 +256,22 @@ class SimpleAmazonItem {
 		$aff = $options;
 		
 		//商品情報
-//		$Item  = $this->item;
-
 		$ItemInfo        = $Item->{'ItemInfo'};
-		$ByLineInfo      = $ItemInfo->{'ByLineInfo'};
-		$Classifications = $ItemInfo->{'Classifications'};
-		$ContentInfo     = $ItemInfo->{'ContentInfo'};
-		$ProductInfo     = $ItemInfo->{'ProductInfo'};
-		$TradeInInfo     = $ItemInfo->{'TradeInInfo'};
+		$ByLineInfo      = $ItemInfo->{'ByLineInfo'} ?? null;
+		$Classifications = $ItemInfo->{'Classifications'} ?? null;
 
-		$title           = $ItemInfo->{'Title'}->{'DisplayValue'}; // 商品名
-		$url             = esc_url( $Item->DetailPageURL ); // リンクURL
-		$Price           = $TradeInInfo->{'Price'}->{'DisplayAmount'}; //価格
-		$ProductGroup    = $Classifications->{'ProductGroup'}->{'DisplayValue'}; //グループ
+		$ContentInfo = $ItemInfo->{'ContentInfo'} ?? null;
+		$ProductInfo = $ItemInfo->{'ProductInfo'} ?? null;
+		$TradeInInfo = $ItemInfo->{'TradeInInfo'} ?? null;
+
+		$title        = $ItemInfo->{'Title'}->{'DisplayValue'}; // 商品名
+		$url          = esc_url( $Item->DetailPageURL ); // リンクURL
+		$ProductGroup = $Classifications->{'ProductGroup'}->{'DisplayValue'} ?? null; //グループ
+
+		$Price        = $TradeInInfo->{'Price'}->{'DisplayAmount'} ?? null; //価格
 
 		//images
-		// $Images = $item->{'Images'};
-		// $ImageItem = $Images->{'Primary'};
-		$images = $Item->{'Images'}->{'Primary'};
+		$images = $Item->{'Images'}->{'Primary'} ?? null;
 
 		$eximg = property_exists( $images, 'Small');
 		$s_image_url = ( $eximg ) ? $images->{'Small'}->{'URL'}    : SIMPLE_AMAZON_IMG_URL . 'amazon_noimg_small.png';
