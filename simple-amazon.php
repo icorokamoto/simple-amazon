@@ -4,7 +4,7 @@ Plugin Name: Simple Amazon
 Plugin URI: http://www.icoro.com/
 Description: ASIN を指定して Amazon から個別商品の情報を取出します。BOOKS, DVD, CD は詳細情報を取り出せます。
 Author: icoro
-Version: 9.0-dev
+Version: 9.0
 Author URI: http://www.icoro.com/
 Special Thanks: tomokame (http://tomokame.moo.jp/)
 Special Thanks: websitepublisher.net (http://www.websitepublisher.net/article/aws-php/)

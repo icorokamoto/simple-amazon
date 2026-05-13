@@ -2,8 +2,7 @@
 Contributors: icoro
 Donate link: 
 Tags: amazon
-Requires at least: 2.6
-Tested up to: 5.3.2
+Tested up to: 6.2.2
 Stable tag: 9.0
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
@@ -47,6 +46,9 @@ Stable tag: 9.0
 * Creators API に対応した。
 * PHPの関数として呼び出す機能を削除した。
 * カスタムフィールドの対応を削除した。
+
+= 8.0.1 =
+* PHP8.2 に対応した。
 
 = 8.0 =
 * PA-API v5 に対応した。
