@@ -1,0 +1,14 @@
+.distignore
+.git/
+.gitignore
+/bin/
+/dist/
+/src/
+/template/sa-full-plus-affi.php
+/vendor/
+composer.json
+composer.lock
+*.zip
+
+.DS_Store
+**/.DS_Store
