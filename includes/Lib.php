@@ -1,13 +1,14 @@
 <?php
+namespace Icoro\SimpleAmazon;
 /******************************************************************************
  * その他もろもろクラス
  *****************************************************************************/
-class SimpleAmazonLib {
+class Lib {
 
 	/**
 	 * ISBN10をISBN13に変換する
-	 * @param String $val
-	 * @return String $val.$chkdgt
+	 * @param string $val
+	 * @return string $val.$chkdgt
 	 */
 	public function calc_chkdgt_mod10( $val ){
 		$f = 0;
@@ -31,8 +32,8 @@ class SimpleAmazonLib {
 
 	/**
 	 * ISBN13をISBN10に変換する
-	 * @param String $val
-	 * @return String $val.$chkdgt
+	 * @param string $val
+	 * @return string $val.$chkdgt
 	 */
 	public function calc_chkdgt_isbn10( $val ){
 		$g = 0;
@@ -56,5 +57,3 @@ class SimpleAmazonLib {
 		return $val.$chkdgt;
 	}
 }
-
-?>

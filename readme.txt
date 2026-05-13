@@ -4,7 +4,7 @@ Donate link:
 Tags: amazon
 Requires at least: 2.6
 Tested up to: 5.3.2
-Stable tag: 8.0
+Stable tag: 9.0
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
 
@@ -15,24 +15,6 @@ Stable tag: 8.0
 　もともとは「wp-tmkm-amazon」というプラグインをベースに開発を始めたものですが、今となってはまったく別物のプラグインとなっております。
 
 = 商品情報の表示 =
-
-　Amazonの商品情報を表示させるにはURLを貼り付ける方法のほか、ショートコードやカスタムフィールドなどでの表示にも対応しています(場合によってはテーマやプラグインをちょっといじる必要あり)。
-
-PHPの関数として呼び出す場合：
-<?php simple_amazon_view($asin, $domain, $template ); ?>
-
-カスタムフィールドに入力した商品情報を表示する場合：
-<?php simple_amazon_custum_view(); ?>
-
-= 商品リストの表示 =
-
-　特定の商品情報を表示するほかに、売上ランキングのリストを表示する機能もあります。
-
-商品リストを表示する場合：
-<?php simple_amazon_list_view( $params, $domain, $styles ); ?>
-
-　変数やパラメータの詳細については Arbitrary section を参照してください。
-
 
 　「Simple Amazon」には、Amazon の 商品ページのURL を貼り付けるとその商品を記事上に表示するという、ただそれだけの機能しかありません。
 
@@ -47,20 +29,24 @@ PHPの関数として呼び出す場合：
 
 1. ダウンロードした zip ファイルを解凍します。
 2. simple-amazon フォルダを wp-content/plugins フォルダに転送します。
-3. cacheディレクトリのパーミッションを777(または707)にします。
 4. 管理画面から simple-amazon を有効化します。
-5. プラグインの管理画面に移動して、「Access Key ID」と「Secret Access Key」、および「アソシエイトID」を入力します。
+5. プラグインの管理画面に移動して、「Credential ID」「Credential Secret」「Credential Version」「Partner Tag」「Marketplace」を入力します。
 6. 必要に応じて「オプション設定」を設定します。
 7. 記事本文中にAmazon.co.jpの商品詳細ページのURLをコピペするだけでAmazonの商品情報が表示されます。
 
 = etc =
 
-* このプラグインを使用するには「Access Key ID」「Secret Access Key」「アソシエイトID」の3つが必要です。持っていない場合は https://affiliate.amazon.co.jp/ で取得してください。
+* このプラグインを使用するには「Credential ID」「Credential Secret」「Credential Version」「Partner Tag」「Marketplace」の3つが必要です。持っていない場合は https://affiliate.amazon.co.jp/ で取得してください。
 * imagesディレクトリの中にあるamazon_noimg.png(75 x 75px)、amazon_noimg_small.png(160 x 160px)、amazon_noimg_large.png(500 x 500px)を差し替えることで、商品画像がないときの代替画像を好きなものにできます。
 * cacheディレクトリは別の場所に設置できます。その場合は、/include/class_cache_control.php の 18行目にある $this->cache_dir の値を、設置したディレクトリのパスに変更してください。
 
 
 == Changelog ==
+
+= 9.0 =
+* Creators API に対応した。
+* PHPの関数として呼び出す機能を削除した。
+* カスタムフィールドの対応を削除した。
 
 = 8.0 =
 * PA-API v5 に対応した。
@@ -211,77 +197,6 @@ PHPの関数として呼び出す場合：
 
 == Arbitrary section ==
 
-= php 関数として呼び出す場合 =
-
-php 関数として呼び出す場合は、テーマファイル等に以下のように記載します。
-
-<?php simple_amazon_view( $asin, $domain, $template ); ?>
-
-　$asin は Amazon の ASIN です。
-　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, jp, uk)です。この項目は省略可能です。省略した場合は WordPress の言語設定に合わせたドメインが設定されます。
-　$template は表示の際に使用するテンプレートです。この項目は省略可能です。
-
-　以下は WPLANG に ja が設定されている場合の設定例です。(日本語版を使用している場合は通常 ja が設定されていると思われます。)
-
-amazon.co.jp にある、ASIN が 4883377245 の商品を表示させたい場合。
-<?php simple_amazon_view('4883377245'); ?>
-
-amazon.co.jp にある、ASIN が 4883377245 の商品を画像だけ(sa-image.php)表示させたい場合。
-<?php simple_amazon_view('4883377245', null, 'sa-image.php'); ?>
-
-Amazon.co.uk にある、ASINが B000BMUVKQ の商品を表示させたい場合。
-<?php simple_amazon_view('B000BMUVKQ', 'uk'); ?>
-
-
-= カスタムフィールドを使って表示 =
-
-　カスタムフィールドに入力したAmazonの商品のURLを元に商品情報を表示します。
-　利用するにはあらかじめテンプレートのAmazonの商品を表示したい場所に以下のように記載します。
-
-<?php simple_amazon_custum_view(); ?>
-
-　実際に商品を表示するには、記事を作成する際に「カスタムフィールドを追加:」で「amazon」を選択し、値に商品ページのURLを入力します。「カスタムフィールドを追加」ボタンをクリックして完了です。
-　改行で区切ることで複数の商品を一度に表示することが出来ます。
-
-
-= 商品リストを表示 (停止中) =
-
-　商品リストを表示します。もっというと、ItemSearchのオペレーションを実行して、その結果をリストする関数です。
-　利用するにはあらかじめテンプレートのAmazonの商品リストを表示したい場所に以下のように記載します。
-
-<?php simple_amazon_list_view( $params, $domain, $styles ); ?>
-
-　$params はProduct Advertising APIのリクエストパラメータがそのまま使えます。より詳しい内容は [Product Advertising](https://images-na.ssl-images-amazon.com/images/G/09/associates/paapi/dg/index.html) API の APIリファレンス -> オペレーション -> ItemSearch のページを参照してください。
-　$domain は Amazon のドメイン(ca, cn, de, es, com, fr, it, ja, uk)です。この項目は省略可能です。省略した場合は WordPress の言語設定に合わせたドメインが設定されます。
-$styles はリスト表示する際のタグなどを指定することが出来ます。設定出来る項目は以下のようになっています。この項目は省略可能です。
-
-imgsize        : 設定出来る値は small / medium / large の3つ。オプション設定の「商品画像サイズ」に相当します。デフォルトはオプション設定に準じます。
-before_list    : リストの前に付く文字列。デフォルトは <ul> です。
-after_list     : リストの後ろに付く文字列。デフォルトは</ul> です。
-before_li      : リストの各項目の前に付く文字列。デフォルトは <li> です。
-after_li       : リストの各項目の後ろに付く文字列。デフォルトは </li> です。
-show_thumbnail : 画像を表示するか否か。表示する場合は true、表示しない場合は false を指定します。デフォルトは true です。
-show_title     : タイトルなどの文字列を表示するか否か。表示する場合は true、表示しない場合は false を指定します。デフォルトは true です。
-
-　以下は WPLANG に ja が設定されている場合の設定例です。(日本語版を使用している場合は通常 ja が設定されていると思われます。)
-
-本 - コミックカテゴリの商品のタイトル(画像なし)を売れている順番でリストする場合。
-<?php
-$params = array('SearchIndex' => 'Books', 'BrowseNode' => '466280');
-$styles = array('show_thumbnail'=>false);
-simple_amazon_list_view($params, null, $styles);
-?>
-
-DVDカテゴリの商品の画像だけを売れている順番でリストする場合。
-<?php
-$style = array(before_list=>'<ul class="clearfix">','show_title'=>false);
-$params = array('SearchIndex' => 'DVD', 'BrowseNode' => '561958' );
-simple_amazon_list_view($params, null, $styles);
-?>
-
-　たぶん、設定次第でもっといろいろ出来ると思うので、いろいろ試してみてください。
-
-
 = ショートコードで商品情報を表示させる方法 =
 
 　投稿中に以下のようにショートコードを書くことで商品を表示することができます。
@@ -297,7 +212,7 @@ ASINとキーワードを両方指定した場合はASINが優先されます。
 
 = 商品情報を表示するコードのカスタマイズ =
 
-　/include/class_view.php の 86行目以降にある $regexps[] を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。
+　/includes/View.php の 35行目以降にある $regexps[] を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。
 　以下のような正規表現を利用して「ASIN」を取り出しています。
 
 ASINを指定する部分: (?P<asin>[A-Z0-9]{10,13})

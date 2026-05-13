@@ -4,85 +4,85 @@
 $detail = "";
 $detail_list = "";
 
-// $ItemInfo        = $item->{'ItemInfo'};
-// $ByLineInfo      = $ItemInfo->{'ByLineInfo'};
-// $Classifications = $ItemInfo->{'Classifications'};
-// $ContentInfo     = $ItemInfo->{'ContentInfo'};
-// $ProductInfo     = $ItemInfo->{'ProductInfo'};
-// $TradeInInfo     = $ItemInfo->{'TradeInInfo'};
+// $itemInfo        = $item->{'itemInfo'};
+// $byLineInfo      = $itemInfo->{'byLineInfo'};
+// $classifications = $itemInfo->{'classifications'};
+// $contentInfo     = $itemInfo->{'contentInfo'};
+// $productInfo     = $itemInfo->{'productInfo'};
+// $tradeInInfo     = $itemInfo->{'tradeInInfo'};
 
-// $ProductGroup    = $Classifications->{'ProductGroup'}->{'DisplayValue'};
-// $Price           = $TradeInInfo->{'Price'}->{'DisplayAmount'};
+// $productGroup    = $classifications->{'productGroup'}->{'displayValue'};
+// $price           = $tradeInInfo->{'price'}->{'displayAmount'};
 
-$Contributors    = isset( $ByLineInfo->{'Contributors'} ) ? $ByLineInfo->{'Contributors'} : null;
-$Manufacturer    = isset( $ByLineInfo->{'Manufacturer'}->{'DisplayValue'} ) ? esc_html( $ByLineInfo->{'Manufacturer'}->{'DisplayValue'} ) : null;
-$PublicationDate = isset( $ContentInfo->{'PublicationDate'}->{'DisplayValue'} ) ? date( "Y/m/d", strtotime( $ContentInfo->{'PublicationDate'}->{'DisplayValue'} ) ) : null;
-$PagesCount      = isset( $ContentInfo->{'PagesCount'}->{'DisplayValue'} ) ? esc_html( $ContentInfo->{'PagesCount'}->{'DisplayValue'} ) : null;
-$Binding         = isset( $Classifications->{'Binding'}->{'DisplayValue'} ) ? esc_html( $Classifications->{'Binding'}->{'DisplayValue'} ) : null;
-$ReleaseDate     = isset( $ProductInfo->{'ReleaseDate'}->{'DisplayValue'} ) ? date( "Y/m/d", strtotime( $ProductInfo->{'ReleaseDate'}->{'DisplayValue'} ) ) : null;
+$contributors    = isset( $byLineInfo->{'Contributors'} ) ? $byLineInfo->{'Contributors'} : null;
+$manufacturer    = isset( $byLineInfo->{'manufacturer'}->{'displayValue'} ) ? esc_html( $byLineInfo->{'manufacturer'}->{'displayValue'} ) : null;
+$publicationDate = isset( $contentInfo->{'publicationDate'}->{'displayValue'} ) ? date( "Y/m/d", strtotime( $contentInfo->{'publicationDate'}->{'displayValue'} ) ) : null;
+$pagesCount      = isset( $contentInfo->{'pagesCount'}->{'displayValue'} ) ? esc_html( $contentInfo->{'pagesCount'}->{'displayValue'} ) : null;
+$binding         = isset( $classifications->{'binding'}->{'displayValue'} ) ? esc_html( $classifications->{'binding'}->{'displayValue'} ) : null;
+$releaseDate     = isset( $productInfo->{'releaseDate'}->{'displayValue'} ) ? date( "Y/m/d", strtotime( $productInfo->{'releaseDate'}->{'displayValue'} ) ) : null;
 
 //商品のカテゴリ別に取得する情報を変える
-switch( strtolower( $ProductGroup ) ) {
+switch( strtolower( $productGroup ) ) {
 	case "book":
-		if( count( $Contributors ) ) {
+		if( count( $contributors ) ) {
 			$author_list = '';
-			foreach( $Contributors as $Contributor ) {
-				if( $Contributor->{'RoleType'} == 'author' ) {
-					$author_list .= esc_html( $Contributor->{'Name'} . ' ' );
+			foreach( $contributors as $contributor ) {
+				if( $contributor->{'RoleType'} == 'author' ) {
+					$author_list .= esc_html( $contributor->{'Name'} . ' ' );
 				}
 			}
 			if( $author_list != '' ) {
-				$detail_list .= "\t" ."<li>著者：" . trim( $author_list ) . "</li>\n";
+				$detail_list .= "\t" ."<li>著者：" . trim( $author_list ) . "</li>" . PHP_EOL;
 			}
 		}
-		$detail_list .= "\t" . "<li>出版社：" . $Manufacturer . " ( " . $PublicationDate . " )</li>" . "\n";
-		$detail_list .= "\t" . "<li>" . $Binding . "：" . $PagesCount . " ページ</li>\n";
+		$detail_list .= "\t" . "<li>出版社：" . $manufacturer . " ( " . $publicationDate . " )</li>" . PHP_EOL;
+		$detail_list .= "\t" . "<li>" . $binding . "：" . $pagesCount . " ページ</li>" . PHP_EOL;
 		break;
 	case "ebooks":
-		if( count( $Contributors ) ) {
+		if( count( $contributors ) ) {
 			$author_list = '';
-			foreach( $Contributors as $Contributor ) {
-				if( $Contributor->{'RoleType'} == 'author' ) {
-					$author_list .= esc_html( $Contributor->{'Name'} . ' ' );
+			foreach( $contributors as $contributor ) {
+				if( $contributor->{'RoleType'} == 'author' ) {
+					$author_list .= esc_html( $contributor->{'Name'} . ' ' );
 				}
 			}
 			if( $author_list != '' ) {
-				$detail_list .= "\t" ."<li>著者：" . trim( $author_list ) . "</li>\n";
+				$detail_list .= "\t" ."<li>著者：" . trim( $author_list ) . "</li>" . PHP_EOL;
 			}
 		}
-		$detail_list .= "\t" . "<li>出版社：" . $Manufacturer . " ( " . $PublicationDate . " )</li>" . "\n";
-		$detail_list .= "\t" . "<li>" . $Binding . "：" . $PagesCount . " ページ</li>\n";
+		$detail_list .= "\t" . "<li>出版社：" . $manufacturer . " ( " . $publicationDate . " )</li>" . PHP_EOL;
+		$detail_list .= "\t" . "<li>" . $binding . "：" . $pagesCount . " ページ</li>" . PHP_EOL;
 		break;
 	case "dvd":
-		$detail_list .= "\t" . "<li>販売元：" . $Manufacturer . " ( " . $ReleaseDate . " )</li>" . "\n";
-//		$detail_list .= "\t" . "<li>時間：" . $attr->RunningTime . " 分</li>" . "\n";
-//		$detail_list .= "\t" . "<li>" . $attr->NumberOfDiscs . " 枚組 ( " . $attr->Binding . " )</li>\n";
-		if( $Binding ) $detail_list .= "\t" . "<li>カテゴリ：" . $Binding . "</li>\n";
+		$detail_list .= "\t" . "<li>販売元：" . $manufacturer . " ( " . $releaseDate . " )</li>" . PHP_EOL;
+//		$detail_list .= "\t" . "<li>時間：" . $attr->RunningTime . " 分</li>" . PHP_EOL;
+//		$detail_list .= "\t" . "<li>" . $attr->NumberOfDiscs . " 枚組 ( " . $attr->binding . " )</li>" . PHP_EOL;
+		if( $binding ) $detail_list .= "\t" . "<li>カテゴリ：" . $binding . "</li>" . PHP_EOL;
 		break;
 	case "music":
-		if( count( $Contributors ) ) {
+		if( count( $contributors ) ) {
 			$author_list = '';
-			foreach( $Contributors as $Contributor ) {
-				if( $Contributor->{'RoleType'} == 'artist' ) {
-					$author_list .= esc_html( $Contributor->{'Name'} . ' ' );
+			foreach( $contributors as $contributor ) {
+				if( $contributor->{'RoleType'} == 'artist' ) {
+					$author_list .= esc_html( $contributor->{'Name'} . ' ' );
 				}
 			}
 			if( $author_list != '' ) {
-				$detail_list .= "\t" ."<li>アーティスト：" . trim( $author_list ) . "</li>\n";
+				$detail_list .= "\t" ."<li>アーティスト：" . trim( $author_list ) . "</li>" . PHP_EOL;
 			}
 		}
-//		$detail_list .= "<li>アーティスト：" . $Artist . "</li>" . "\n";
-		$detail_list .= "\t" . "<li>レーベル：" . $Manufacturer . "( " . $ReleaseDate . " )</li>\n";
+//		$detail_list .= "<li>アーティスト：" . $Artist . "</li>" . PHP_EOL;
+		$detail_list .= "\t" . "<li>レーベル：" . $manufacturer . "( " . $releaseDate . " )</li>" . PHP_EOL;
 		break;
 	default:
-		if( $Manufacturer ) $detail_list .= "\t" . "<li>メーカー：" . $Manufacturer . "</li>\n";
-		if( $Binding ) $detail_list .= "\t" . "<li>カテゴリ：" . $Binding . "</li>\n";
-		if( $ReleaseDate ) $detail_list .= "\t" . "<li>発売日：" . $ReleaseDate . "</li>\n";
+		if( $manufacturer ) $detail_list .= "\t" . "<li>メーカー：" . $manufacturer . "</li>" . PHP_EOL;
+		if( $binding ) $detail_list .= "\t" . "<li>カテゴリ：" . $binding . "</li>" . PHP_EOL;
+		if( $releaseDate ) $detail_list .= "\t" . "<li>発売日：" . $releaseDate . "</li>" . PHP_EOL;
 }
-if( $Price ) $detail_list .= "\t" . "<li>価格：" . $Price . "</li>\n";
+if( $price ) $detail_list .= "\t" . "<li>価格：" . $price . "</li>" . PHP_EOL;
 
 if ( $detail_list ) {
-	$detail .= '<ul class="sa-detail">' . "\n";
+	$detail .= '<ul class="sa-detail">' . PHP_EOL;
 	$detail .= $detail_list;
 	$detail .= '</ul>';
 }
