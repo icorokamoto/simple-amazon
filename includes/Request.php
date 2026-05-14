@@ -80,8 +80,12 @@ class Request {
         }
 
       } catch( Exception $e ) {
+        $error_message = $e->getMessage();
+        if( $e->getPrevious() ) {
+          $error_message .= PHP_EOL . $e->getPrevious()->getMessage();
+        }
         throw new Exception(
-          message: 'Error: ' . $e->getMessage() .PHP_EOL . $e->getPrevious()->getMessage()
+          message: 'Error: ' . $error_message
           // previous: $e
         );
       }
