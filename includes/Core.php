@@ -83,6 +83,17 @@ class Core {
 	}
 
 	/**
+	 * Amazon のリンクを取得
+	 * @param string $search_type
+	 * @param string $search_keyword
+	 * @return string $html
+	 */
+	public function get_amazon_link( $search_type, $search_keyword ) {
+		$html = $this->view->generate_link_html( $search_type, $search_keyword );
+		return $html;
+	}
+
+	/**
 	 * ショートコード
 	 * @param array $atts
 	 * @return string $html
@@ -95,13 +106,23 @@ class Core {
 			'word'    => null
 	  ), $atts );
 
-		$html = '';
+		$search_type    = ( $atts['asin'] ) ? 'get' : 'search';
+		$search_keyword = ( $atts['asin'] ) ? $atts['asin'] : $atts['word'];
 
-		if( $atts['asin'] ) {
-			$html = $this->view->generate_html_by_asin( $atts['asin'] );
-		} elseif( $atts['word'] ) {
-			$html = $this->view->generate_html_by_word( $atts['word'] );
-		}
+		$html = $this->view->generate_link_html( $search_type, $search_keyword );
+		// $html = $this->get_amazon_link( $search_type, $search_keyword );
+
+		// $html = '';
+
+		// if( $atts['asin'] ) {
+		// 	$this->view->set_request_type( 'get' );
+		// 	$this->view->set_search_keyword( $atts['asin'] );
+		// } elseif( $atts['word'] ) {
+		// 	$this->view->set_request_type( 'search' );
+		// 	$this->view->set_search_keyword( $atts['word'] );
+		// }
+
+		// $html = $this->view->generate_link_html();
 
 		return $html;
 	}

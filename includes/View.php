@@ -11,6 +11,9 @@ class View {
 
 	private Options $options;
 	// private $lib;
+	// apiなしの商品リンク表示などに使用
+	private string $asin = '';
+	private string $search_keyword = '';
 
 	/**
 	 * Construct
@@ -33,19 +36,21 @@ class View {
 			return $content;
 		}
 
-//		$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
-		$regexps[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
-//		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com|amazon\.ca|amazon\.co\.uk|amazon\.fr|amazon\.de|amazon\.co\.jp)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
-		$regexps[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com\.au|amazon\.com\.br|amazon\.in|amazon\.sg|amazon\.com\.mx|amazon\.ae|amazon\.com\.tr|amazon\.ca|amazon\.de|amazon\.es|amazon\.fr|amazon\.it|amazon\.co\.jp|amazon\.co\.uk|amazon\.com)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+//		$patterns[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
+		$patterns[] = '/<amazon>(?P<asin>[A-Z0-9]{10,13})<\/amazon>/';
+		// $patterns[] = '/(^|<p>)https?:\/\/www\.(?P<domain>amazon\.com\.au|amazon\.com\.br|amazon\.in|amazon\.sg|amazon\.com\.mx|amazon\.ae|amazon\.com\.tr|amazon\.ca|amazon\.de|amazon\.es|amazon\.fr|amazon\.it|amazon\.co\.jp|amazon\.co\.uk|amazon\.com)\/?(.*)\/(dp|gp\/product|gp\/aw\/d)\/(?P<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
+		$patterns[] = '/(^|<p>)https?:\/\/www\.amazon\.[a-z\.]+(?:\/(?<name>[^\/]+))?\/dp\/(?<asin>[A-Z0-9]{10}).*?($|<\/p>)/m';
 
-		foreach( $regexps as $regexp ) {
-			if( preg_match_all($regexp, $content, $arr) ) {
+		// リクエストタイプを設定
+		// $this->set_request_type( 'get' );
+
+		foreach( $patterns as $pattern ) {
+			if( preg_match_all($pattern, $content, $arr) ) {
 				for ( $i=0; $i<count($arr[0]); $i++ ) {
-					$asin = $arr['asin'][$i];
-
+					$this->asin = $arr['asin'][$i];
 					// $name = ( isset($arr['name'][$i]) ) ? urldecode($arr['name'][$i]) : '';
 
-					$item_html = $this->generate_html_by_asin( $asin );
+					$item_html = $this->generate_link_html( 'get', $this->asin );
 
 					// URLの置換
 					$content = str_replace( $arr[0][$i], $item_html, $content );
@@ -76,49 +81,82 @@ class View {
 	// }
 
 	/**
-	 * ASINから商品情報を出力する
-	 * @param string $asin
-	 * @retun string $item_html
+	 * APIを使用せずにリンクを生成する
+	 * @return string $html
 	 */
-	public function generate_html_by_asin( $asin ) {
-		$item_html = $this->generate_html( $asin, 'get' );
-		return $item_html;
+	private function generate_link_without_api() {
+		$asin           = $this->asin;
+		$search_keyword = $this->search_keyword;
+		$marketplace    = $this->options->get_option( 'marketplace' );
+		$partner_tag    = $this->options->get_option('partner_tag');
+
+		$query = ( $asin ) ? 'dp/' . $asin . '/?' : 's/?k=' . urlencode( $search_keyword ) . '&';
+		$query .= 'tag=' . $partner_tag;
+		$amazon_url = 'https://' . $marketplace . '/' . $query;
+
+		$html = "<p><a href=\"{$amazon_url}\">Amazon: {$search_keyword}</a></p>";
+
+		return $html;
 	}
 
 	/**
-	 * キーワードから商品情報を出力する
-	 * @param string $word
-	 * @retun string $item_html
+	 * ASIN または AmazonのURL から商品情報を出力する
+	 * @param string $request_type
+	 * @param string $request_keyword
+	 * @return string $item_link_html
 	 */
-	public function generate_html_by_word( $word ) {
-		$item_html = $this->generate_html( $word, 'search' );
-		return $item_html;
+	public function generate_link_html( $request_type, $request_keyword ) {
+
+		$item_link_html = $this->generate_html( $request_type, $request_keyword );
+
+		return $item_link_html;
+		
 	}
 
 	/**
 	 * 商品情報のhtmlを出力する
-	 * @param string $keyword
-	 * @param string $request_type 'get' or 'search'
-	 * @return string $item_html
+	 * @param string $request_type
+	 * @param string $request_keyword
 	 */
-	private function generate_html( $keyword, $request_type ) {
-
-		$item_html = "";
+	private function generate_html( $request_type, $request_keyword ) {
 
 		//オプションの設定が終わってない場合は置換せずに返す
 		$flag = $this->options->isset_required_options();
-		if( ! $flag ) {
-			return $item_html;
+		if( ! $flag ) return '';
+
+		// $request_type    = $this->request_type;
+		// $request_keyword = $this->request_keyword;
+
+		if( $request_type == 'get' ) {
+			if( strlen( $request_keyword ) != 10 ) {
+				// URLだった場合（ASINではなかった場合）
+				// URLからASINと商品名(name)を取得する
+				$product_info_array = $this->parse_amazon_url( $request_keyword );
+				$request_keyword = $product_info_array['asin']; // ASINをリクエストキーワードに設定
+				$this->asin = $product_info_array['asin'];
+				$this->search_keyword = $product_info_array['name'];
+			}
+		} elseif( $request_type == 'search' ) {
+			$this->search_keyword = $request_keyword;
 		}
 
-		$request = new Request();
-		$request->set_request_type( $request_type );
-		$request->set_keyword( $keyword );
+		// $html_no_api = $this->generate_link_without_api();
+
+		// リクエストの作成
+		$request = new Request( [
+			'request_type' => $request_type,
+			'request_keyword' => $request_keyword
+		] );
 
 		try{
+
+			// リクエストを投げる
 			$json = $request->request();
+
 		}catch( Exception $e ) {
-      $messages = [];
+
+			// エラー処理
+      $messages = array();
       $current = $e;
 
     	// getPrevious() がある限り、過去のエラーを遡る
@@ -128,6 +166,8 @@ class View {
       }
 
 			$error_message = '';
+			$html_no_api = $this->generate_link_without_api();
+			// $error_message .= $html_no_api;
 
 			//管理者の場合のみエラーメッセージを表示
 			if ( is_user_logged_in() ) {
@@ -137,11 +177,11 @@ class View {
 					. '</div>' . "\n";
 			}
 
-			return $error_message;
+			return $html_no_api . $error_message;
 		}
 
 		//テンプレートを適用
-		$item_html = $this->apply_template( $json, $keyword );		
+		$item_html = $this->apply_template( $json );		
 
 		return $item_html;
 
@@ -150,13 +190,15 @@ class View {
 	/**
 	 * テンプレートからhtmlを生成する
 	 * @param object $json
-	 * @param string $keyword
 	 * @return string $item_html
 	 */
-	private function apply_template( $json, $keyword ) {
+	private function apply_template( $json ) {
 
 		//テンプレート
 		$template = $this->options->get_option( 'template' );
+
+		// 検索キーワード
+		$keyword = $this->search_keyword;
 
 		// レスポンスの振り分け
 		if( property_exists( $json, 'itemsResult' ) ) {
@@ -212,5 +254,28 @@ class View {
 		return $item_html;
 
 	}
-	
+
+	/**
+	 * AmazonのURLから商品名とasinを取得する
+	 * @param string $url
+	 * @return array $parse_array
+	 */
+	private function parse_amazon_url( $url ) {
+
+		$pattern = '/https?:\/\/www\.amazon\.[a-z\.]+(?:\/(?<name>[^\/]+))?\/dp\/(?<asin>[A-Z0-9]{10})(?:\/|$)/';
+		$parse_array = array(
+			"name" => '',
+			"asin" => ''
+		);
+
+		if ( preg_match( $pattern, $url, $matches ) ) {
+      // 名前付きグループから値を取得
+      // 商品名がない場合は空文字をセット
+      $parse_array["name"] = !empty( $matches['name'] ) ? urldecode($matches['name']) : '';
+      $parse_array["asin"] = $matches['asin'];
+		}
+
+		return $parse_array;
+	}
+
 }

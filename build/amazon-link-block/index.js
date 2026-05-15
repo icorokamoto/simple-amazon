@@ -80,7 +80,7 @@ function Edit({
             label: 'キーワードで検索',
             value: 'keyword'
           }, {
-            label: 'ASINで検索',
+            label: 'ASIN or URLで検索',
             value: 'asin'
           }],
           onChange: value => setAttributes({
@@ -93,7 +93,7 @@ function Edit({
             keyword: val
           })
         }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
-          label: "ASIN",
+          label: "ASIN / URL",
           value: asin,
           onChange: val => setAttributes({
             asin: val
@@ -185,7 +185,7 @@ module.exports = window["wp"]["i18n"];
   \******************************************/
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"simple-amazon/amazon-link-block","version":"1.0","title":"Amazon Link","category":"widgets","icon":"cart","description":"ASINまたはキーワードでAmazon商品リンクを表示します","attributes":{"searchType":{"type":"string","default":"keyword"},"asin":{"type":"string","default":""},"keyword":{"type":"string","default":""}},"supports":{"html":false},"textdomain":"simple-amazon","editorScript":"file:./index.js","render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"simple-amazon/amazon-link-block","version":"1.0","title":"Amazon Link","category":"widgets","icon":"cart","description":"キーワードやASIN、AmazonのURLでAmazon商品のリンクを表示します","attributes":{"searchType":{"type":"string","default":"keyword"},"asin":{"type":"string","default":""},"keyword":{"type":"string","default":""}},"supports":{"html":false},"textdomain":"simple-amazon","editorScript":"file:./index.js","render":"file:./render.php"}');
 
 /***/ }
 

@@ -6,7 +6,7 @@
   "title": "Amazon Link",
   "category": "widgets",
   "icon": "cart",
-  "description": "ASINまたはキーワードでAmazon商品リンクを表示します",
+  "description": "キーワードやASIN、AmazonのURLでAmazon商品のリンクを表示します",
   "attributes": {
     "searchType": {
       "type": "string",

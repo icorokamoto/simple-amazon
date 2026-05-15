@@ -1,5 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PHP file to use when rendering the block type on the server to show on the front end.
  *
@@ -12,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 
 namespace Icoro\SimpleAmazon;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // 定数が定義されているか確認（念のための安全策）
 if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) ) {
@@ -37,24 +38,16 @@ if ( ! class_exists( Core::class ) ) {
  */
 
 // 属性の取得
-$search_type = $attributes['searchType'] ?? 'keyword';
-$keyword     = $attributes['keyword'] ?? '';
-$asin        = $attributes['asin'] ?? '';
+// $search_type    = $attributes['searchType'] ?? 'keyword';
+$search_type    = ( $attributes['searchType'] == 'asin' ) ? 'get' : 'search';
+$search_keyword = ( $attributes['searchType'] == 'asin' ) ? $attributes['asin'] : $attributes['keyword'] ;
 
-// 表示する値の決定
-$target_value = ( 'asin' === $search_type ) ? $asin : $keyword;
-if ( empty( $target_value ) ) {
+if ( empty( $search_keyword ) ) {
   return;
 }
 
-$atts = array(
-	'asin'    => $asin,
-	'word'    => $keyword
-);
-
 // リンクの生成
-// ショートコードのメソッドを流用
 $sa = new Core();
-$link_html = $sa->sa_shortcode( $atts );
+$link_html = $sa->get_amazon_link( $search_type, $search_keyword );
 
 echo $link_html;

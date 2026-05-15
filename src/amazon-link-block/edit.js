@@ -46,7 +46,7 @@ export default function Edit( { attributes, setAttributes } ) {
 						selected = { searchType }
 						options = {[
 							{ label: 'キーワードで検索', value: 'keyword' },
-							{ label: 'ASINで検索', value: 'asin'},
+							{ label: 'ASIN or URLで検索', value: 'asin'},
 						]}
 						onChange={ (value) => setAttributes({ searchType: value })}
 					/>
@@ -58,7 +58,7 @@ export default function Edit( { attributes, setAttributes } ) {
 					/>
 					) : (
 					<TextControl
-						label="ASIN"
+						label="ASIN / URL"
 						value={ asin }
 						onChange={ (val) => setAttributes({ asin: val }) }
 					/>

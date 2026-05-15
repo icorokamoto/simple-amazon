@@ -32,32 +32,23 @@ class Request {
 
 	/**
 	 * Construct
+   * @param array $atts = [ request_type, request_keyword ]
 	 */
-	public function __construct() {
-		$this->options = new Options();
+	public function __construct( $atts ) {
+		$this->options         = new Options();
+    $this->request_type    = ( $atts['request_type'] ) ? $atts['request_type'] : '';
+    $this->request_keyword = ( $atts['request_keyword'] ) ? $atts['request_keyword'] : '';
 	}
-
-  /**
-   * リクエストタイプを設定
-   * @param string $request_type 'get', 'search' 
-   */
-  public function set_request_type( $request_type ) {
-    $this->request_type = $request_type;
-  }
-
-  /**
-   * 検索キーワードを設定
-   * @param string $request_keyword
-   */
-  public function set_keyword( $request_keyword ) {
-    $this->request_keyword = $request_keyword;
-  }
 
   /**
    * リクエストを送信
    */
   public function request() {
 
+    // リクエストに使うASIN またはキーワードが空だった場合
+    if( ! $this->request_keyword ) {
+      throw new Exception( message: 'error: no asin, keywords' );
+    }
 
     // --- Set an ID for this cache ---
 		$cache_id = 'simpleamazon_' . $this->request_type . '_' . md5( $this->request_keyword );
