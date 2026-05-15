@@ -1,6 +1,8 @@
 <?php
 namespace Icoro\SimpleAmazon;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class Options {
 
 	public mixed $options;

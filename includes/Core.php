@@ -1,6 +1,8 @@
 <?php
 namespace Icoro\SimpleAmazon;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class Core {
 
 	public View $view;

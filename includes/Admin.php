@@ -4,6 +4,8 @@
  *****************************************************************************/
 namespace Icoro\SimpleAmazon;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class Admin {
 
 	// private $cache;

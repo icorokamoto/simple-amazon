@@ -1,6 +1,8 @@
 <?php
 namespace Icoro\SimpleAmazon;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 // stauss source
 use Icoro\SimpleAmazon\Vendor\Amazon\CreatorsAPI\v1\Configuration;
 use Icoro\SimpleAmazon\Vendor\Amazon\CreatorsAPI\v1\com\amazon\creators\api\DefaultApi;
