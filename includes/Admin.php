@@ -43,14 +43,12 @@ class Admin {
 	/**
 	 * JavascriptとCSSを読み込む
 	 */
-	public function simple_amazon_add_scripts() {
-
-		// add jQuery tabs for options page. Use jQuery UI Tabs from WP
-		if ( isset( $_GET['page'] ) && $_GET['page'] == 'simple_amazon' ) {
-			wp_enqueue_script( 'simple-amazon-admin', SIMPLE_AMAZON_JS_URL.'simple-amazon-admin.js', array(), SIMPLE_AMAZON_VER );
-		}
-
-	}
+	// public function simple_amazon_add_scripts() {
+	// 	// add jQuery tabs for options page. Use jQuery UI Tabs from WP
+	// 	if ( isset( $_GET['page'] ) && $_GET['page'] == 'simple_amazon' ) {
+	// 		wp_enqueue_script( 'simple-amazon-admin', SIMPLE_AMAZON_JS_URL.'simple-amazon-admin.js', array(), SIMPLE_AMAZON_VER );
+	// 	}
+	// }
 	
 	/**
 	 * @brief	管理画面のhtmlを生成する
