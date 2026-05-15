@@ -16,18 +16,18 @@ class Core {
 	 */
 	public function __construct() {
 
-		// $this->lib = new Lib();
+		//オブジェクトの設定
+		$this->view = new View();
 		$this->options = new Options();
+		// $this->lib = new Lib();
 
 		//オプション設定の読み込み
 		$this->options->load_options();
 
-		//オブジェクトの設定
-		$this->view = new View();
-
 		//書換が必要なのでとりあえず一時停止
 		// $this->saListView = new SimpleAmazonListView();
 
+		// 管理画面の読み込み
 		if ( is_admin() ) {
 			$this->admin = new Admin();
 		}
@@ -37,7 +37,7 @@ class Core {
 		register_deactivation_hook(__FILE__, array($this, 'plugin_deactivation'));
 
 		// 定期的に期限切れのキャッシュを削除する feat. wp-cron
-		add_action('simple_amazon_clear_chache_hook', array($this, 'clean_cache'));
+		// add_action('simple_amazon_clear_chache_hook', array($this, 'clean_cache'));
 
 		// simple amazonのcssを読み込む
 		add_action('wp_head', array($this, 'add_stylesheet'), 1);
@@ -45,7 +45,7 @@ class Core {
 		// 投稿中のamazonのURLをhtmlに置き換える
 		add_filter('the_content', array($this->view, 'replace_urls'), 1);
 	
-		// ショートコード設定
+		// 初期設定
 		add_action( 'init', function() {
 			// ショートコード設定
 			add_shortcode( 'sa', array( $this, 'sa_shortcode' ) );

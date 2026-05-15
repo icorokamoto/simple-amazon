@@ -3,7 +3,7 @@ Contributors: icoro
 Donate link: 
 Tags: amazon
 Tested up to: 6.2.2
-Stable tag: 9.0.1
+Stable tag: 9.1
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
 

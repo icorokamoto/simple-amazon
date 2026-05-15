@@ -10,7 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class View {
 
 	private Options $options;
-	// private $lib;
+	// private Lib $lib;
+
 	// apiなしの商品リンク表示などに使用
 	private string $asin = '';
 	private string $search_keyword = '';
