@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "simple-amazon/amazon-link-block",
+	"version": "1.0",
+	"title": "Amazon Link",
+	"category": "widgets",
+	"icon": "cart",
+	"description": "ASINまたはキーワードでAmazon商品リンクを表示します",
+	"attributes": {
+		"searchType": {
+			"type": "string",
+			"default": "keyword"
+		},
+		"asin": {
+			"type": "string",
+			"default": ""
+		},
+		"keyword": {
+			"type": "string",
+			"default": ""
+		} 
+	},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "simple-amazon",
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

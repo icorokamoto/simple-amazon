@@ -1,5 +1,6 @@
 /bin/strauss.phar
 /dist/
 /includes/vendor/
+/node_modules/
 /template/sa-full-plus-affi.php
 /vendor/

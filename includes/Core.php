@@ -45,9 +45,12 @@ class Core {
 	
 		// ショートコード設定
 		add_action( 'init', function() {
+			// ショートコード設定
 			add_shortcode( 'sa', array( $this, 'sa_shortcode' ) );
-		});
 
+			// カスタムブロックの設定
+			register_block_type( SIMPLE_AMAZON_PLUGIN_DIR . 'build/amazon-link-block' );
+		});
 	}
 
 	/**
