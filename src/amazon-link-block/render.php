@@ -1,5 +1,4 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PHP file to use when rendering the block type on the server to show on the front end.
  *
@@ -12,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 
 namespace Icoro\SimpleAmazon;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // 定数が定義されているか確認（念のための安全策）
 if ( ! defined( 'SIMPLE_AMAZON_PLUGIN_DIR' ) ) {
