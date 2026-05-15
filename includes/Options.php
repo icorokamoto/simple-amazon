@@ -58,15 +58,17 @@ class Options {
 	 */
 	public function isset_option( $option_type ) {
 
-		$flag = false;
-		$check_option = '';
-
 		$check_option = $this->get_option( $option_type );
+		$flag = ( $check_option ) ? true : false;
+
+		// $flag = false;
+		// $check_option = '';
+
 		// $check_option = $this->options[$option_type];
 
-		if( $check_option ) {
-			$flag = true;
-		}
+		// if( $check_option ) {
+		// 	$flag = true;
+		// }
 
 		return $flag;
 	}
@@ -76,11 +78,8 @@ class Options {
 	 * @param array $options
 	 */
 	public function update_options( $options ) {
-
-		$this->options = $options;
-
-		update_option( 'simple_amazon_admin_options', $this->options );
-
+		$flag = update_option( 'simple_amazon_admin_options', $options );
+		if( $flag ) $this->options = $options;
 	}
 
 	/**
