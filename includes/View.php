@@ -131,7 +131,7 @@ class View {
 			if ( is_user_logged_in() ) {
 				$error_message = '<div class="notice">' . "\n"
 					. 'Amazonの商品情報取得時にエラーが発生したようです。<br />（このメッセージは管理者にのみ表示されています。）'  . "\n"
-					. '<pre>' . esc_html( implode( "\n", $messages ) ) . '</pre>' . "\n"
+					. '<pre style="overflow-x: auto;">' . esc_html( implode( "\n", $messages ) ) . '</pre>' . "\n"
 					. '</div>' . "\n";
 			}
 
