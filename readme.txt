@@ -1,43 +1,55 @@
 === Simple Amazon ===
 Contributors: icoro
-Donate link: 
-Tags: amazon
-Tested up to: 6.2.2
+Tags: amazon, affiliate, pa-api, product, blocks
+Requires at least: 5.0
+Tested up to: 6.9
+Requires PHP: 8.1
 Stable tag: 9.1
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
+Amazon の商品 URL を貼り付けるだけで、PA-API v5 経由で商品情報を取得して表示するプラグインです。
 
 
 == Description ==
 
-　「Simple Amazon」はAmazonの商品ページのURLを記事本文に貼り付けることでその商品情報を表示することが出来るプラグインです。
-　もともとは「wp-tmkm-amazon」というプラグインをベースに開発を始めたものですが、今となってはまったく別物のプラグインとなっております。
+「Simple Amazon」は、Amazonの商品ページのURLを記事本文に貼り付けるだけで、その商品情報を自動的に取得し表示することができるプラグインです。
 
-= 商品情報の表示 =
+　もともとは「wp-tmkm-amazon」というプラグインをベースに開発を始めたものですが、最新の Amazon Product Advertising API (PA-API) v5 への対応やカスタムブロック、PHP8.2 への対応など、今となってはまったく別物のプラグインとなっております。
 
-　「Simple Amazon」には、Amazon の 商品ページのURL を貼り付けるとその商品を記事上に表示するという、ただそれだけの機能しかありません。
 
-　「商品検索なんてAmaozonでした方が早いでしょ」「ちょっと具合悪いとこなんて自分で直すわ」「でも自分でイチからプラグイン組むのはダルイわ」という、ワケが分かっている人向けのプラグインです。
+=== 主な特徴 ===
 
-　「Simple Amazon」のベースとなっているのは、「wp-tmkm-amazon」というプラグインです。このプラグイン、良くできていると思うのですが、すでに開発が止まってます(最近、有志により開発が進められているっぽいです)。
-　加えて、php5で使用するとエラーを吐いたり、自分にはあまり必要ない機能もあったので、書き直させてもらいました。
-　そうして出来たのがこの「Simple Amazon」です。
+* **カスタムブロック:** ブロックエディタ（Gutenberg）で直感的に操作できる専用ブロックを搭載しています。
+* **URLを貼るだけ:** 投稿画面にAmazonのURLをコピペするだけで、商品詳細が生成されます。
+* **ショートコード対応:** `[sa asin="ASIN"]` 形式での表示も可能です。
+* **PA-API v5 対応:** 最新のAmazon APIを使用して正確な商品情報を取得します。
+* **テンプレート機能:** 出力されるHTMLをテンプレートファイルでカスタマイズできます。
+
+「商品検索はAmazonのサイトで直接やったほうが早い」「余計な機能はいらないから、確実に動作してカスタマイズしやすいものがいい」という、シンプルさを求めるユーザーに最適なプラグインです。
 
 
 == Installation ==
 
-1. ダウンロードした zip ファイルを解凍します。
-2. simple-amazon フォルダを wp-content/plugins フォルダに転送します。
-4. 管理画面から simple-amazon を有効化します。
-5. プラグインの管理画面に移動して、「Credential ID」「Credential Secret」「Credential Version」「Partner Tag」「Marketplace」を入力します。
-6. 必要に応じて「オプション設定」を設定します。
-7. 記事本文中にAmazon.co.jpの商品詳細ページのURLをコピペするだけでAmazonの商品情報が表示されます。
+1. 管理画面の「プラグイン > 新規追加」からアップロードするか、`wp-content/plugins` ディレクトリにフォルダをアップロードします。
+2. プラグインを有効化します。
+3. 設定画面（Simple Amazon）へ移動し、Amazonアソシエイトの「Access Key ID」「Secret Access Key」「Partner Tag」等の必要事項を入力します。
+4. 投稿本文に Amazon.co.jp の商品詳細ページのURLを貼り付ければ完了です。
 
-= etc =
 
-* このプラグインを使用するには「Credential ID」「Credential Secret」「Credential Version」「Partner Tag」「Marketplace」の3つが必要です。持っていない場合は https://affiliate.amazon.co.jp/ で取得してください。
-* imagesディレクトリの中にあるamazon_noimg.png(75 x 75px)、amazon_noimg_small.png(160 x 160px)、amazon_noimg_large.png(500 x 500px)を差し替えることで、商品画像がないときの代替画像を好きなものにできます。
-* cacheディレクトリは別の場所に設置できます。その場合は、/include/class_cache_control.php の 18行目にある $this->cache_dir の値を、設置したディレクトリのパスに変更してください。
+== Frequently Asked Questions ==
+
+= Amazon API のキーはどこで取得できますか？ =
+Amazonアソシエイト・プログラムの管理画面（https://affiliate.amazon.co.jp/）の「ツール > Product Advertising API」から取得してください。
+
+= 商品画像が表示されません =
+APIの認証情報が正しいか、またAPIの利用制限（過去30日間の売上実績が必要な場合があります）に抵触していないか確認してください。
+
+
+== Screenshots ==
+
+1. 管理画面の設定ページ。
+2. 投稿に表示される商品リンクの例。
 
 
 == Changelog ==
@@ -203,33 +215,21 @@ Stable tag: 9.1
 * wp-tmkm-amazonをsimpleXMLに対応させた。
 
 
-== Arbitrary section ==
-
 = ショートコードで商品情報を表示させる方法 =
 
-　投稿中に以下のようにショートコードを書くことで商品を表示することができます。
+投稿中に以下のようにショートコードを書くことで商品を表示することができます。
 
-ASINを指定して表示する場合
-[sa asin="(ASINコード)"]
+**ASINを指定して表示する場合**
+`[sa asin="(ASINコード)"]`
 
-キーワードを指定して表示する場合
-[sa word="(キーワード)"]
-
-キーワードはAmazonでそのキーワードを検索したときに一番最初に出てくる商品が表示されます。
-ASINとキーワードを両方指定した場合はASINが優先されます。
+**キーワードを指定して表示する場合**
+`[sa word="(キーワード)"]`
+※キーワード検索で最上位の商品が表示されます。同時にASINが指定されている場合はASINが優先されます。
 
 = 商品情報を表示するコードのカスタマイズ =
 
-　/includes/View.php の 35行目以降にある $regexps[] を追加・編集することで、商品情報を表示させるためのコードを追加・変更できます。
-　以下のような正規表現を利用して「ASIN」を取り出しています。
-
-ASINを指定する部分: (?P<asin>[A-Z0-9]{10,13})
-
-　たとえば、wp-tmkm-amazonとの互換を保ちたい場合は以下の行を追加します。
-
-$regexps[] = '/\[tmkm-amazon\](?P<asin>[A-Z0-9]{10,13})\[\/tmkm-amazon\]/';
-
+`/includes/View.php` 内の `$patterns[]` を編集することで、URLの解析パターンを追加・変更できます。
 
 = テンプレート機能 =
 
-　テンプレートファイルを作成して /template にいれることで、出力される商品情報のHTMLを変更することが出来ます。テンプレートファイルで使える変数などは /template/sa-default.php を参照してください。
+`/template` ディレクトリ内にテンプレートファイルを作成することで、出力されるHTMLを自由に変更できます。詳細は `/template/sa-default.php` を参照してください。
