@@ -3,7 +3,7 @@ Contributors: icoro
 Donate link: 
 Tags: amazon
 Tested up to: 6.2.2
-Stable tag: 9.0
+Stable tag: 9.0.2
 
 本文に貼り付けられた Amazon の URL を元にして個別商品の情報を取出します。
 
@@ -41,6 +41,12 @@ Stable tag: 9.0
 
 
 == Changelog ==
+
+= 9.0.2 =
+* APIエラーなどで表示される管理者用エラーメッセージが横に溢れないように修正した。
+
+= 9.0.1 =
+* エラー出力で停止することがあったのを修正した。
 
 = 9.0 =
 * Creators API に対応した。
